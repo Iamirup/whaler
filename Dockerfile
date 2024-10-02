@@ -11,15 +11,13 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o /entrypoint
+RUN go build -o entrypoint
 
 # ------------------------------------------- Runtime
 FROM alpine:latest AS runtime
 
 WORKDIR /app
 
-COPY --from=builder /entrypoint .
-
-WORKDIR /
+COPY --from=builder /app/entrypoint .
 
 ENTRYPOINT ["./entrypoint server"]
