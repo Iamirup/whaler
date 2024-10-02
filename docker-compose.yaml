@@ -12,7 +12,7 @@ services:
     container_name: rdbms-whaler
     image: postgres:latest
     environment:
-      POSTGRES_USER: amir
+      POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: db
     volumes:
