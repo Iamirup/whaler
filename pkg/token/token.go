@@ -74,7 +74,10 @@ func (token *token) CreateRefreshTokenString(data any) (string, error) {
 	}
 
 	expiredAt := jwt.NewNumericDate(time.Now().Add(token.refreshTokenExpiration))
-	registeredClaim := jwt.RegisteredClaims{ExpiresAt: expiredAt}
+	registeredClaim := jwt.RegisteredClaims{
+		ExpiresAt: expiredAt,
+		ID:        "refresh", // Unique claim to distinguish refresh token
+	}
 	payload := &Payload{dataBytes, registeredClaim}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodEdDSA, payload)
