@@ -35,3 +35,4 @@ jobs:
             mkdir -p whaler
             cd ~/whaler
             git pull origin main
+            sudo docker compose up -d --build

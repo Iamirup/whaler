@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/Iamirup/whaler/internal/models"
 	"github.com/mohammadne/phone-book/pkg/rdbms"
@@ -41,7 +40,7 @@ ORDER BY user_configs.id
 FETCH NEXT $4 ROWS ONLY;`
 
 const QueryGetUserByUsername = `
-SELECT *
+SELECT id, password, created_at
 FROM users
 WHERE username=$1;`
 
@@ -56,12 +55,11 @@ func (r *repository) GetUserByUsername(username string) (*models.User, error) {
 			return nil, err
 		}
 
-		r.logger.Error("Error find user by email", zap.Error(err))
+		r.logger.Error("Error find user by username", zap.Error(err))
 		return nil, err
 	}
 
 	return user, nil
-
 }
 
 const QueryGetUserByUsernameAndPassword = `
@@ -70,8 +68,6 @@ FROM users
 WHERE username=$1 AND password=$2;`
 
 func (r *repository) GetUserByUsernameAndPassword(username, password string) (*models.User, error) {
-
-	fmt.Println("GetUserByUsernameAndPassword")
 
 	user := &models.User{Username: username, Password: password}
 

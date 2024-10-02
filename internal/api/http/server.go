@@ -30,7 +30,7 @@ func New(log *zap.Logger, repo repository.Repository, token token.Token) *Server
 	// Client Endpoints
 	server.clientApp = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
 
-	apiV1 := server.clientApp.Group("api/v1")
+	apiV1 := server.clientApp.Group("/api/v1")
 
 	auth := apiV1.Group("/auth")
 	auth.Post("/register", server.register)
