@@ -103,14 +103,21 @@ func (handler *Server) register(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).SendString(errString)
 	}
 
-	token, err := handler.token.CreateTokenString(user.Id)
+	accessToken, err := handler.token.CreateTokenString(user.Id)
 	if err != nil {
-		errString := "Error creating JWT token for user"
+		errString := "Error creating JWT access token for user"
 		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
 		return c.Status(http.StatusInternalServerError).SendString(errString)
 	}
 
-	response := map[string]string{"Token": token}
+	refreshToken, err := handler.token.CreateRefreshTokenString(user.Id)
+	if err != nil {
+		errString := "Error creating JWT refresh token for user"
+		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
+		return c.Status(http.StatusInternalServerError).SendString(errString)
+	}
+
+	response := map[string]string{"AccessToken": accessToken, "RefreshToken": refreshToken}
 	return c.Status(http.StatusCreated).JSON(&response)
 }
 
@@ -134,14 +141,21 @@ func (handler *Server) login(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).SendString(errString)
 	}
 
-	token, err := handler.token.CreateTokenString(user.Id)
+	accessToken, err := handler.token.CreateTokenString(user.Id)
 	if err != nil {
-		errString := "Error creating JWT token for user"
+		errString := "Error creating JWT access token for user"
 		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
 		return c.Status(http.StatusInternalServerError).SendString(errString)
 	}
 
-	response := map[string]string{"Token": token}
+	refreshToken, err := handler.token.CreateRefreshTokenString(user.Id)
+	if err != nil {
+		errString := "Error creating JWT refresh token for user"
+		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
+		return c.Status(http.StatusInternalServerError).SendString(errString)
+	}
+
+	response := map[string]string{"AccessToken": accessToken, "RefreshToken": refreshToken}
 	return c.Status(http.StatusOK).JSON(&response)
 }
 
