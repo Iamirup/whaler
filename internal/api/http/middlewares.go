@@ -19,10 +19,33 @@ func (handler *Server) fetchUserId(c *fiber.Ctx) error {
 	}
 
 	var id uint64
-	if err := handler.token.ExtractTokenData(header, &id); err != nil || id == 0 {
-		handler.logger.Error("Invalid token header", zap.Error(err))
-		response := "invalid token header, please login again"
-		return c.Status(http.StatusBadRequest).SendString(response)
+	err := handler.token.ExtractTokenData(header, &id)
+	if err != nil || id == 0 {
+		// Attempt to use refresh token if access token is invalid or expired
+		refreshToken := c.Cookies("refresh_token")
+		if refreshToken == "" {
+			handler.logger.Error("Missing refresh token")
+			response := "invalid token header, please login again"
+			return c.Status(http.StatusBadRequest).SendString(response)
+		}
+
+		err = handler.token.ValidateRefreshToken(refreshToken)
+		if err != nil {
+			handler.logger.Error("Invalid refresh token", zap.Error(err))
+			response := "invalid refresh token, please login again"
+			return c.Status(http.StatusUnauthorized).SendString(response)
+		}
+
+		// Generate new access token
+		newAccessToken, err := handler.token.CreateTokenString(id)
+		if err != nil {
+			handler.logger.Error("Failed to create new access token", zap.Error(err))
+			response := "failed to create new access token, please login again"
+			return c.Status(http.StatusInternalServerError).SendString(response)
+		}
+
+		// Set new access token in response header
+		c.Set("Authorization", "Bearer "+newAccessToken)
 	}
 
 	c.Locals("user-id", id)

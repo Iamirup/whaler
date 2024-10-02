@@ -13,12 +13,15 @@ import (
 type Token interface {
 	CreateTokenString(data any) (string, error)
 	ExtractTokenData(tokenString string, data any) error
+	CreateRefreshTokenString(data any) (string, error)
+	ValidateRefreshToken(tokenString string) error
 }
 
 type token struct {
-	privateEd25519Key crypto.PrivateKey
-	publicEd25519Key  crypto.PublicKey
-	expiration        time.Duration
+	privateEd25519Key      crypto.PrivateKey
+	publicEd25519Key       crypto.PublicKey
+	accessTokenExpiration  time.Duration
+	refreshTokenExpiration time.Duration
 }
 
 func New(cfg *Config) (Token, error) {
@@ -37,7 +40,8 @@ func New(cfg *Config) (Token, error) {
 		return nil, fmt.Errorf("unable to parse Ed25519 public key: %v", err)
 	}
 
-	token.expiration = cfg.Expiration
+	token.accessTokenExpiration = cfg.AccessTokenExpiration
+	token.refreshTokenExpiration = cfg.RefreshTokenExpiration
 
 	return token, nil
 }
@@ -54,7 +58,22 @@ func (token *token) CreateTokenString(data any) (string, error) {
 		return "", errors.New(errStr)
 	}
 
-	expiredAt := jwt.NewNumericDate(time.Now().Add(token.expiration))
+	expiredAt := jwt.NewNumericDate(time.Now().Add(token.refreshTokenExpiration))
+	registeredClaim := jwt.RegisteredClaims{ExpiresAt: expiredAt}
+	payload := &Payload{dataBytes, registeredClaim}
+
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodEdDSA, payload)
+	return jwtToken.SignedString(token.privateEd25519Key)
+}
+
+func (token *token) CreateRefreshTokenString(data any) (string, error) {
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		errStr := fmt.Sprintf("error marshal data: %v", err)
+		return "", errors.New(errStr)
+	}
+
+	expiredAt := jwt.NewNumericDate(time.Now().Add(token.refreshTokenExpiration))
 	registeredClaim := jwt.RegisteredClaims{ExpiresAt: expiredAt}
 	payload := &Payload{dataBytes, registeredClaim}
 
@@ -95,6 +114,28 @@ func (token *token) ExtractTokenData(tokenString string, data any) error {
 
 	if err := json.Unmarshal([]byte(payload.Data), data); err != nil {
 		errStr := fmt.Sprintf("%s: %s, data: %s", inValidToken, errorUnmarshalData, payload.Data)
+		return errors.New(errStr)
+	}
+
+	return nil
+}
+
+func (token *token) ValidateRefreshToken(tokenString string) error {
+	checkSigningMethod := func(jwtToken *jwt.Token) (any, error) {
+		if _, ok := jwtToken.Method.(*jwt.SigningMethodEd25519); !ok {
+			return nil, fmt.Errorf("wrong signing method: %v", jwtToken.Header["alg"])
+		}
+		return token.publicEd25519Key, nil
+	}
+
+	jwtToken, err := jwt.ParseWithClaims(tokenString, &Payload{}, checkSigningMethod)
+	if err != nil {
+		errStr := fmt.Sprintf("error: %v, token: %s", err, tokenString)
+		return errors.New(errStr)
+	}
+
+	if !jwtToken.Valid {
+		errStr := fmt.Sprintf("%s, token: %v", inValidToken, jwtToken)
 		return errors.New(errStr)
 	}
 
