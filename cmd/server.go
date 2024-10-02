@@ -3,12 +3,11 @@ package cmd
 import (
 	"os"
 
-	"github.com/mohammadne/phone-book/internal/api/http"
-	"github.com/mohammadne/phone-book/internal/config"
-	"github.com/mohammadne/phone-book/internal/repository"
-	"github.com/mohammadne/phone-book/pkg/logger"
-	"github.com/mohammadne/phone-book/pkg/rdbms"
-	"github.com/mohammadne/phone-book/pkg/token"
+	"github.com/Iamirup/whaler/internal/api/http"
+	"github.com/Iamirup/whaler/internal/config"
+	"github.com/Iamirup/whaler/internal/repository"
+	"github.com/Iamirup/whaler/pkg/logger"
+	"github.com/Iamirup/whaler/pkg/token"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -22,7 +21,7 @@ func (cmd Server) Command(trap chan os.Signal) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "server",
-		Short: "run floki server",
+		Short: "run whaler server",
 		Run:   run,
 	}
 }
@@ -30,10 +29,12 @@ func (cmd Server) Command(trap chan os.Signal) *cobra.Command {
 func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 	myLogger := logger.NewZap(cfg.Logger)
 
-	db, err := rdbms.New(cfg.RDBMS)
-	if err != nil {
-		myLogger.Panic("Error creating rdbms database", zap.Error(err))
-	}
+	// db, err := rdbms.New(cfg.RDBMS)
+	// if err != nil {
+	// 	myLogger.Panic("Error creating rdbms database", zap.Error(err))
+	// }
+
+	db := "test"
 
 	repo := repository.New(myLogger, cfg.Repository, db)
 
