@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/Iamirup/whaler/internal/models"
+	"github.com/Iamirup/whaler/pkg/rdbms"
 	"go.uber.org/zap"
 )
 
@@ -16,23 +17,13 @@ type Repository interface {
 	UpdateConfig(userId uint64, config *models.UserConfig) error
 }
 
-// type repository struct {
-// 	logger *zap.Logger
-// 	config *Config
-// 	rdbms  rdbms.RDBMS
-// }
-
 type repository struct {
 	logger *zap.Logger
 	config *Config
-	rdbms  string
+	rdbms  rdbms.RDBMS
 }
 
-// func New(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) Repository {
-// 	return &repository{logger: logger, config: cfg, rdbms: rdbms}
-// }
-
-func New(logger *zap.Logger, cfg *Config, rdbms string) Repository {
+func New(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) Repository {
 	return &repository{logger: logger, config: cfg, rdbms: rdbms}
 }
 

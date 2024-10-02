@@ -7,6 +7,7 @@ import (
 	"github.com/Iamirup/whaler/internal/config"
 	"github.com/Iamirup/whaler/internal/repository"
 	"github.com/Iamirup/whaler/pkg/logger"
+	"github.com/Iamirup/whaler/pkg/rdbms"
 	"github.com/Iamirup/whaler/pkg/token"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -29,12 +30,10 @@ func (cmd Server) Command(trap chan os.Signal) *cobra.Command {
 func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 	myLogger := logger.NewZap(cfg.Logger)
 
-	// db, err := rdbms.New(cfg.RDBMS)
-	// if err != nil {
-	// 	myLogger.Panic("Error creating rdbms database", zap.Error(err))
-	// }
-
-	db := "test"
+	db, err := rdbms.New(cfg.RDBMS)
+	if err != nil {
+		myLogger.Panic("Error creating rdbms database", zap.Error(err))
+	}
 
 	repo := repository.New(myLogger, cfg.Repository, db)
 
