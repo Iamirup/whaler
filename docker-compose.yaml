@@ -4,12 +4,13 @@ services:
     restart: unless-stopped
     build: .
     ports:
-      - 8080:8080
+      - 8765:8080
     depends_on:
-      - db
+      - rdbms
 
   rdbms:
-    image: postgress
+    container_name: rdbms-whaler
+    image: postgres:latest
     environment:
       POSTGRES_USER: amir
       POSTGRES_PASSWORD: pass

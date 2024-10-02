@@ -34,3 +34,4 @@ jobs:
           script: |
             mkdir -p whaler
             cd ~/whaler
+            git pull origin main
