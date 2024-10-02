@@ -1,0 +1,21 @@
+services:
+  whaler:
+    container_name: whaler
+    restart: unless-stopped
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+  rdbms:
+    image: postgress
+    environment:
+      POSTGRES_USER: amir
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    volumes:
+      - /whaler_data:/var/lib/postgresql/data
+
+volumes:
+  whaler_data:
