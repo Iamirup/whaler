@@ -20,4 +20,4 @@ WORKDIR /app
 
 COPY --from=builder /entrypoint .
 
-ENTRYPOINT ["./entrypoint"]
+ENTRYPOINT ["./entrypoint server"]
