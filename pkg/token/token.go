@@ -15,6 +15,7 @@ type Token interface {
 	ExtractTokenData(tokenString string, data any) error
 	CreateRefreshTokenString(data any) (string, error)
 	ValidateRefreshToken(tokenString string) error
+	GetRefreshTokenExpiration() time.Duration
 }
 
 type token struct {
@@ -143,4 +144,8 @@ func (token *token) ValidateRefreshToken(tokenString string) error {
 	}
 
 	return nil
+}
+
+func (token *token) GetRefreshTokenExpiration() time.Duration {
+	return token.refreshTokenExpiration
 }

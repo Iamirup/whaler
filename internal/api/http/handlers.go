@@ -57,7 +57,6 @@ func (handler *Server) events(c *fiber.Ctx) error {
 	ctx.Response.Header.Set("Access-Control-Allow-Headers", "Cache-Control")
 	ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
 	ctx.SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
-		fmt.Println("WRITER")
 		for {
 			event := Event{
 				Contents: generateContents(),
@@ -117,7 +116,15 @@ func (handler *Server) register(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).SendString(errString)
 	}
 
-	response := map[string]string{"AccessToken": accessToken, "RefreshToken": refreshToken}
+	// Set refresh token as HTTP-only cookie
+	c.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		Expires:  time.Now().Add(handler.token.GetRefreshTokenExpiration()),
+		HTTPOnly: true,
+	})
+
+	response := map[string]string{"AccessToken": accessToken}
 	return c.Status(http.StatusCreated).JSON(&response)
 }
 
@@ -155,7 +162,15 @@ func (handler *Server) login(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).SendString(errString)
 	}
 
-	response := map[string]string{"AccessToken": accessToken, "RefreshToken": refreshToken}
+	// Set refresh token as HTTP-only cookie
+	c.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		Expires:  time.Now().Add(handler.token.GetRefreshTokenExpiration()),
+		HTTPOnly: true,
+	})
+
+	response := map[string]string{"AccessToken": accessToken}
 	return c.Status(http.StatusOK).JSON(&response)
 }
 
