@@ -101,7 +101,7 @@ func (token *token) ExtractTokenData(tokenString string, data any) error {
 
 	jwtToken, errExp := jwt.ParseWithClaims(tokenString, &Payload{}, checkSigningMethod)
 	if errExp != nil {
-		fmt.Println("errrrrorrrrr", errExp)
+		fmt.Println("errrrrorrrrr", errExp, jwtToken.Claims.(*Payload), jwtToken.Claims.(*Payload).Data)
 	}
 
 	if !jwtToken.Valid {
