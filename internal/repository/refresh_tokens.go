@@ -9,7 +9,10 @@ import (
 )
 
 const QueryCreateNewRefreshToken = `
-INSERT INTO refresh_tokens(refresh_token, owner_id) VALUES($1, $2)
+INSERT INTO refresh_tokens(refresh_token, owner_id)
+VALUES($1, $2)
+ON CONFLICT (owner_id) 
+DO UPDATE SET refresh_token = EXCLUDED.refresh_token
 RETURNING owner_id;`
 
 func (r *repository) CreateNewRefreshToken(refreshToken *models.RefreshToken) error {
