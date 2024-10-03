@@ -29,7 +29,7 @@ func (handler *Server) fetchUserId(c *fiber.Ctx) error {
 			return c.Status(http.StatusBadRequest).SendString(response)
 		}
 
-		if err.Error() == "token has expired" {
+		if err.Error() == "Error token has expired" {
 			// from db
 			err = handler.token.ValidateRefreshToken(refreshToken)
 			if err != nil {
