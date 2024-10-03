@@ -125,11 +125,6 @@ func (token *token) ExtractTokenData(tokenString string, data any) error {
 		return errors.New("error token has expired")
 	}
 
-	fmt.Println(payload.ExpiresAt)
-	fmt.Println(payload.ExpiresAt.Time)
-	fmt.Println(time.Now())
-	fmt.Println(time.Now().After(payload.ExpiresAt.Time))
-
 	return nil
 }
 

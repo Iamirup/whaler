@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -29,8 +28,6 @@ func (handler *Server) fetchUserId(c *fiber.Ctx) error {
 			response := "invalid token header, please login again"
 			return c.Status(http.StatusBadRequest).SendString(response)
 		}
-
-		fmt.Println(err.Error())
 
 		if err.Error() == "error token has expired" {
 			// from db
