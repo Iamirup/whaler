@@ -116,15 +116,19 @@ func (token *token) ExtractTokenData(tokenString string, data any) error {
 		return errors.New(errStr)
 	}
 
-	// Check if the token is expired
-	if payload.ExpiresAt != nil && time.Now().After(payload.ExpiresAt.Time) {
-		return errors.New("token has expired")
-	}
-
 	if err := json.Unmarshal([]byte(payload.Data), data); err != nil {
 		errStr := fmt.Sprintf("%s: %s, data: %s", "Invalid token", "error unmarshalling data", payload.Data)
 		return errors.New(errStr)
 	}
+
+	if payload.ExpiresAt != nil && time.Now().After(payload.ExpiresAt.Time) {
+		return errors.New("token has expired")
+	}
+
+	fmt.Println(payload.ExpiresAt)
+	fmt.Println(payload.ExpiresAt.Time)
+	fmt.Println(time.Now())
+	fmt.Println(time.Now().After(payload.ExpiresAt.Time))
 
 	return nil
 }
