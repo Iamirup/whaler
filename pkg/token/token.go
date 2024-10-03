@@ -100,6 +100,9 @@ func (token *token) ExtractTokenData(tokenString string, data any) error {
 	}
 
 	jwtToken, errExp := jwt.ParseWithClaims(tokenString, &Payload{}, checkSigningMethod)
+	if errExp != nil {
+		fmt.Println("errrrrorrrrr", errExp)
+	}
 
 	if !jwtToken.Valid {
 		errStr := fmt.Sprintf("Invalid token, token: %v", jwtToken)
