@@ -40,8 +40,8 @@ func New(log *zap.Logger, repo repository.Repository, token token.Token) *Server
 	events.Get("", server.events)
 
 	configs := apiV1.Group("/config", server.fetchUserId)
-	configs.Get("/:id", server.getConfig)
-	configs.Patch("/:id", server.updateConfig)
+	configs.Get("", server.getConfig)
+	configs.Patch("", server.updateConfig)
 
 	return server
 }

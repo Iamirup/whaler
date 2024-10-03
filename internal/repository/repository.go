@@ -15,6 +15,9 @@ type Repository interface {
 
 	GetConfigById(userId, configId uint64) (*models.UserConfig, error)
 	UpdateConfig(userId uint64, config *models.UserConfig) error
+
+	CreateNewRefreshToken(refresh_token *models.RefreshToken) error
+	GetRefreshTokenById(ownerId uint64) (*models.RefreshToken, error)
 }
 
 type repository struct {

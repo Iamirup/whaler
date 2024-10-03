@@ -116,6 +116,13 @@ func (handler *Server) register(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).SendString(errString)
 	}
 
+	newRefreshToken := &models.RefreshToken{Token: refreshToken, OwnerId: user.Id}
+	if err := handler.repository.CreateNewRefreshToken(newRefreshToken); err != nil {
+		errString := "Error happened while adding the refresh token"
+		handler.logger.Error(errString, zap.Error(err))
+		return c.Status(http.StatusInternalServerError).SendString(errString)
+	}
+
 	// Set refresh token as HTTP-only cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "refresh_token",
@@ -159,6 +166,13 @@ func (handler *Server) login(c *fiber.Ctx) error {
 	if err != nil {
 		errString := "Error creating JWT refresh token for user"
 		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
+		return c.Status(http.StatusInternalServerError).SendString(errString)
+	}
+
+	newRefreshToken := &models.RefreshToken{Token: refreshToken, OwnerId: user.Id}
+	if err := handler.repository.CreateNewRefreshToken(newRefreshToken); err != nil {
+		errString := "Error happened while adding the refresh token"
+		handler.logger.Error(errString, zap.Error(err))
 		return c.Status(http.StatusInternalServerError).SendString(errString)
 	}
 

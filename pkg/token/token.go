@@ -59,7 +59,7 @@ func (token *token) CreateTokenString(data any) (string, error) {
 		return "", errors.New(errStr)
 	}
 
-	expiredAt := jwt.NewNumericDate(time.Now().Add(token.refreshTokenExpiration))
+	expiredAt := jwt.NewNumericDate(time.Now().Add(token.accessTokenExpiration))
 	registeredClaim := jwt.RegisteredClaims{ExpiresAt: expiredAt}
 	payload := &Payload{dataBytes, registeredClaim}
 
@@ -106,18 +106,23 @@ func (token *token) ExtractTokenData(tokenString string, data any) error {
 	}
 
 	if !jwtToken.Valid {
-		errStr := fmt.Sprintf("%s, token: %v", inValidToken, jwtToken)
+		errStr := fmt.Sprintf("%s, token: %v", "Invalid token", jwtToken)
 		return errors.New(errStr)
 	}
 
 	payload, ok := jwtToken.Claims.(*Payload)
 	if !ok {
-		errStr := fmt.Sprintf("%s: %s, token: %v", inValidToken, errorMappingPayload, jwtToken)
+		errStr := fmt.Sprintf("%s: %s, token: %v", "Invalid token", "error mapping payload", jwtToken)
 		return errors.New(errStr)
 	}
 
+	// Check if the token is expired
+	if payload.ExpiresAt != nil && time.Now().After(payload.ExpiresAt.Time) {
+		return errors.New("token has expired")
+	}
+
 	if err := json.Unmarshal([]byte(payload.Data), data); err != nil {
-		errStr := fmt.Sprintf("%s: %s, data: %s", inValidToken, errorUnmarshalData, payload.Data)
+		errStr := fmt.Sprintf("%s: %s, data: %s", "Invalid token", "error unmarshalling data", payload.Data)
 		return errors.New(errStr)
 	}
 
