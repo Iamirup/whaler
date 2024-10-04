@@ -69,9 +69,9 @@ func (r *repository) GetUserByUsername(username string) (*models.User, error) {
 }
 
 const QueryGetUserByUsernameAndPassword = `
-SELECT id, created_at
+SELECT id, password, created_at 
 FROM users
-WHERE username=$1 AND password=$2;`
+WHERE username=$1`
 
 func (r *repository) GetUserByUsernameAndPassword(username, password string) (*models.User, error) {
 
