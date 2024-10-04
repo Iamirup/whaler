@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/Iamirup/whaler/internal/config"
 	"github.com/Iamirup/whaler/internal/models"
 	"github.com/Iamirup/whaler/internal/repository"
@@ -14,9 +12,9 @@ import (
 
 type Migrate struct{}
 
-func (m Migrate) Command(trap chan os.Signal) *cobra.Command {
+func (m Migrate) Command() *cobra.Command {
 	run := func(_ *cobra.Command, args []string) {
-		m.main(config.Load(true), args, trap)
+		m.main(config.Load(true), args)
 	}
 
 	return &cobra.Command{
@@ -28,7 +26,7 @@ func (m Migrate) Command(trap chan os.Signal) *cobra.Command {
 	}
 }
 
-func (m *Migrate) main(cfg *config.Config, args []string, trap chan os.Signal) {
+func (m *Migrate) main(cfg *config.Config, args []string) {
 	myLogger := logger.NewZap(cfg.Logger)
 
 	if len(args) != 1 {

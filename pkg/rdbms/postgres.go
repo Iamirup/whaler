@@ -3,8 +3,6 @@ package rdbms
 import (
 	"database/sql"
 	"fmt"
-
-	_ "github.com/lib/pq"
 )
 
 func New(cfg *Config) (RDBMS, error) {
@@ -15,11 +13,11 @@ func New(cfg *Config) (RDBMS, error) {
 
 	db, err := sql.Open("postgres", connString)
 	if err != nil {
-		return nil, fmt.Errorf("Error openning connection:\n%v", err)
+		return nil, fmt.Errorf("error openning connection:\n%v", err)
 	}
 
 	if err = db.Ping(); err != nil {
-		return nil, fmt.Errorf("Error ping database:\n%v", err)
+		return nil, fmt.Errorf("error ping database:\n%v", err)
 	}
 
 	return &rdbms{db: db}, nil
