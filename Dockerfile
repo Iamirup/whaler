@@ -13,21 +13,13 @@ COPY . .
 
 RUN go build -o /entrypoint
 
-# ------------------------------------------- Migrate
-FROM alpine:latest AS migrate
-
-WORKDIR /app
-
-COPY --from=builder . .
-
-ENTRYPOINT [ "./entrypoint", "migrate", "up"]
-
-
 # ------------------------------------------- Runtime
 FROM alpine:latest AS runtime
 
 WORKDIR /app
 
 COPY --from=builder /entrypoint .
+
+RUN ./entrypoint migrate up
 
 ENTRYPOINT [ "./entrypoint", "server" ]
