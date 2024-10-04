@@ -15,15 +15,6 @@ ENV GOCACHE=/root/.cache/go-build
 
 RUN --mount=type=cache,target="/root/.cache/go-build" go build -o /entrypoint
 
-# ------------------------------------------- Migrate
-FROM alpine:latest AS migrate
-
-WORKDIR /app
-
-COPY --from=builder /entrypoint .
-
-CMD [ "./entrypoint", "migrate", "up"]
-
 # ------------------------------------------- Runtime
 FROM alpine:latest AS runtime
 
@@ -31,4 +22,4 @@ WORKDIR /app
 
 COPY --from=builder /entrypoint .
 
-ENTRYPOINT [ "./entrypoint", "server" ]
+ENTRYPOINT [ "./entrypoint", "migrate", "up", "&&", "./entrypoint", "server"]
