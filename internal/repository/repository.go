@@ -36,13 +36,13 @@ func New(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) Repository {
 	return &repository{logger: logger, config: cfg, rdbms: rdbms}
 }
 
-// go:embed .
+//go:embed migrations
 var migrations embed.FS
 
 func (r *repository) Migrate(direction models.Migrate) error {
 	fmt.Println("here: ", migrations)
 
-	files, err := fs.ReadDir(migrations, ".")
+	files, err := fs.ReadDir(migrations, "migrations")
 	if err != nil {
 		return fmt.Errorf("error reading migrations directory:\n%v", err)
 	}
