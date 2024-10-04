@@ -1,8 +1,6 @@
 package models
 
-import (
-	"github.com/Iamirup/whaler/pkg/utils"
-)
+import "golang.org/x/crypto/bcrypt"
 
 type User struct {
 	Id         string     `json:"Id"`
@@ -21,10 +19,16 @@ func (c User) Marshal() *User {
 	}
 }
 
-func (c User) HashPassword() (string, error) {
-	hashedPassword, err := utils.Hash(c.Password)
+func (u *User) HashPassword() (string, error) {
+	passwordBytes := []byte(u.Password)
+	hashedPasswordBytes, err := bcrypt.GenerateFromPassword(passwordBytes, bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}
-	return hashedPassword, nil
+	return string(hashedPasswordBytes), nil
+}
+
+func (u *User) CheckPasswordHash(plainPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(plainPassword))
+	return err == nil
 }

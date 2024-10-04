@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/Iamirup/whaler/internal/models"
 	"github.com/mohammadne/phone-book/pkg/rdbms"
@@ -76,23 +75,18 @@ WHERE username=$1 AND password=$2;`
 
 func (r *repository) GetUserByUsernameAndPassword(username, password string) (*models.User, error) {
 
-	user := &models.User{Username: username, Password: password}
+	user := &models.User{Username: username}
 
-	fmt.Println(username, password)
-
-	hashedPassword, err := user.HashPassword()
-	if err != nil {
-		r.logger.Error("Error hashing password", zap.Error(err))
+	in := []interface{}{username}
+	out := []interface{}{&user.Id, &user.Password, &user.CreatedAt}
+	if err := r.rdbms.QueryRow(QueryGetUserByUsernameAndPassword, in, out); err != nil {
+		r.logger.Error("Error finding user by username", zap.Error(err))
 		return nil, err
 	}
 
-	fmt.Println(username, hashedPassword)
-
-	in := []interface{}{username, hashedPassword}
-	out := []interface{}{&user.Id, &user.CreatedAt}
-	if err := r.rdbms.QueryRow(QueryGetUserByUsernameAndPassword, in, out); err != nil {
-		r.logger.Error("Error find user by username and password", zap.Error(err))
-		return nil, err
+	if !user.CheckPasswordHash(password) {
+		r.logger.Error("invalid username or password")
+		return nil, errors.New("invalid username or password")
 	}
 
 	return user, nil
