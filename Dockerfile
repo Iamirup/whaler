@@ -22,4 +22,4 @@ WORKDIR /app
 
 COPY --from=builder /entrypoint .
 
-ENTRYPOINT [ "./entrypoint", "migrate", "up", "&&", "./entrypoint", "server"]
+ENTRYPOINT ["/bin/sh", "-c", "./entrypoint migrate up && ./entrypoint server"]
