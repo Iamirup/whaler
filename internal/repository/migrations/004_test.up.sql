@@ -1,3 +1,0 @@
-CREATE TABLE IF NOT EXISTS test(
-    smth TEXT
-);

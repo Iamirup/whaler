@@ -40,14 +40,11 @@ func New(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) Repository {
 var migrations embed.FS
 
 func (r *repository) Migrate(direction models.Migrate) error {
-	fmt.Println("here: ", migrations)
 
 	files, err := fs.ReadDir(migrations, "migrations")
 	if err != nil {
 		return fmt.Errorf("error reading migrations directory:\n%v", err)
 	}
-
-	fmt.Println("1: ", files)
 
 	result := make([]string, 0, len(files)/2)
 
@@ -58,11 +55,7 @@ func (r *repository) Migrate(direction models.Migrate) error {
 		}
 	}
 
-	fmt.Println("2: ", result)
-
 	result = utils.Sort(result)
-
-	fmt.Println("3: ", result)
 
 	for index := 0; index < len(result); index++ {
 		file := "migrations/"
@@ -73,14 +66,10 @@ func (r *repository) Migrate(direction models.Migrate) error {
 			file += result[len(result)-index-1]
 		}
 
-		fmt.Println("4: ", file)
-
 		data, err := fs.ReadFile(migrations, file)
 		if err != nil {
 			return fmt.Errorf("error reading migration file: %s\n%v", file, err)
 		}
-
-		fmt.Println("5: ", data)
 
 		if err := r.rdbms.Execute(string(data), []any{}); err != nil {
 			return fmt.Errorf("error migrating the file: %s\n%v", file, err)
