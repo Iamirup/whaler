@@ -22,7 +22,7 @@ WORKDIR /app
 
 COPY --from=builder /entrypoint .
 
-ENTRYPOINT [ "./entrypoint", "migrate", "up"]
+CMD [ "./entrypoint", "migrate", "up"]
 
 # ------------------------------------------- Runtime
 FROM alpine:latest AS runtime
