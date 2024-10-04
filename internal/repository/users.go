@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/Iamirup/whaler/internal/models"
 	"github.com/mohammadne/phone-book/pkg/rdbms"
@@ -77,11 +78,15 @@ func (r *repository) GetUserByUsernameAndPassword(username, password string) (*m
 
 	user := &models.User{Username: username, Password: password}
 
+	fmt.Println(username, password)
+
 	hashedPassword, err := user.HashPassword()
 	if err != nil {
 		r.logger.Error("Error hashing password", zap.Error(err))
 		return nil, err
 	}
+
+	fmt.Println(username, hashedPassword)
 
 	in := []interface{}{username, hashedPassword}
 	out := []interface{}{&user.Id, &user.CreatedAt}
