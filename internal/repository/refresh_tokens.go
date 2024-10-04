@@ -36,7 +36,7 @@ SELECT refresh_token
 FROM refresh_tokens
 WHERE owner_id = $1;`
 
-func (r *repository) GetRefreshTokenById(ownerId uint64) (*models.RefreshToken, error) {
+func (r *repository) GetRefreshTokenById(ownerId string) (*models.RefreshToken, error) {
 
 	refreshToken := &models.RefreshToken{OwnerId: ownerId}
 

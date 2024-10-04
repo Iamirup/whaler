@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	Id         uint64     `json:"Id"`
+	Id         string     `json:"Id"`
 	Username   string     `json:"username"`
 	Password   string     `json:"password,omitempty"`
 	UserConfig UserConfig `json:"user_config,omitempty"`

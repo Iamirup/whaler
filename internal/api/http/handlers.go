@@ -85,7 +85,7 @@ func (handler *Server) register(c *fiber.Ctx) error {
 		handler.logger.Error("Error while retrieving data from database", zap.Error(err))
 		response := map[string]string{"error": "Error while retrieving data from database"}
 		return c.Status(http.StatusInternalServerError).JSON(response)
-	} else if err == nil || (user != nil && user.Id != 0) {
+	} else if err == nil || (user != nil && user.Id != "") {
 		handler.logger.Error("User with given username already exists", zap.String("username", request.Username))
 		response := map[string]string{"error": "User with given username already exists"}
 		return c.Status(http.StatusBadRequest).JSON(response)
@@ -96,7 +96,7 @@ func (handler *Server) register(c *fiber.Ctx) error {
 		handler.logger.Error("Error happened while creating the user", zap.Error(err))
 		response := map[string]string{"error": "Error happened while creating the user"}
 		return c.Status(http.StatusInternalServerError).JSON(response)
-	} else if user.Id == 0 {
+	} else if user.Id == "" {
 		handler.logger.Error("Error invalid user id created", zap.Any("user", user))
 		response := map[string]string{"error": "Error invalid user id created"}
 		return c.Status(http.StatusInternalServerError).JSON(response)
@@ -187,8 +187,8 @@ func (handler *Server) login(c *fiber.Ctx) error {
 }
 
 func (handler *Server) getConfig(c *fiber.Ctx) error {
-	userId, ok := c.Locals("user-id").(uint64)
-	if !ok || userId == 0 {
+	userId, ok := c.Locals("user-id").(string)
+	if !ok || userId == "" {
 		handler.logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
 	}
@@ -215,8 +215,8 @@ func (handler *Server) getConfig(c *fiber.Ctx) error {
 }
 
 func (handler *Server) updateConfig(c *fiber.Ctx) error {
-	userId, ok := c.Locals("user-id").(uint64)
-	if !ok || userId == 0 {
+	userId, ok := c.Locals("user-id").(string)
+	if !ok || userId == "" {
 		handler.logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
 	}
@@ -236,7 +236,7 @@ func (handler *Server) updateConfig(c *fiber.Ctx) error {
 		}
 
 		errString := "Error happened while getting the config"
-		handler.logger.Error(errString, zap.Uint64("user-id", userId), zap.Uint64("config-id", configId), zap.Error(err))
+		handler.logger.Error(errString, zap.String("user-id", userId), zap.Uint64("config-id", configId), zap.Error(err))
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 

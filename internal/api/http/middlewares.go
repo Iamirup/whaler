@@ -18,7 +18,7 @@ func (handler *Server) fetchUserId(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
 
-	var id uint64
+	var id string
 	err := handler.token.ExtractTokenData(header, &id)
 	if err != nil {
 		// Attempt to use refresh token if access token is invalid or expired

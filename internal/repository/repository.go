@@ -19,11 +19,11 @@ type Repository interface {
 	GetUserByUsername(username string) (*models.User, error)
 	GetUserByUsernameAndPassword(username, password string) (*models.User, error)
 
-	GetConfigById(userId, configId uint64) (*models.UserConfig, error)
-	UpdateConfig(userId uint64, config *models.UserConfig) error
+	GetConfigById(userId string, configId uint64) (*models.UserConfig, error)
+	UpdateConfig(userId string, config *models.UserConfig) error
 
 	CreateNewRefreshToken(refresh_token *models.RefreshToken) error
-	GetRefreshTokenById(ownerId uint64) (*models.RefreshToken, error)
+	GetRefreshTokenById(ownerId string) (*models.RefreshToken, error)
 }
 
 type repository struct {
@@ -45,6 +45,8 @@ func (r *repository) Migrate(direction models.Migrate) error {
 		return fmt.Errorf("error reading migrations directory:\n%v", err)
 	}
 
+	fmt.Println("1: ", files)
+
 	result := make([]string, 0, len(files)/2)
 
 	for _, file := range files {
@@ -54,7 +56,11 @@ func (r *repository) Migrate(direction models.Migrate) error {
 		}
 	}
 
+	fmt.Println("2: ", result)
+
 	result = utils.Sort(result)
+
+	fmt.Println("3: ", result)
 
 	for index := 0; index < len(result); index++ {
 		file := "migrations/"
@@ -65,10 +71,14 @@ func (r *repository) Migrate(direction models.Migrate) error {
 			file += result[len(result)-index-1]
 		}
 
+		fmt.Println("4: ", file)
+
 		data, err := fs.ReadFile(migrations, file)
 		if err != nil {
 			return fmt.Errorf("error reading migration file: %s\n%v", file, err)
 		}
+
+		fmt.Println("5: ", data)
 
 		if err := r.rdbms.Execute(string(data), []any{}); err != nil {
 			return fmt.Errorf("error migrating the file: %s\n%v", file, err)
