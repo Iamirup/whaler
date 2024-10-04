@@ -40,7 +40,9 @@ func New(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) Repository {
 var migrations embed.FS
 
 func (r *repository) Migrate(direction models.Migrate) error {
-	files, err := fs.ReadDir(migrations, "migrations")
+	fmt.Println("here: ", migrations)
+
+	files, err := fs.ReadDir(migrations, ".")
 	if err != nil {
 		return fmt.Errorf("error reading migrations directory:\n%v", err)
 	}
