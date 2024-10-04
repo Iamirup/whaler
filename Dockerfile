@@ -29,6 +29,7 @@ FROM alpine:latest AS runtime
 
 WORKDIR /app
 
+# COPY --from=builder /entrypoint .
 COPY --from=builder . .
 
 ENTRYPOINT [ "./entrypoint", "server" ]
