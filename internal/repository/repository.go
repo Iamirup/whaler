@@ -36,7 +36,7 @@ func New(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) Repository {
 	return &repository{logger: logger, config: cfg, rdbms: rdbms}
 }
 
-// go:embed /app/internal/repository/migrations
+// go:embed /app/internal/repository
 var migrations embed.FS
 
 func (r *repository) Migrate(direction models.Migrate) error {
