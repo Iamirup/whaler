@@ -1,7 +1,7 @@
 # ------------------------------------------- Builder
 FROM golang:alpine AS builder
 
-RUN apk add git
+# RUN apk add git
 
 WORKDIR /app
 
@@ -20,4 +20,8 @@ WORKDIR /app
 
 COPY --from=builder /entrypoint .
 
-ENTRYPOINT ["./entrypoint", "server"]
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
