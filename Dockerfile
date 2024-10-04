@@ -20,7 +20,7 @@ FROM alpine:latest AS migrate
 
 WORKDIR /app
 
-COPY --from=builder . .
+COPY --from=builder /entrypoint .
 
 ENTRYPOINT [ "./entrypoint", "migrate", "up"]
 
