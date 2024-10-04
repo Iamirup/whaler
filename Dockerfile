@@ -11,9 +11,11 @@ RUN go mod download
 
 COPY . .
 
-ENV GOCACHE=/root/.cache/go-build
+# ENV GOCACHE=/root/.cache/go-build
 
-RUN --mount=type=cache,target="/root/.cache/go-build" go build -o /entrypoint
+# RUN --mount=type=cache,target="/root/.cache/go-build" go build -o /entrypoint
+
+RUN go build -o /entrypoint
 
 # ------------------------------------------- Migrate
 FROM alpine:latest AS migrate
