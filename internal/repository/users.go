@@ -18,7 +18,13 @@ func (r *repository) CreateUser(user *models.User) error {
 		return errors.New("insufficient information for user")
 	}
 
-	in := []any{user.Username, user.Password}
+	hashedPassword, err := user.HashPassword()
+	if err != nil {
+		r.logger.Error("Error hashing password", zap.Error(err))
+		return err
+	}
+
+	in := []any{user.Username, hashedPassword}
 	out := []any{&user.Id}
 	if err := r.rdbms.QueryRow(QueryCreateUser, in, out); err != nil {
 		r.logger.Error("Error inserting author", zap.Error(err))
@@ -71,7 +77,13 @@ func (r *repository) GetUserByUsernameAndPassword(username, password string) (*m
 
 	user := &models.User{Username: username, Password: password}
 
-	in := []interface{}{username, password}
+	hashedPassword, err := user.HashPassword()
+	if err != nil {
+		r.logger.Error("Error hashing password", zap.Error(err))
+		return nil, err
+	}
+
+	in := []interface{}{username, hashedPassword}
 	out := []interface{}{&user.Id, &user.CreatedAt}
 	if err := r.rdbms.QueryRow(QueryGetUserByUsernameAndPassword, in, out); err != nil {
 		r.logger.Error("Error find user by username and password", zap.Error(err))

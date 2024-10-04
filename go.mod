@@ -13,6 +13,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/valyala/fasthttp v1.56.0
 	go.uber.org/zap v1.27.0
+	golang.org/x/crypto v0.27.0
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 )
 

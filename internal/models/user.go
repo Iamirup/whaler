@@ -1,5 +1,9 @@
 package models
 
+import (
+	"github.com/Iamirup/whaler/pkg/utils"
+)
+
 type User struct {
 	Id         uint64     `json:"Id"`
 	Username   string     `json:"username"`
@@ -15,4 +19,12 @@ func (c User) Marshal() *User {
 		UserConfig: c.UserConfig,
 		CreatedAt:  c.CreatedAt,
 	}
+}
+
+func (c User) HashPassword() (string, error) {
+	hashedPassword, err := utils.Hash(c.Password)
+	if err != nil {
+		return "", err
+	}
+	return hashedPassword, nil
 }
