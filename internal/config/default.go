@@ -37,7 +37,7 @@ func Default() *Config {
 			PublicPem: "-----BEGIN PUBLIC KEY-----\n" +
 				"MCowBQYDK2VwAyEAqQsZ5iRNP3kdpNn3V/db9o/WkYHY8kkwQqCZGcDvJ+g=\n" +
 				"-----END PUBLIC KEY-----",
-			AccessTokenExpiration:  30 * time.Minute,
+			AccessTokenExpiration:  10 * time.Minute,
 			RefreshTokenExpiration: 24 * 7 * time.Hour,
 		},
 	}

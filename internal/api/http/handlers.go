@@ -75,55 +75,54 @@ func (handler *Server) events(c *fiber.Ctx) error {
 func (handler *Server) register(c *fiber.Ctx) error {
 	request := struct{ Username, Password string }{}
 	if err := c.BodyParser(&request); err != nil {
-		errString := "Error parsing request body"
-		handler.logger.Error(errString, zap.Any("request", request), zap.Error(err))
-		return c.Status(http.StatusBadRequest).SendString(errString)
+		handler.logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
+		response := map[string]string{"error": "Error parsing request body"}
+		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	user, err := handler.repository.GetUserByUsername(request.Username)
 	if err != nil && err.Error() != rdbms.ErrNotFound {
-		errString := "Error while retrieving data from database"
-		handler.logger.Error(errString, zap.Error(err))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error while retrieving data from database", zap.Error(err))
+		response := map[string]string{"error": "Error while retrieving data from database"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	} else if err == nil || (user != nil && user.Id != 0) {
-		errString := "User with given username already exists"
-		handler.logger.Error(errString, zap.String("username", request.Username))
-		return c.Status(http.StatusBadRequest).SendString(errString)
+		handler.logger.Error("User with given username already exists", zap.String("username", request.Username))
+		response := map[string]string{"error": "User with given username already exists"}
+		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	user = &models.User{Username: request.Username, Password: request.Password}
 	if err := handler.repository.CreateUser(user); err != nil {
-		errString := "Error happened while creating the user"
-		handler.logger.Error(errString, zap.Error(err))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error happened while creating the user", zap.Error(err))
+		response := map[string]string{"error": "Error happened while creating the user"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	} else if user.Id == 0 {
-		errString := "Error invalid user id created"
-		handler.logger.Error(errString, zap.Any("user", user))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error invalid user id created", zap.Any("user", user))
+		response := map[string]string{"error": "Error invalid user id created"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
 	accessToken, err := handler.token.CreateTokenString(user.Id)
 	if err != nil {
-		errString := "Error creating JWT access token for user"
-		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error creating JWT access token for user", zap.Any("user", user), zap.Error(err))
+		response := map[string]string{"error": "Error creating JWT access token for user"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
 	refreshToken, err := handler.token.CreateRefreshTokenString(user.Id)
 	if err != nil {
-		errString := "Error creating JWT refresh token for user"
-		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error creating JWT refresh token for user", zap.Any("user", user), zap.Error(err))
+		response := map[string]string{"error": "Error creating JWT refresh token for user"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
 	newRefreshToken := &models.RefreshToken{Token: refreshToken, OwnerId: user.Id}
 	if err := handler.repository.CreateNewRefreshToken(newRefreshToken); err != nil {
-		errString := "Error happened while adding the refresh token"
-		handler.logger.Error(errString, zap.Error(err))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error happened while adding the refresh token", zap.Error(err))
+		response := map[string]string{"error": "Error happened while adding the refresh token"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
-	// Set refresh token as HTTP-only cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "refresh_token",
 		Value:    refreshToken,
@@ -131,52 +130,51 @@ func (handler *Server) register(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	response := map[string]string{"AccessToken": accessToken}
-	return c.Status(http.StatusCreated).JSON(&response)
+	response := map[string]string{"access_token": accessToken}
+	return c.Status(http.StatusCreated).JSON(response)
 }
 
 func (handler *Server) login(c *fiber.Ctx) error {
 	request := struct{ Username, Password string }{}
 
 	if err := c.BodyParser(&request); err != nil {
-		errString := "Error parsing request body"
-		handler.logger.Error(errString, zap.Error(err))
-		return c.Status(http.StatusBadRequest).SendString(errString)
+		handler.logger.Error("Error parsing request body", zap.Error(err))
+		response := map[string]string{"error": "Error parsing request body"}
+		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	user, err := handler.repository.GetUserByUsernameAndPassword(request.Username, request.Password)
 	if err != nil {
-		errString := "Wrong username or password has been given"
-		handler.logger.Error(errString, zap.Error(err))
-		return c.Status(http.StatusBadRequest).SendString(errString)
+		handler.logger.Error("Wrong username or password has been given", zap.Error(err))
+		response := map[string]string{"error": "Wrong username or password has been given"}
+		return c.Status(http.StatusBadRequest).JSON(response)
 	} else if user == nil {
-		errString := "Error invalid user returned"
-		handler.logger.Error(errString, zap.Any("request", request))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error invalid user returned", zap.Any("request", request))
+		response := map[string]string{"error": "Error invalid user returned"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
 	accessToken, err := handler.token.CreateTokenString(user.Id)
 	if err != nil {
-		errString := "Error creating JWT access token for user"
-		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error creating JWT access token for user", zap.Any("user", user), zap.Error(err))
+		response := map[string]string{"error": "Error creating JWT access token for user"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
 	refreshToken, err := handler.token.CreateRefreshTokenString(user.Id)
 	if err != nil {
-		errString := "Error creating JWT refresh token for user"
-		handler.logger.Error(errString, zap.Any("user", user), zap.Error(err))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error creating JWT refresh token for user", zap.Any("user", user), zap.Error(err))
+		response := map[string]string{"error": "Error creating JWT refresh token for user"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
 	newRefreshToken := &models.RefreshToken{Token: refreshToken, OwnerId: user.Id}
 	if err := handler.repository.CreateNewRefreshToken(newRefreshToken); err != nil {
-		errString := "Error happened while adding the refresh token"
-		handler.logger.Error(errString, zap.Error(err))
-		return c.Status(http.StatusInternalServerError).SendString(errString)
+		handler.logger.Error("Error happened while adding the refresh token", zap.Error(err))
+		response := map[string]string{"error": "Error happened while adding the refresh token"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
-	// Set refresh token as HTTP-only cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "refresh_token",
 		Value:    refreshToken,
@@ -184,8 +182,8 @@ func (handler *Server) login(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	response := map[string]string{"AccessToken": accessToken}
-	return c.Status(http.StatusOK).JSON(&response)
+	response := map[string]string{"access_token": accessToken}
+	return c.Status(http.StatusOK).JSON(response)
 }
 
 func (handler *Server) getConfig(c *fiber.Ctx) error {
@@ -198,19 +196,18 @@ func (handler *Server) getConfig(c *fiber.Ctx) error {
 	configId, err := strconv.ParseUint(c.Params("id"), 10, 64)
 	if err != nil || configId == 0 {
 		handler.logger.Error("Invalid token header", zap.Error(err))
-		response := "Invalid config id in path parameters"
-		return c.Status(http.StatusBadRequest).SendString(response)
+		response := map[string]string{"error": "Invalid config id in path parameters"}
+		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	config, err := handler.repository.GetConfigById(userId, configId)
 	if err != nil {
 		if err.Error() == rdbms.ErrNotFound {
-			response := fmt.Sprintf("The given config id (%d) doesn't exists", configId)
-			return c.Status(http.StatusBadRequest).SendString(response)
+			response := map[string]string{"error": fmt.Sprintf("The given config id (%d) doesn't exists", configId)}
+			return c.Status(http.StatusBadRequest).JSON(response)
 		}
 
-		errString := "Error happened while getting the config"
-		handler.logger.Error(errString, zap.Any("config", config), zap.Error(err))
+		handler.logger.Error("Error happened while getting the config", zap.Any("config", config), zap.Error(err))
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
@@ -227,15 +224,15 @@ func (handler *Server) updateConfig(c *fiber.Ctx) error {
 	configId, err := strconv.ParseUint(c.Params("id"), 10, 64)
 	if err != nil || configId == 0 {
 		handler.logger.Error("Invalid token header", zap.Error(err))
-		response := "Invalid config id in path parameters"
-		return c.Status(http.StatusBadRequest).SendString(response)
+		response := map[string]string{"error": "Invalid config id in path parameters"}
+		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	oldConfig, err := handler.repository.GetConfigById(userId, configId)
 	if err != nil {
 		if err.Error() == rdbms.ErrNotFound {
-			response := fmt.Sprintf("The given config id (%d) doesn't exists", configId)
-			return c.Status(http.StatusBadRequest).SendString(response)
+			response := map[string]string{"error": fmt.Sprintf("The given config id (%d) doesn't exists", configId)}
+			return c.Status(http.StatusBadRequest).JSON(response)
 		}
 
 		errString := "Error happened while getting the config"
@@ -245,18 +242,18 @@ func (handler *Server) updateConfig(c *fiber.Ctx) error {
 
 	newConfig := &models.UserConfig{}
 	if err := c.BodyParser(newConfig); err != nil {
-		errString := "Error parsing request body"
-		handler.logger.Error(errString, zap.Any("config", newConfig), zap.Error(err))
-		return c.Status(http.StatusBadRequest).SendString(errString)
+		handler.logger.Error("Error parsing request body", zap.Any("config", newConfig), zap.Error(err))
+		response := map[string]string{"error": "Error parsing request body"}
+		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 	newConfig.Update(oldConfig)
 
 	if err := handler.repository.UpdateConfig(userId, newConfig); err != nil {
-		errString := "Error happened while creating the config"
-		handler.logger.Error(errString, zap.Any("config", newConfig), zap.Error(err))
-		return c.SendStatus(http.StatusInternalServerError)
+		handler.logger.Error("Error happened while creating the config", zap.Any("config", newConfig), zap.Error(err))
+		response := map[string]string{"error": "Error happened while creating the config"}
+		return c.Status(http.StatusInternalServerError).JSON(response)
 	}
 
-	response := "Config has been updated successfully"
-	return c.Status(http.StatusOK).SendString(response)
+	response := map[string]string{"message": "Config has been updated successfully"}
+	return c.Status(http.StatusOK).JSON(response)
 }
