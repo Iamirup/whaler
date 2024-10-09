@@ -15,7 +15,6 @@ services:
       - "traefik.http.routers.registry.rule=PathPrefix(`/api/v1`)"
       - "traefik.http.routers.registry.middlewares=https-redirect"
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.registry-secure.middlewares=web-auth"
       - "traefik.http.routers.registry-secure.entrypoints=https"
       - "traefik.http.routers.registry-secure.rule=PathPrefix(`/api/v1`)"
       - "traefik.http.routers.registry-secure.tls=true"
