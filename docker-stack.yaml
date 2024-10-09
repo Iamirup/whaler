@@ -1,10 +1,10 @@
 services:
   whaler-backend:
-    container_name: whaler-backend
+    image: iamirup/whaler-backend:latest
     deploy:
       replicas: 3
       restart_policy:
-        condition: unless-stopped
+        condition: on-failure
     build: ./backend
     depends_on:
       - rdbms
@@ -26,10 +26,10 @@ services:
       - "traefik.http.services.app.loadbalancer.server.port=8080"
 
   whaler-frontend:
-    container_name: whaler-frontend
+    image: iamirup/whaler-frontend:latest
     deploy:
       restart_policy:
-        condition: unless-stopped
+        condition: on-failure
     build: ./frontend
     networks:
       - web_net
@@ -48,7 +48,6 @@ services:
       - "traefik.http.services.app.loadbalancer.server.port=5000" 
 
   rdbms:
-    container_name: rdbms-whaler
     image: postgres:latest
     environment:
       POSTGRES_USER: user
@@ -63,8 +62,9 @@ networks:
   web_net:
     external: true
     name: web_net
+    driver: overlay
   whaler_net:
-
+    driver: overlay
 
 volumes:
   whaler_data:

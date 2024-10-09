@@ -35,5 +35,8 @@ jobs:
             mkdir -p whaler
             cd ~/whaler
             git pull origin main
-            sudo docker compose -f traefik/compose.yaml up -d
-            sudo docker compose up -d --build
+
+            sudo docker compose -f docker-stack.yaml build --push
+
+            sudo docker stack deploy -c traefik/traefik-stack.yaml traefik-stack
+            sudo docker stack deploy -c docker-stack.yaml whaler-stack
