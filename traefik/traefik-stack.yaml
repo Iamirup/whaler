@@ -2,7 +2,6 @@ networks:
   web_net:
     name: web_net
     driver: overlay
-    attachable: true
 
 volumes:
   traefik-acme:
@@ -19,11 +18,11 @@ services:
       - "--log.filepath=/log-file.log"
       - "--log.format=json"
       - "--api=true"
-      - "--api.dashboard=true"
       - "--ping=true"
       - "--accesslog=true"
       - "--accesslog.bufferingsize=100"
       - "--api.insecure=true"
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
       - "--providers.swarm.exposedbydefault=false"
       - "--providers.swarm.network=web_net"
       - "--entrypoints.http.address=:80"
@@ -51,6 +50,7 @@ services:
       - "traefik.http.routers.traefik.rule=Host(`traefik.whaler.ir`)"
       - "traefik.http.routers.traefik.middlewares=https-redirect"
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
       - "traefik.http.middlewares.web-auth.basicauth.users=Whaler:{SHA}/7B/sSL1ebPdiHUatSOLxakVUPI="
       - "traefik.http.routers.traefik-secure.middlewares=web-auth"
       - "traefik.http.routers.traefik-secure.entrypoints=https"
