@@ -32,5 +32,10 @@ services:
     volumes:
       - /whaler_data:/var/lib/postgresql/data
 
+networks:
+  web_net:
+    external: true
+    name: web_net
+
 volumes:
   whaler_data:

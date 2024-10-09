@@ -1,7 +1,6 @@
 networks:
   web_net:
     external: true
-    name: web_net
 
 volumes:
   traefik-acme:
