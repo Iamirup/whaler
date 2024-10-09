@@ -7,6 +7,7 @@ services:
       - rdbms
     networks:
       - web_net
+      - whaler_net
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web_net"
@@ -31,11 +32,15 @@ services:
       POSTGRES_DB: db
     volumes:
       - /whaler_data:/var/lib/postgresql/data
+    networks:
+      - whaler_net
 
 networks:
   web_net:
     external: true
     name: web_net
+  whaler_net:
+
 
 volumes:
   whaler_data:
