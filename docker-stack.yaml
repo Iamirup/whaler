@@ -3,7 +3,7 @@ services:
     image: iamirup/whaler-backend:latest
     build: ./backend
     deploy:
-      replicas: 3
+      replicas: 2
       restart_policy:
         condition: on-failure
       labels:
