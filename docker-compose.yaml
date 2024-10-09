@@ -11,16 +11,16 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web_net"
-      - "traefik.http.routers.registry.entrypoints=http"
-      - "traefik.http.routers.registry.rule=PathPrefix(`/api/v1`)"
-      - "traefik.http.routers.registry.middlewares=https-redirect"
+      - "traefik.http.routers.app.entrypoints=http"
+      - "traefik.http.routers.app.rule=PathPrefix(`/api/v1`)"
+      - "traefik.http.routers.app.middlewares=https-redirect"
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.registry-secure.entrypoints=https"
-      - "traefik.http.routers.registry-secure.rule=PathPrefix(`/api/v1`)"
-      - "traefik.http.routers.registry-secure.tls=true"
-      - "traefik.http.routers.registry-secure.tls.options=default"
-      - "traefik.http.routers.registry-secure.tls.certresolver=mycert"
-      # - "traefik.http.services.registry.loadbalancer.server.port=8080"
+      - "traefik.http.routers.app-secure.entrypoints=https"
+      - "traefik.http.routers.app-secure.rule=PathPrefix(`/api/v1`)"
+      - "traefik.http.routers.app-secure.tls=true"
+      - "traefik.http.routers.app-secure.tls.options=default"
+      - "traefik.http.routers.app-secure.tls.certresolver=mycert"
+      - "traefik.http.services.app.loadbalancer.server.port=8080"
 
   rdbms:
     container_name: rdbms-whaler
