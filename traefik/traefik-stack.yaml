@@ -39,7 +39,7 @@ services:
       - ./traefik:/traefik
       - traefik-acme:/acme
     deploy:
-       mode: global
+      mode: global
       restart_policy:
         condition: on-failure
       labels:
