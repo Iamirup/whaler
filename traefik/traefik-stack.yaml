@@ -9,10 +9,7 @@ volumes:
 
 services:
   traefik:
-    image: traefik:latest
-    deploy:
-      restart_policy:
-        condition: on-failure
+    image: traefik:latest        
     command:
       - "--log.level=INFO"
       - "--log.filepath=/log-file.log"
@@ -41,21 +38,25 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik:/traefik
       - traefik-acme:/acme
+    deploy:
+       mode: global
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=web_net"
+        - "traefik.http.routers.traefik.entrypoints=http"
+        - "traefik.http.routers.traefik.rule=Host(`traefik.whaler.ir`)"
+        - "traefik.http.routers.traefik.middlewares=https-redirect"
+        - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+        - "traefik.http.middlewares.web-auth.basicauth.users=Whaler:{SHA}/7B/sSL1ebPdiHUatSOLxakVUPI="
+        - "traefik.http.routers.traefik-secure.middlewares=web-auth"
+        - "traefik.http.routers.traefik-secure.entrypoints=https"
+        - "traefik.http.routers.traefik-secure.rule=Host(`traefik.whaler.ir`)"
+        - "traefik.http.routers.traefik-secure.tls=true"
+        - "traefik.http.routers.traefik-secure.tls.options=default"
+        - "traefik.http.routers.traefik-secure.tls.certresolver=mycert"
+        - "traefik.http.services.traefik.loadbalancer.server.port=8080"
     networks:
       - web_net
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=web_net"
-      - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.whaler.ir`)"
-      - "traefik.http.routers.traefik.middlewares=https-redirect"
-      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
-      - "traefik.http.middlewares.web-auth.basicauth.users=Whaler:{SHA}/7B/sSL1ebPdiHUatSOLxakVUPI="
-      - "traefik.http.routers.traefik-secure.middlewares=web-auth"
-      - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.whaler.ir`)"
-      - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.options=default"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=mycert"
-      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
