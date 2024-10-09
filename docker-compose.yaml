@@ -3,10 +3,24 @@ services:
     container_name: whaler
     restart: unless-stopped
     build: .
-    ports:
-      - 8765:8080
     depends_on:
       - rdbms
+    networks:
+      - web_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web_net"
+      - "traefik.http.routers.registry.entrypoints=http"
+      - "traefik.http.routers.registry.rule=PathPrefix(`/api/v1`)"
+      - "traefik.http.routers.registry.middlewares=https-redirect"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.registry-secure.middlewares=web-auth"
+      - "traefik.http.routers.registry-secure.entrypoints=https"
+      - "traefik.http.routers.registry-secure.rule=PathPrefix(`/api/v1`)"
+      - "traefik.http.routers.registry-secure.tls=true"
+      - "traefik.http.routers.registry-secure.tls.options=default"
+      - "traefik.http.routers.registry-secure.tls.certresolver=mycert"
+      - "traefik.http.services.registry.loadbalancer.server.port=80"
 
   rdbms:
     container_name: rdbms-whaler
