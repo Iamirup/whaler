@@ -1,8 +1,8 @@
 services:
-  whaler:
-    container_name: whaler
+  whaler-backend:
+    container_name: whaler-backend
     restart: unless-stopped
-    build: .
+    build: ./backend
     depends_on:
       - rdbms
     networks:
@@ -12,7 +12,6 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=web_net"
       - "traefik.http.routers.app.entrypoints=http"
-      - "traefik.http.routers.app.rule=Host(`whaler.ir`)"
       - "traefik.http.routers.app.rule=(Host(`whaler.ir`) && PathPrefix(`/api/v1`))"
       - "traefik.http.routers.app.middlewares=https-redirect"
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
@@ -22,6 +21,26 @@ services:
       - "traefik.http.routers.app-secure.tls.options=default"
       - "traefik.http.routers.app-secure.tls.certresolver=mycert"
       - "traefik.http.services.app.loadbalancer.server.port=8080"
+
+  whaler-frontend:
+    container_name: whaler-frontend
+    restart: unless-stopped
+    build: ./frontend
+    networks:
+      - web_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web_net"
+      - "traefik.http.routers.app.entrypoints=http"
+      - "traefik.http.routers.app.rule=Host(`whaler.ir`)"
+      - "traefik.http.routers.app.middlewares=https-redirect"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.app-secure.entrypoints=https"
+      - "traefik.http.routers.app-secure.rule=Host(`whaler.ir`)"
+      - "traefik.http.routers.app-secure.tls=true"
+      - "traefik.http.routers.app-secure.tls.options=default"
+      - "traefik.http.routers.app-secure.tls.certresolver=mycert"
+      - "traefik.http.services.app.loadbalancer.server.port=5000" 
 
   rdbms:
     container_name: rdbms-whaler
