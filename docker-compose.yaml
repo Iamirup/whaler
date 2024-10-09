@@ -1,7 +1,10 @@
 services:
   whaler-backend:
     container_name: whaler-backend
-    restart: unless-stopped
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: unless-stopped
     build: ./backend
     depends_on:
       - rdbms
@@ -24,7 +27,9 @@ services:
 
   whaler-frontend:
     container_name: whaler-frontend
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: unless-stopped
     build: ./frontend
     networks:
       - web_net
