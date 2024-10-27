@@ -1,0 +1,41 @@
+name: deploy
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'backend/eventor/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@v3
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: unnecessary
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy with rsync
+        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" . ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/whaler
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            mkdir -p whaler
+            cd ~/whaler
+            git pull origin main
+            sudo docker compose -f deployments/docker/eventor-ms-stack.yaml build --push
+            sudo docker stack deploy -c deployments/docker/eventor-ms-stack.yaml eventor-ms-stack
