@@ -3,8 +3,8 @@ package repository
 import (
 	"errors"
 
-	"github.com/Iamirup/whaler/backend/eventor/internal/models"
-	"github.com/Iamirup/whaler/backend/eventor/pkg/rdbms"
+	"github.com/Iamirup/whaler/backend/microservice/auth/internal/core/domain/entity"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
 	"go.uber.org/zap"
 )
 
@@ -15,7 +15,7 @@ ON CONFLICT (owner_id)
 DO UPDATE SET refresh_token = EXCLUDED.refresh_token
 RETURNING owner_id;`
 
-func (r *repository) CreateNewRefreshToken(refreshToken *models.RefreshToken) error {
+func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.RefreshToken) error {
 
 	if len(refreshToken.Token) == 0 {
 		return errors.New("insufficient refresh token")
@@ -36,9 +36,9 @@ SELECT refresh_token
 FROM refresh_tokens
 WHERE owner_id = $1;`
 
-func (r *repository) GetRefreshTokenById(ownerId string) (*models.RefreshToken, error) {
+func (r *refreshTokenRepository) GetRefreshTokenById(ownerId string) (*entity.RefreshToken, error) {
 
-	refreshToken := &models.RefreshToken{OwnerId: ownerId}
+	refreshToken := &entity.RefreshToken{OwnerId: ownerId}
 
 	in := []interface{}{ownerId}
 	out := []interface{}{&refreshToken.Token}

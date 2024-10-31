@@ -1,10 +1,10 @@
 package config
 
 import (
-	"github.com/Iamirup/whaler/backend/auth/internal/repository"
-	"github.com/Iamirup/whaler/backend/auth/pkg/logger"
-	"github.com/Iamirup/whaler/backend/auth/pkg/rdbms"
-	"github.com/Iamirup/whaler/backend/auth/pkg/token"
+	"github.com/Iamirup/whaler/backend/microservice/auth/pkg/logger"
+	"github.com/Iamirup/whaler/backend/microservice/auth/pkg/rdbms"
+	"github.com/Iamirup/whaler/backend/microservice/auth/pkg/token"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/infrastructure/repository"
 )
 
 type Config struct {

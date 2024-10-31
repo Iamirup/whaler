@@ -3,6 +3,8 @@ package ports
 import (
 	"context"
 	"database/sql"
+
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 )
 
 type (
@@ -12,7 +14,7 @@ type (
 		CreateNewRefreshToken(ctx context.Context, refreshToken *entity.RefreshToken) error
 
 		// GetRefreshTokenById retrieves a refresh token by its owener user id from database
-		GetRefreshTokenById(ctx context.Context, id uuid) (*entity.RefreshToken, error)
+		GetRefreshTokenById(ctx context.Context, id string) (*entity.RefreshToken, error)
 	}
 
 	// RefreshTokenServicePort defines the methods for interacting with refresh token services

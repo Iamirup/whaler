@@ -3,8 +3,8 @@ package repository
 import (
 	"errors"
 
-	"github.com/Iamirup/whaler/backend/auth/internal/models"
-	"github.com/Iamirup/whaler/backend/auth/pkg/rdbms"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
 	"go.uber.org/zap"
 )
 
@@ -12,7 +12,7 @@ const QueryCreateUser = `
 INSERT INTO users(username, password) VALUES($1, $2)
 RETURNING id;`
 
-func (r *repository) CreateUser(user *models.User) error {
+func (r *userRepository) CreateUser(user *entity.User) error {
 
 	if len(user.Username) == 0 || len(user.Password) == 0 {
 		return errors.New("insufficient information for user")
@@ -50,9 +50,9 @@ SELECT id, password, created_at
 FROM users
 WHERE username=$1;`
 
-func (r *repository) GetUserByUsername(username string) (*models.User, error) {
+func (r *userRepository) GetUserByUsername(username string) (*entity.User, error) {
 
-	user := &models.User{Username: username}
+	user := &entity.User{Username: username}
 
 	in := []interface{}{username}
 	out := []interface{}{&user.Id, &user.Password, &user.CreatedAt}
@@ -73,9 +73,9 @@ SELECT id, password, created_at
 FROM users
 WHERE username=$1`
 
-func (r *repository) GetUserByUsernameAndPassword(username, password string) (*models.User, error) {
+func (r *userRepository) GetUserByUsernameAndPassword(username, password string) (*entity.User, error) {
 
-	user := &models.User{Username: username}
+	user := &entity.User{Username: username}
 
 	in := []interface{}{username}
 	out := []interface{}{&user.Id, &user.Password, &user.CreatedAt}

@@ -2,9 +2,13 @@ package services
 
 import (
 	"context"
-	"voucher/internal/core/application/ports"
-	api "voucher/internal/interfaces/api/dto"
-	"voucher/pkg/serr"
+
+	serr "github.com/Iamirup/whaler/backend/microservice/auth/pkg/erros"
+
+	api "github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest/dto"
+
+	"github.com/Iamirup/whaler/backend/microservice/auth/internal/core/application/ports"
+	"github.com/Iamirup/whaler/backend/microservice/auth/internal/core/domain/entity"
 )
 
 // VoucherApplicationService provides application logic for vouchers.

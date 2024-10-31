@@ -3,11 +3,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/Iamirup/whaler/backend/auth/internal/config"
-	"github.com/Iamirup/whaler/backend/auth/internal/repository"
-	"github.com/Iamirup/whaler/backend/auth/pkg/logger"
-	"github.com/Iamirup/whaler/backend/auth/pkg/rdbms"
-	"github.com/Iamirup/whaler/backend/auth/pkg/token"
+	"github.com/Iamirup/whaler/backend/microservice/auth/internal/adapters/interfaces/rest"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/infrastructure/repository"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/config"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/logger"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/token"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -34,14 +35,15 @@ func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 		myLogger.Panic("Error creating rdbms database", zap.Error(err))
 	}
 
-	repo := repository.New(myLogger, cfg.Repository, db)
+	userRepo := repository.NewUserRepository(myLogger, cfg.Repository, db)
+	refreshTokenRepo := repository.NewRefreshTokenRepository(myLogger, cfg.Repository, db)
 
 	theToken, err := token.New(cfg.Token)
 	if err != nil {
 		myLogger.Panic("Error creating token object", zap.Error(err))
 	}
 
-	http.New(myLogger, repo, theToken).Serve()
+	rest.New(myLogger, userRepo, refreshTokenRepo, theToken).Serve()
 
 	// Keep this at the bottom of the main function
 	field := zap.String("signal trap", (<-trap).String())

@@ -3,6 +3,8 @@ package ports
 import (
 	"context"
 	"database/sql"
+
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 )
 
 type (
@@ -20,7 +22,7 @@ type (
 
 	// UserServicePort defines the methods for interacting with user services
 	UserServicePort interface {
-		Register(ctx context.Context, code string, maxUsages int) error
-		Login(ctx context.Context, code string, tx *sql.Tx) (*entity.VoucherCode, error)
+		Register(ctx context.Context, code string, maxUsages int) (error, entity.AuthTokens)
+		Login(ctx context.Context, code string, tx *sql.Tx) (error, entity.AuthTokens)
 	}
 )

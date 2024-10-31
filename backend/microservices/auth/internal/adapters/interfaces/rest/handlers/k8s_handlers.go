@@ -3,13 +3,18 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest"
 	"github.com/gofiber/fiber/v2"
 )
 
-func (handler *Server) liveness(c *fiber.Ctx) error {
+type KubernetesHandler struct {
+	server *rest.Server
+}
+
+func (h *KubernetesHandler) liveness(c *fiber.Ctx) error {
 	return c.SendStatus(http.StatusOK)
 }
 
-func (handler *Server) readiness(c *fiber.Ctx) error {
+func (h *KubernetesHandler) readiness(c *fiber.Ctx) error {
 	return c.SendStatus(http.StatusOK)
 }

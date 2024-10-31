@@ -1,12 +1,16 @@
 package entity
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
-	Id        string `json:"Id"`
-	Username  string `json:"username"`
-	Password  string `json:"password,omitempty"`
-	CreatedAt string `json:"created_at"`
+	Id        string    `json:"Id"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func (c User) Marshal() *User {
@@ -29,4 +33,8 @@ func (u *User) HashPassword() (string, error) {
 func (u *User) CheckPasswordHash(plainPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(plainPassword))
 	return err == nil
+}
+
+func (u *User) Validate() error {
+	return nil
 }

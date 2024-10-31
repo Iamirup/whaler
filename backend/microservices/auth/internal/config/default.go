@@ -3,10 +3,10 @@ package config
 import (
 	"time"
 
-	"github.com/Iamirup/whaler/backend/auth/internal/repository"
-	"github.com/Iamirup/whaler/backend/auth/pkg/logger"
-	"github.com/Iamirup/whaler/backend/auth/pkg/rdbms"
-	"github.com/Iamirup/whaler/backend/auth/pkg/token"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/infrastructure/repository"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/logger"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/token"
 )
 
 func Default() *Config {

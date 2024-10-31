@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/Iamirup/whaler/backend/auth/internal/config"
-	"github.com/Iamirup/whaler/backend/auth/internal/models"
-	"github.com/Iamirup/whaler/backend/auth/internal/repository"
-	"github.com/Iamirup/whaler/backend/auth/pkg/logger"
-	"github.com/Iamirup/whaler/backend/auth/pkg/rdbms"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/infrastructure/repository"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/config"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/logger"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -38,8 +38,8 @@ func (m *Migrate) main(cfg *config.Config, args []string) {
 		myLogger.Fatal("Error creating rdbms", zap.Error(err))
 	}
 
-	repo := repository.New(myLogger, cfg.Repository, db)
-	if err := repo.Migrate(models.Migrate(args[0])); err != nil {
+	repo := repository.NewMigrationRepository(myLogger, cfg.Repository, db)
+	if err := repo.Migrate(entity.Migrate(args[0])); err != nil {
 		myLogger.Fatal("Error migrating", zap.String("migration", args[0]), zap.Error(err))
 	}
 
