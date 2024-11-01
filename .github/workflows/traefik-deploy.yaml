@@ -32,6 +32,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            mkdir -p whaler
+            sudo mkdir -p whaler /traefik-acme /traefik
             cd ~/whaler
             sudo docker stack deploy -c deploy/docker/traefik-stack.yaml traefik-stack

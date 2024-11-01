@@ -34,7 +34,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            mkdir -p whaler
+            sudo mkdir -p whaler /whaler_eventor_data
             cd ~/whaler
             git pull origin main
             sudo docker compose -f deploy/docker/eventor-ms-stack.yaml build --push
