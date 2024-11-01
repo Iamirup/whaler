@@ -42,8 +42,8 @@ services:
         mode: host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik:/traefik
-      - traefik-acme:/acme
+      - /traefik:/traefik
+      - /traefik-acme:/acme
     deploy:
       restart_policy:
         condition: on-failure

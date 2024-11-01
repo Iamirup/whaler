@@ -5,7 +5,7 @@ on:
       - main
       - master
     paths:
-      - 'backend/eventor/**'
+      - 'backend/microservices/eventor/**'
 
 jobs:
   build-and-deploy:

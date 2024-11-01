@@ -5,7 +5,7 @@ on:
       - main
       - master
     paths:
-      - 'backend/auth/**'
+      - 'backend/microservices/auth/**'
 
 jobs:
   build-and-deploy:

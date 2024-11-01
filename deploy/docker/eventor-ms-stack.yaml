@@ -1,7 +1,7 @@
 services:
   eventor-microservice:
     image: iamirup/whaler-eventor-backend:latest
-    build: ./backend/microservices/eventor
+    build: backend/microservices/eventor
     deploy:
       replicas: 2
       restart_policy:
