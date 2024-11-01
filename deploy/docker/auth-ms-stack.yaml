@@ -1,7 +1,7 @@
 services:
   auth-microservice:
     image: iamirup/whaler-auth-backend:latest
-    build: backend/microservices/auth
+    build: ../../backend/microservices/auth
     deploy:
       replicas: 2
       restart_policy:

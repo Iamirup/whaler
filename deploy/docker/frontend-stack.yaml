@@ -1,7 +1,7 @@
 services:
   whaler-frontend:
     image: iamirup/whaler-frontend:latest
-    build: frontend
+    build: ../../frontend
     deploy:
       restart_policy:
         condition: on-failure
