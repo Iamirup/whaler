@@ -19,6 +19,8 @@ services:
         - "traefik.http.routers.frontend-secure.tls.options=default"
         - "traefik.http.routers.frontend-secure.tls.certresolver=mycert"
         - "traefik.http.services.frontend.loadbalancer.server.port=80" 
+    networks:
+      - web_net
 
 networks:
   web_net:

@@ -24,7 +24,7 @@ services:
       - rdbms
     networks:
       - web_net
-      - whaler_net
+      - whaler_eventor_net
 
   rdbms:
     image: postgres:latest
@@ -35,14 +35,14 @@ services:
     volumes:
       - /whaler_eventor_data:/var/lib/postgresql/data
     networks:
-      - whaler_net
+      - whaler_eventor_net
 
 networks:
   web_net:
     external: true
     name: web_net
     driver: overlay
-  whaler_net:
+  whaler_eventor_net:
     driver: overlay
 
 volumes:
