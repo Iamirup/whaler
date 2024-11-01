@@ -1,10 +1,9 @@
-package handlers
+package rest
 
 import (
 	"net/http"
 	"time"
 
-	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest/dto"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/services"
 	"github.com/gofiber/fiber/v2"
@@ -12,16 +11,20 @@ import (
 )
 
 type UserHandler struct {
-	server         *rest.Server
+	server         *Server
 	userAppService *services.UserApplicationService
 }
 
-func (h *UserHandler) register(c *fiber.Ctx) error {
+func NewUserHandler(server *Server, userAppService *services.UserApplicationService) *UserHandler {
+	return &UserHandler{server: server, userAppService: userAppService}
+}
+
+func (h *UserHandler) Register(c *fiber.Ctx) error {
 	// request := struct{ Username, Password string }{}
 	var request dto.RegisterRequest
 
 	if err := c.BodyParser(&request); err != nil {
-		h.server.logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
+		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
 		response := map[string]string{"error": "Error parsing request body"}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
@@ -36,21 +39,21 @@ func (h *UserHandler) register(c *fiber.Ctx) error {
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "refresh_token",
-		Value:    authTokens.refreshToken,
-		Expires:  time.Now().Add(h.server.token.GetRefreshTokenExpiration()),
+		Value:    authTokens.RefreshToken,
+		Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
 		HTTPOnly: true,
 	})
 
-	response := map[string]string{"access_token": authTokens.accessToken}
+	response := map[string]string{"access_token": authTokens.AccessToken}
 	return c.Status(http.StatusCreated).JSON(response)
 }
 
-func (h *UserHandler) login(c *fiber.Ctx) error {
+func (h *UserHandler) Login(c *fiber.Ctx) error {
 	// request := struct{ Username, Password string }{}
 	var request dto.LoginRequest
 
 	if err := c.BodyParser(&request); err != nil {
-		h.server.logger.Error("Error parsing request body", zap.Error(err))
+		h.server.Logger.Error("Error parsing request body", zap.Error(err))
 		response := map[string]string{"error": "Error parsing request body"}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
@@ -65,11 +68,11 @@ func (h *UserHandler) login(c *fiber.Ctx) error {
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "refresh_token",
-		Value:    authTokens.refreshToken,
-		Expires:  time.Now().Add(h.server.token.GetRefreshTokenExpiration()),
+		Value:    authTokens.RefreshToken,
+		Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
 		HTTPOnly: true,
 	})
 
-	response := map[string]string{"access_token": authTokens.accessToken}
+	response := map[string]string{"access_token": authTokens.AccessToken}
 	return c.Status(http.StatusOK).JSON(response)
 }

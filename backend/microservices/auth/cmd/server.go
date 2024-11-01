@@ -3,8 +3,8 @@ package cmd
 import (
 	"os"
 
-	"github.com/Iamirup/whaler/backend/microservice/auth/internal/adapters/interfaces/rest"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/infrastructure/repository"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/config"
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/logger"
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"

@@ -6,10 +6,10 @@ import (
 	"io/fs"
 	"strings"
 
-	"github.com/Iamirup/whaler/backend/microservice/auth/internal/core/application/ports"
-	"github.com/Iamirup/whaler/backend/microservice/auth/pkg/utils"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/ports"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/utils"
 	"go.uber.org/zap"
 )
 

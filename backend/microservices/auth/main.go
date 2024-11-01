@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Iamirup/whaler/backend/auth/cmd"
+	"github.com/Iamirup/whaler/backend/microservices/auth/cmd"
 	"github.com/spf13/cobra"
 )
 

@@ -3,7 +3,7 @@ package repository
 import (
 	"errors"
 
-	"github.com/Iamirup/whaler/backend/microservice/auth/internal/core/domain/entity"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
 	"go.uber.org/zap"
 )
