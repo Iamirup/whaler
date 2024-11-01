@@ -1,10 +1,8 @@
 package ports
 
 import (
-	"context"
-	"database/sql"
-
 	serr "github.com/Iamirup/whaler/backend/microservices/auth/pkg/errors"
+	"github.com/gofiber/fiber/v2"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 )
@@ -24,7 +22,7 @@ type (
 
 	// UserServicePort defines the methods for interacting with user services
 	UserServicePort interface {
-		Register(ctx context.Context, code string, maxUsages int) (*serr.ServiceError, entity.AuthTokens)
-		Login(ctx context.Context, code string, tx *sql.Tx) (*serr.ServiceError, entity.AuthTokens)
+		Register(ctx *fiber.Ctx, username, password string) (*serr.ServiceError, entity.AuthTokens)
+		Login(ctx *fiber.Ctx, username, password string) (*serr.ServiceError, entity.AuthTokens)
 	}
 )

@@ -1,13 +1,13 @@
 package services
 
 import (
-	"context"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/token"
+	"github.com/gofiber/fiber/v2"
 
-	api "github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest/dto"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/ports"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 
@@ -39,10 +39,10 @@ func NewUserService(
 }
 
 // RecordRedemption records a new voucher redemption in the history.
-func (s *UserService) Register(ctx context.Context, request *api.RegisterRequest) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserService) Register(ctx *fiber.Ctx, username, password string) (*serr.ServiceError, entity.AuthTokens) {
 	user := &entity.User{
-		Username:  request.Username,
-		Password:  request.Password,
+		Username:  username,
+		Password:  password,
 		CreatedAt: time.Now(),
 	}
 	err := user.Validate()
@@ -50,16 +50,16 @@ func (s *UserService) Register(ctx context.Context, request *api.RegisterRequest
 		return &serr.ServiceError{Message: "no valid user data", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
-	user, err = s.userPersistencePort.GetUserByUsername(request.Username)
+	user, err = s.userPersistencePort.GetUserByUsername(username)
 	if err != nil && err.Error() != rdbms.ErrNotFound {
 		s.logger.Error("Error while retrieving data from database", zap.Error(err))
 		return &serr.ServiceError{Message: "Error while retrieving data from database", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	} else if err == nil || (user != nil && user.Id != "") {
-		s.logger.Error("User with given username already exists", zap.String("username", request.Username))
+		s.logger.Error("User with given username already exists", zap.String("username", username))
 		return &serr.ServiceError{Message: "User with given username already exists", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	user = &entity.User{Username: request.Username, Password: request.Password}
+	user = &entity.User{Username: username, Password: password}
 	if err := s.userPersistencePort.CreateUser(user); err != nil {
 		s.logger.Error("Error happened while creating the user", zap.Error(err))
 		return &serr.ServiceError{Message: "Error happened while creating the user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
@@ -86,18 +86,22 @@ func (s *UserService) Register(ctx context.Context, request *api.RegisterRequest
 		return &serr.ServiceError{Message: "Error happened while adding the refresh token", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	return s.userPersistencePort.CreateUser(ctx, request), entity.AuthTokens{AccessToken: accessToken, RefreshToken: refreshToken}
+	if err := s.userPersistencePort.CreateUser(user); err != nil {
+		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+	}
+
+	return nil, entity.AuthTokens{AccessToken: accessToken, RefreshToken: refreshToken}
 }
 
 // ListRedeemedHistoriesByCode retrieves the redemption history for a specific voucher's code.
-func (s *UserService) Login(ctx context.Context, request *api.LoginRequest) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserService) Login(ctx *fiber.Ctx, username, password string) (*serr.ServiceError, entity.AuthTokens) {
 
-	user, err := s.userPersistencePort.GetUserByUsernameAndPassword(request.Username, request.Password)
+	user, err := s.userPersistencePort.GetUserByUsernameAndPassword(username, password)
 	if err != nil {
 		s.logger.Error("Wrong username or password has been given", zap.Error(err))
 		return &serr.ServiceError{Message: "Wrong username or password has been given", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	} else if user == nil {
-		s.logger.Error("Error invalid user returned", zap.Any("request", request))
+		s.logger.Error("Error invalid user returned", zap.Any("request", fmt.Sprintf("%s - %s", username, password)))
 		return &serr.ServiceError{Message: "Error invalid user returned", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 

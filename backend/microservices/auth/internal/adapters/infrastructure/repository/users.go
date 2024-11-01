@@ -27,7 +27,7 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 	in := []any{user.Username, hashedPassword}
 	out := []any{&user.Id}
 	if err := r.rdbms.QueryRow(QueryCreateUser, in, out); err != nil {
-		r.logger.Error("Error inserting author", zap.Error(err))
+		r.logger.Error("Error inserting user", zap.Error(err))
 		return err
 	}
 

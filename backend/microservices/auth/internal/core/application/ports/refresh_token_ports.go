@@ -1,10 +1,8 @@
 package ports
 
 import (
-	"context"
-	"database/sql"
-
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
+	"github.com/gofiber/fiber/v2"
 )
 
 type (
@@ -19,7 +17,7 @@ type (
 
 	// RefreshTokenServicePort defines the methods for interacting with refresh token services
 	RefreshTokenServicePort interface {
-		Refresh(ctx context.Context, code string, maxUsages int) error
-		Revoke(ctx context.Context, code string, tx *sql.Tx) (*entity.VoucherCode, error)
+		Refresh(ctx *fiber.Ctx, something string) error
+		Revoke(ctx *fiber.Ctx, something string) error
 	}
 )
