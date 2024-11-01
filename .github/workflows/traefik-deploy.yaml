@@ -34,4 +34,4 @@ jobs:
           script: |
             mkdir -p whaler
             cd ~/whaler
-            sudo docker stack deploy -c deployments/docker/traefik-stack.yaml traefik-stack
+            sudo docker stack deploy -c deploy/docker/traefik-stack.yaml traefik-stack

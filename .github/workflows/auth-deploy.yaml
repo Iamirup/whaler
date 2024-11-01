@@ -37,5 +37,5 @@ jobs:
             mkdir -p whaler
             cd ~/whaler
             git pull origin main
-            sudo docker compose -f deployments/docker/auth-ms-stack.yaml build --push
-            sudo docker stack deploy -c deployments/docker/auth-ms-stack.yaml auth-ms-stack
+            sudo docker compose -f deploy/docker/auth-ms-stack.yaml build --push
+            sudo docker stack deploy -c deploy/docker/auth-ms-stack.yaml auth-ms-stack
