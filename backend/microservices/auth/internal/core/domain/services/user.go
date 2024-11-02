@@ -86,10 +86,6 @@ func (s *UserService) Register(ctx *fiber.Ctx, username, password string) (*serr
 		return &serr.ServiceError{Message: "Error happened while adding the refresh token", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	if err := s.userPersistencePort.CreateUser(user); err != nil {
-		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
-	}
-
 	return nil, entity.AuthTokens{AccessToken: accessToken, RefreshToken: refreshToken}
 }
 
