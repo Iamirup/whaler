@@ -9,12 +9,12 @@ import (
 )
 
 const QueryCreateUser = `
-INSERT INTO users(username, password) VALUES($1, $2)
+INSERT INTO users(email, username, password) VALUES($1, $2, $3)
 RETURNING id;`
 
 func (r *userRepository) CreateUser(user *entity.User) error {
 
-	if len(user.Username) == 0 || len(user.Password) == 0 {
+	if len(user.Email) == 0 || len(user.Username) == 0 || len(user.Password) == 0 {
 		return errors.New("insufficient information for user")
 	}
 
@@ -24,7 +24,7 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 		return err
 	}
 
-	in := []any{user.Username, hashedPassword}
+	in := []any{user.Email, user.Username, hashedPassword}
 	out := []any{&user.Id}
 	if err := r.rdbms.QueryRow(QueryCreateUser, in, out); err != nil {
 		r.logger.Error("Error inserting user", zap.Error(err))
@@ -33,17 +33,6 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 
 	return nil
 }
-
-const QueryGetUserDetailsById = `
-SELECT *
-FROM users
-JOIN user_configs ON users.id = user_configs.user_id
-WHERE
-	users.id = $1 AND
-	user_configs.id > $2 AND
-	user_configs.name LIKE '%' || $3 || '%'
-ORDER BY user_configs.id
-FETCH NEXT $4 ROWS ONLY;`
 
 const QueryGetUserByUsername = `
 SELECT id, password, created_at

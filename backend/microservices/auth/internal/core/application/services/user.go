@@ -28,7 +28,11 @@ func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.S
 		return &serr.ServiceError{Message: "no valid request", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
-	return s.domainService.Register(request.Username, request.Password)
+	if request.Password != request.ConfirmPassword {
+		return &serr.ServiceError{Message: "password and confirm password are not equal", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
+	}
+
+	return s.domainService.Register(request.Email, request.Username, request.Password)
 }
 
 // CreateVoucher create a new voucher

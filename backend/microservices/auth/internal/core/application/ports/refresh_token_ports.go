@@ -15,7 +15,7 @@ type (
 		GetRefreshTokenById(userId string) (*entity.RefreshToken, error)
 
 		// RemoveRefreshTokenById removes a refresh token by its owener user id from database
-		RemoveRefreshTokenById(userId string) error
+		RemoveRefreshToken(userId string) error
 	}
 
 	// RefreshTokenServicePort defines the methods for interacting with refresh token services

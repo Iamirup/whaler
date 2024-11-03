@@ -11,8 +11,6 @@ import (
 const QueryCreateNewRefreshToken = `
 INSERT INTO refresh_tokens(refresh_token, owner_id)
 VALUES($1, $2)
-ON CONFLICT (owner_id) 
-DO UPDATE SET refresh_token = EXCLUDED.refresh_token
 RETURNING owner_id;`
 
 func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.RefreshToken) error {
@@ -24,7 +22,7 @@ func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.Refr
 	in := []any{refreshToken.Token, refreshToken.OwnerId}
 	out := []any{&refreshToken.OwnerId}
 	if err := r.rdbms.QueryRow(QueryCreateNewRefreshToken, in, out); err != nil {
-		r.logger.Error("Error inserting author", zap.Error(err))
+		r.logger.Error("Error inserting new refresh token", zap.Error(err))
 		return err
 	}
 
@@ -54,18 +52,18 @@ func (r *refreshTokenRepository) GetRefreshTokenById(ownerId string) (*entity.Re
 	return refreshToken, nil
 }
 
-const QueryRemoveRefreshTokenById = `
+const QueryRemoveRefreshToken = `
 DELETE FROM refresh_tokens
 WHERE refresh_token = $1
 RETURNING refresh_token;`
 
-func (r *refreshTokenRepository) RemoveRefreshTokenById(refreshToken string) error {
+func (r *refreshTokenRepository) RemoveRefreshToken(refreshToken string) error {
 
 	refreshTokenEntity := &entity.RefreshToken{Token: refreshToken}
 
 	in := []interface{}{refreshToken}
 	out := []interface{}{&refreshTokenEntity.Token}
-	if err := r.rdbms.QueryRow(QueryRemoveRefreshTokenById, in, out); err != nil {
+	if err := r.rdbms.QueryRow(QueryRemoveRefreshToken, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
 			return err
 		}

@@ -38,8 +38,9 @@ func NewUserService(
 }
 
 // RecordRedemption records a new voucher redemption in the history.
-func (s *UserService) Register(username, password string) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserService) Register(email, username, password string) (*serr.ServiceError, entity.AuthTokens) {
 	user := &entity.User{
+		Email:     email,
 		Username:  username,
 		Password:  password,
 		CreatedAt: time.Now(),
@@ -122,7 +123,7 @@ func (s *UserService) Login(username, password string) (*serr.ServiceError, enti
 }
 
 func (s *UserService) Logout(refreshToken string) *serr.ServiceError {
-	err := s.refreshTokenPersistencePort.RemoveRefreshTokenById(refreshToken)
+	err := s.refreshTokenPersistencePort.RemoveRefreshToken(refreshToken)
 	if err != nil {
 		s.logger.Error("Error invalid refresh token", zap.Error(err))
 		return &serr.ServiceError{Message: "invalid refresh token, please login again", StatusCode: http.StatusInternalServerError}
