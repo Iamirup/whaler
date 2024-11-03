@@ -53,3 +53,26 @@ func (r *refreshTokenRepository) GetRefreshTokenById(ownerId string) (*entity.Re
 
 	return refreshToken, nil
 }
+
+const QueryRemoveRefreshTokenById = `
+DELETE FROM refresh_tokens
+WHERE refresh_token = $1
+RETURNING refresh_token;`
+
+func (r *refreshTokenRepository) RemoveRefreshTokenById(refreshToken string) error {
+
+	refreshTokenEntity := &entity.RefreshToken{Token: refreshToken}
+
+	in := []interface{}{refreshToken}
+	out := []interface{}{&refreshTokenEntity.Token}
+	if err := r.rdbms.QueryRow(QueryRemoveRefreshTokenById, in, out); err != nil {
+		if err.Error() == rdbms.ErrNotFound {
+			return err
+		}
+
+		r.logger.Error("Error find refresh token by owner id", zap.Error(err))
+		return err
+	}
+
+	return nil
+}

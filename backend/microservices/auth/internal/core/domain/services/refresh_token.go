@@ -1,9 +1,12 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/ports"
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
+	serr "github.com/Iamirup/whaler/backend/microservices/auth/pkg/errors"
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/token"
-	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 )
 
@@ -24,10 +27,16 @@ func NewRefreshTokenService(
 	}
 }
 
-func (s *RefreshTokenService) Refresh(ctx *fiber.Ctx, something string) error {
+func (s *RefreshTokenService) Refresh(refreshToken string) *serr.ServiceError {
 	return nil
 }
 
-func (s *RefreshTokenService) Revoke(ctx *fiber.Ctx, something string) error {
-	return nil
+func (s *RefreshTokenService) GetRefreshTokenById(userId string) (*entity.RefreshToken, *serr.ServiceError) {
+	refreshToken, err := s.refreshTokenPersistencePort.GetRefreshTokenById(userId)
+	if err != nil {
+		s.logger.Error("Error invalid refresh token returned", zap.Error(err))
+		return nil, &serr.ServiceError{Message: "invalid refresh token, please login again", StatusCode: http.StatusInternalServerError}
+	}
+
+	return refreshToken, nil
 }

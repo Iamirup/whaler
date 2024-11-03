@@ -30,7 +30,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 	}
 
 	/////////////////////////////////////////
-	err, authTokens := h.userAppService.Register(c, &request)
+	err, authTokens := h.userAppService.Register(&request)
 	if err != nil {
 		response := map[string]string{"error": err.Message}
 		return c.Status(err.StatusCode).JSON(response)
@@ -59,7 +59,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	}
 
 	///////////////////
-	err, authTokens := h.userAppService.Login(c, &request)
+	err, authTokens := h.userAppService.Login(&request)
 	if err != nil {
 		response := map[string]string{"error": err.Message}
 		return c.Status(err.StatusCode).JSON(response)
@@ -75,4 +75,20 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 
 	response := map[string]string{"access_token": authTokens.AccessToken}
 	return c.Status(http.StatusOK).JSON(response)
+}
+
+func (h *UserHandler) Logout(c *fiber.Ctx) error {
+	refreshToken, ok := c.Locals("user-refresh_token").(string)
+	if !ok || refreshToken == "" {
+		h.server.Logger.Error("Invalid user-refresh_token local")
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	err := h.userAppService.Logout(refreshToken)
+	if err != nil {
+		response := map[string]string{"error": err.Message}
+		return c.Status(err.StatusCode).JSON(response)
+	}
+
+	return c.SendStatus(http.StatusOK)
 }

@@ -2,7 +2,7 @@ package ports
 
 import (
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
-	"github.com/gofiber/fiber/v2"
+	serr "github.com/Iamirup/whaler/backend/microservices/auth/pkg/errors"
 )
 
 type (
@@ -12,12 +12,15 @@ type (
 		CreateNewRefreshToken(refreshToken *entity.RefreshToken) error
 
 		// GetRefreshTokenById retrieves a refresh token by its owener user id from database
-		GetRefreshTokenById(id string) (*entity.RefreshToken, error)
+		GetRefreshTokenById(userId string) (*entity.RefreshToken, error)
+
+		// RemoveRefreshTokenById removes a refresh token by its owener user id from database
+		RemoveRefreshTokenById(userId string) error
 	}
 
 	// RefreshTokenServicePort defines the methods for interacting with refresh token services
 	RefreshTokenServicePort interface {
-		Refresh(ctx *fiber.Ctx, something string) error
-		Revoke(ctx *fiber.Ctx, something string) error
+		Refresh(refreshToken string) *serr.ServiceError
+		GetRefreshTokenById(userId string) (*entity.RefreshToken, *serr.ServiceError)
 	}
 )

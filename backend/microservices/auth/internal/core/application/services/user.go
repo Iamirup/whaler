@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	serr "github.com/Iamirup/whaler/backend/microservices/auth/pkg/errors"
-	"github.com/gofiber/fiber/v2"
 
 	api "github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest/dto"
 
@@ -23,21 +22,25 @@ func NewUserApplicationService(domainService ports.UserServicePort) *UserApplica
 }
 
 // RedeemVoucher handles the redemption process of a voucher and interacts with the domain services.
-func (s *UserApplicationService) Register(ctx *fiber.Ctx, request *api.RegisterRequest) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.ServiceError, entity.AuthTokens) {
 	err := request.Validate()
 	if err != nil {
 		return &serr.ServiceError{Message: "no valid request", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
-	return s.domainService.Register(ctx, request.Username, request.Password)
+	return s.domainService.Register(request.Username, request.Password)
 }
 
 // CreateVoucher create a new voucher
-func (s *UserApplicationService) Login(ctx *fiber.Ctx, request *api.LoginRequest) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserApplicationService) Login(request *api.LoginRequest) (*serr.ServiceError, entity.AuthTokens) {
 	err := request.Validate()
 	if err != nil {
 		return &serr.ServiceError{Message: "no valid request", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
-	return s.domainService.Login(ctx, request.Username, request.Password)
+	return s.domainService.Login(request.Username, request.Password)
+}
+
+func (s *UserApplicationService) Logout(refreshToken string) *serr.ServiceError {
+	return s.domainService.Logout(refreshToken)
 }

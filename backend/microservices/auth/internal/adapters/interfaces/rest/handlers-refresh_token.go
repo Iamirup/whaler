@@ -1,6 +1,8 @@
 package rest
 
 import (
+	"net/http"
+
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,9 +18,11 @@ func NewRefreshTokenHandler(server *Server, refreshTokenAppService *services.Ref
 }
 
 func (h *RefreshTokenHandler) Refresh(c *fiber.Ctx) error {
-	return nil
-}
+	userId, ok := c.Locals("user-id").(string)
+	if !ok || userId == "" {
+		h.server.Logger.Error("Invalid user-id local")
+		return c.SendStatus(http.StatusInternalServerError)
+	}
 
-func (h *RefreshTokenHandler) Revoke(c *fiber.Ctx) error {
-	return nil
+	return c.SendStatus(http.StatusOK)
 }

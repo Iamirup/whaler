@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/token"
-	"github.com/gofiber/fiber/v2"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/ports"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
@@ -39,7 +38,7 @@ func NewUserService(
 }
 
 // RecordRedemption records a new voucher redemption in the history.
-func (s *UserService) Register(ctx *fiber.Ctx, username, password string) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserService) Register(username, password string) (*serr.ServiceError, entity.AuthTokens) {
 	user := &entity.User{
 		Username:  username,
 		Password:  password,
@@ -90,7 +89,7 @@ func (s *UserService) Register(ctx *fiber.Ctx, username, password string) (*serr
 }
 
 // ListRedeemedHistoriesByCode retrieves the redemption history for a specific voucher's code.
-func (s *UserService) Login(ctx *fiber.Ctx, username, password string) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserService) Login(username, password string) (*serr.ServiceError, entity.AuthTokens) {
 
 	user, err := s.userPersistencePort.GetUserByUsernameAndPassword(username, password)
 	if err != nil {
@@ -120,4 +119,14 @@ func (s *UserService) Login(ctx *fiber.Ctx, username, password string) (*serr.Se
 	}
 
 	return nil, entity.AuthTokens{AccessToken: accessToken, RefreshToken: refreshToken}
+}
+
+func (s *UserService) Logout(refreshToken string) *serr.ServiceError {
+	err := s.refreshTokenPersistencePort.RemoveRefreshTokenById(refreshToken)
+	if err != nil {
+		s.logger.Error("Error invalid refresh token", zap.Error(err))
+		return &serr.ServiceError{Message: "invalid refresh token, please login again", StatusCode: http.StatusInternalServerError}
+	}
+
+	return nil
 }

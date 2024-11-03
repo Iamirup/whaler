@@ -80,7 +80,7 @@ func (r *userRepository) GetUserByUsernameAndPassword(username, password string)
 	in := []interface{}{username}
 	out := []interface{}{&user.Id, &user.Password, &user.CreatedAt}
 	if err := r.rdbms.QueryRow(QueryGetUserByUsernameAndPassword, in, out); err != nil {
-		r.logger.Error("Error finding user by username", zap.Error(err))
+		r.logger.Error("Error finding user by username and password", zap.Error(err))
 		return nil, err
 	}
 

@@ -1,0 +1,1 @@
+CREATE INDEX refresh_token_index ON refresh_tokens(refresh_token);
