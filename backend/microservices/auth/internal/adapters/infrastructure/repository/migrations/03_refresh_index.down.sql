@@ -1,1 +1,1 @@
-DROP INDEX refresh_token_index;
+DROP INDEX owner_id_index;

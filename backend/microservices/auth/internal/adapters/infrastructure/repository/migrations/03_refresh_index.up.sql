@@ -1,1 +1,1 @@
-CREATE INDEX refresh_token_index ON refresh_tokens(refresh_token);
+CREATE INDEX IF NOT EXISTS owner_id_index ON refresh_tokens(owner_id);
