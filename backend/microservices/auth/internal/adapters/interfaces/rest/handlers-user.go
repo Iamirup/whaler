@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -20,7 +21,7 @@ func NewUserHandler(server *Server, userAppService *services.UserApplicationServ
 }
 
 func (h *UserHandler) Register(c *fiber.Ctx) error {
-	// request := struct{ Username, Password string }{}
+
 	var request dto.RegisterRequest
 
 	if err := c.BodyParser(&request); err != nil {
@@ -28,6 +29,8 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		response := map[string]string{"error": "Error parsing request body"}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
+
+	fmt.Println(request)
 
 	/////////////////////////////////////////
 	err, authTokens := h.userAppService.Register(&request)
@@ -49,7 +52,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) Login(c *fiber.Ctx) error {
-	// request := struct{ Username, Password string }{}
+
 	var request dto.LoginRequest
 
 	if err := c.BodyParser(&request); err != nil {

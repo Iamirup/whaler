@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	serr "github.com/Iamirup/whaler/backend/microservices/auth/pkg/errors"
+	"go.uber.org/zap"
 
 	api "github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest/dto"
 
@@ -13,6 +14,7 @@ import (
 
 type UserApplicationService struct {
 	domainService ports.UserServicePort
+	logger        *zap.Logger
 }
 
 func NewUserApplicationService(domainService ports.UserServicePort) *UserApplicationService {
@@ -25,6 +27,7 @@ func NewUserApplicationService(domainService ports.UserServicePort) *UserApplica
 func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.ServiceError, entity.AuthTokens) {
 	err := request.Validate()
 	if err != nil {
+		s.logger.Error(err.Error(), zap.Error(err))
 		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
@@ -35,6 +38,7 @@ func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.S
 func (s *UserApplicationService) Login(request *api.LoginRequest) (*serr.ServiceError, entity.AuthTokens) {
 	err := request.Validate()
 	if err != nil {
+		s.logger.Error(err.Error(), zap.Error(err))
 		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
