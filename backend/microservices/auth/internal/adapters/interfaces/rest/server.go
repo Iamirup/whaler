@@ -41,7 +41,7 @@ func New(log *zap.Logger, userRepo ports.UserPersistencePort, refreshTokenRepo p
 	authV1.Post("/register", userHandler.Register)
 	authV1.Post("/login", userHandler.Login)
 	authV1.Post("/logout", userHandler.Logout, userHandler.fetchUserRefreshToken)
-	authV1.Post("/refresh", refreshTokenHandler.Refresh, refreshTokenHandler.fetchUserId)
+	authV1.Get("/refresh", refreshTokenHandler.Refresh, refreshTokenHandler.fetchUserId)
 
 	return server
 }
