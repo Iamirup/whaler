@@ -25,11 +25,7 @@ func NewUserApplicationService(domainService ports.UserServicePort) *UserApplica
 func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.ServiceError, entity.AuthTokens) {
 	err := request.Validate()
 	if err != nil {
-		return &serr.ServiceError{Message: "no valid request", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
-	}
-
-	if request.Password != request.ConfirmPassword {
-		return &serr.ServiceError{Message: "password and confirm password are not equal", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
+		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
 	return s.domainService.Register(request.Email, request.Username, request.Password)
@@ -39,10 +35,10 @@ func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.S
 func (s *UserApplicationService) Login(request *api.LoginRequest) (*serr.ServiceError, entity.AuthTokens) {
 	err := request.Validate()
 	if err != nil {
-		return &serr.ServiceError{Message: "no valid request", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
+		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
-	return s.domainService.Login(request.Username, request.Password)
+	return s.domainService.Login(request.Email, request.Username, request.Password)
 }
 
 func (s *UserApplicationService) Logout(refreshToken string) *serr.ServiceError {

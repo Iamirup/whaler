@@ -42,10 +42,11 @@ func (r *refreshTokenRepository) GetRefreshTokenById(ownerId string) (*entity.Re
 	out := []interface{}{&refreshToken.Token}
 	if err := r.rdbms.QueryRow(QueryGetRefreshTokenById, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
+			r.logger.Error("Error id not found", zap.Error(err))
 			return nil, err
 		}
 
-		r.logger.Error("Error find user by username", zap.Error(err))
+		r.logger.Error("Error find refresh token by id", zap.Error(err))
 		return nil, err
 	}
 
@@ -54,17 +55,14 @@ func (r *refreshTokenRepository) GetRefreshTokenById(ownerId string) (*entity.Re
 
 const QueryRemoveRefreshToken = `
 DELETE FROM refresh_tokens
-WHERE refresh_token = $1
-RETURNING refresh_token;`
+WHERE refresh_token = $1;`
 
 func (r *refreshTokenRepository) RemoveRefreshToken(refreshToken string) error {
 
-	refreshTokenEntity := &entity.RefreshToken{Token: refreshToken}
-
 	in := []interface{}{refreshToken}
-	out := []interface{}{&refreshTokenEntity.Token}
-	if err := r.rdbms.QueryRow(QueryRemoveRefreshToken, in, out); err != nil {
+	if err := r.rdbms.Execute(QueryRemoveRefreshToken, in); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
+			r.logger.Error("Error owner refresh token not found", zap.Error(err))
 			return err
 		}
 

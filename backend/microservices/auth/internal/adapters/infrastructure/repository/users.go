@@ -80,3 +80,27 @@ func (r *userRepository) GetUserByUsernameAndPassword(username, password string)
 
 	return user, nil
 }
+
+const QueryGetUserByEmailAndPassword = `
+SELECT id, password, created_at 
+FROM users
+WHERE email=$1`
+
+func (r *userRepository) GetUserByEmailAndPassword(email, password string) (*entity.User, error) {
+
+	user := &entity.User{Email: email}
+
+	in := []interface{}{email}
+	out := []interface{}{&user.Id, &user.Password, &user.CreatedAt}
+	if err := r.rdbms.QueryRow(QueryGetUserByEmailAndPassword, in, out); err != nil {
+		r.logger.Error("Error finding user by email and password", zap.Error(err))
+		return nil, err
+	}
+
+	if !user.CheckPasswordHash(password) {
+		r.logger.Error("invalid email or password")
+		return nil, errors.New("invalid email or password")
+	}
+
+	return user, nil
+}

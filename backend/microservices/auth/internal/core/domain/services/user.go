@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/token"
@@ -39,18 +40,15 @@ func NewUserService(
 
 // RecordRedemption records a new voucher redemption in the history.
 func (s *UserService) Register(email, username, password string) (*serr.ServiceError, entity.AuthTokens) {
+
 	user := &entity.User{
 		Email:     email,
 		Username:  username,
 		Password:  password,
 		CreatedAt: time.Now(),
 	}
-	err := user.Validate()
-	if err != nil {
-		return &serr.ServiceError{Message: "no valid user data", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
-	}
 
-	user, err = s.userPersistencePort.GetUserByUsername(username)
+	user, err := s.userPersistencePort.GetUserByUsername(username)
 	if err != nil && err.Error() != rdbms.ErrNotFound {
 		s.logger.Error("Error while retrieving data from database", zap.Error(err))
 		return &serr.ServiceError{Message: "Error while retrieving data from database", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
@@ -90,15 +88,29 @@ func (s *UserService) Register(email, username, password string) (*serr.ServiceE
 }
 
 // ListRedeemedHistoriesByCode retrieves the redemption history for a specific voucher's code.
-func (s *UserService) Login(username, password string) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserService) Login(email, username, password string) (*serr.ServiceError, entity.AuthTokens) {
 
-	user, err := s.userPersistencePort.GetUserByUsernameAndPassword(username, password)
-	if err != nil {
-		s.logger.Error("Wrong username or password has been given", zap.Error(err))
-		return &serr.ServiceError{Message: "Wrong username or password has been given", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
-	} else if user == nil {
-		s.logger.Error("Error invalid user returned", zap.Any("request", fmt.Sprintf("%s - %s", username, password)))
-		return &serr.ServiceError{Message: "Error invalid user returned", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+	var user *entity.User
+	var err error
+
+	if strings.TrimSpace(email) != "" {
+		user, err = s.userPersistencePort.GetUserByEmailAndPassword(email, password)
+		if err != nil {
+			s.logger.Error("Wrong email or password has been given", zap.Error(err))
+			return &serr.ServiceError{Message: "Wrong email or password has been given", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
+		} else if user == nil {
+			s.logger.Error("Error invalid user returned", zap.Any("request", fmt.Sprintf("%s - %s", email, password)))
+			return &serr.ServiceError{Message: "Error invalid user returned", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+		}
+	} else {
+		user, err = s.userPersistencePort.GetUserByUsernameAndPassword(username, password)
+		if err != nil {
+			s.logger.Error("Wrong username or password has been given", zap.Error(err))
+			return &serr.ServiceError{Message: "Wrong username or password has been given", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
+		} else if user == nil {
+			s.logger.Error("Error invalid user returned", zap.Any("request", fmt.Sprintf("%s - %s", username, password)))
+			return &serr.ServiceError{Message: "Error invalid user returned", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+		}
 	}
 
 	accessToken, err := s.token.CreateTokenString(user.Id)

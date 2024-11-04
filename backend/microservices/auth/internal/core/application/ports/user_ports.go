@@ -17,12 +17,15 @@ type (
 
 		// GetUserByUsernameAndPassword retrieves a user by its username and password
 		GetUserByUsernameAndPassword(username, password string) (*entity.User, error)
+
+		// GetUserByEmailAndPassword retrieves a user by its email and password
+		GetUserByEmailAndPassword(email, password string) (*entity.User, error)
 	}
 
 	// UserServicePort defines the methods for interacting with user services
 	UserServicePort interface {
 		Register(email, username, password string) (*serr.ServiceError, entity.AuthTokens)
-		Login(username, password string) (*serr.ServiceError, entity.AuthTokens)
+		Login(email, username, password string) (*serr.ServiceError, entity.AuthTokens)
 		Logout(refreshToken string) *serr.ServiceError
 	}
 )
