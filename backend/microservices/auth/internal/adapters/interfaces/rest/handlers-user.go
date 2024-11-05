@@ -22,6 +22,12 @@ func NewUserHandler(server *Server, userAppService *services.UserApplicationServ
 func (h *UserHandler) Register(c *fiber.Ctx) error {
 
 	var request dto.RegisterRequest
+	userAgent := string(c.Request().Header.Peek("User-Agent"))
+	if userAgent == "" {
+		h.server.Logger.Error("Missing user agent header")
+		response := map[string]string{"error": "no user agent header, please provide it"}
+		return c.Status(http.StatusBadRequest).JSON(response)
+	}
 
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
@@ -29,13 +35,11 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	/////////////////////////////////////////
-	err, authTokens := h.userAppService.Register(&request)
+	err, authTokens := h.userAppService.Register(&request, userAgent)
 	if err != nil {
 		response := map[string]string{"error": err.Message}
 		return c.Status(err.StatusCode).JSON(response)
 	}
-	/////////////////////////////////////////
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "refresh_token",
@@ -51,6 +55,12 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 func (h *UserHandler) Login(c *fiber.Ctx) error {
 
 	var request dto.LoginRequest
+	userAgent := string(c.Request().Header.Peek("User-Agent"))
+	if userAgent == "" {
+		h.server.Logger.Error("Missing user agent header")
+		response := map[string]string{"error": "no user agent header, please provide it"}
+		return c.Status(http.StatusBadRequest).JSON(response)
+	}
 
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Error(err))
@@ -58,13 +68,11 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	///////////////////
-	err, authTokens := h.userAppService.Login(&request)
+	err, authTokens := h.userAppService.Login(&request, userAgent)
 	if err != nil {
 		response := map[string]string{"error": err.Message}
 		return c.Status(err.StatusCode).JSON(response)
 	}
-	///////////////////
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "refresh_token",
@@ -78,6 +86,13 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) Logout(c *fiber.Ctx) error {
+	userAgent := string(c.Request().Header.Peek("User-Agent"))
+	if userAgent == "" {
+		h.server.Logger.Error("Missing user agent header")
+		response := map[string]string{"error": "no user agent header, please provide it"}
+		return c.Status(http.StatusBadRequest).JSON(response)
+	}
+
 	refreshToken, ok := c.Locals("user-refresh_token").(string)
 	if !ok || refreshToken == "" {
 		h.server.Logger.Error("Invalid user-refresh_token local")

@@ -24,22 +24,22 @@ func NewUserApplicationService(domainService ports.UserServicePort, logger *zap.
 	}
 }
 
-func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserApplicationService) Register(request *api.RegisterRequest, userAgent string) (*serr.ServiceError, entity.AuthTokens) {
 	if err := request.Validate(); err != nil {
 		s.logger.Error(err.Error(), zap.Error(err))
 		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
-	return s.domainService.Register(request.Email, request.Username, request.Password)
+	return s.domainService.Register(request.Email, request.Username, request.Password, userAgent)
 }
 
-func (s *UserApplicationService) Login(request *api.LoginRequest) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserApplicationService) Login(request *api.LoginRequest, userAgent string) (*serr.ServiceError, entity.AuthTokens) {
 	if err := request.Validate(); err != nil {
 		s.logger.Error(err.Error(), zap.Error(err))
 		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
 
-	return s.domainService.Login(request.Email, request.Username, request.Password)
+	return s.domainService.Login(request.Email, request.Username, request.Password, userAgent)
 }
 
 func (s *UserApplicationService) Logout(refreshToken string) *serr.ServiceError {

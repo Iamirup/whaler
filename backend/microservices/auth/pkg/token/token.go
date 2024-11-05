@@ -13,7 +13,7 @@ import (
 type Token interface {
 	CreateTokenString(data any) (string, error)
 	ExtractTokenData(tokenString string, data any) error
-	CreateRefreshTokenString(data any) (string, error)
+	CreateRefreshTokenString(data any, userAgent string) (string, error)
 	ValidateRefreshToken(tokenString string) error
 	GetRefreshTokenExpiration() time.Duration
 }
@@ -67,7 +67,7 @@ func (token *token) CreateTokenString(data any) (string, error) {
 	return jwtToken.SignedString(token.privateEd25519Key)
 }
 
-func (token *token) CreateRefreshTokenString(data any) (string, error) {
+func (token *token) CreateRefreshTokenString(data any, userAgent string) (string, error) {
 	dataBytes, err := json.Marshal(data)
 	if err != nil {
 		errStr := fmt.Sprintf("error marshal data: %v", err)
@@ -77,7 +77,7 @@ func (token *token) CreateRefreshTokenString(data any) (string, error) {
 	expiredAt := jwt.NewNumericDate(time.Now().Add(token.refreshTokenExpiration))
 	registeredClaim := jwt.RegisteredClaims{
 		ExpiresAt: expiredAt,
-		ID:        "refresh", // Unique claim to distinguish refresh token
+		ID:        "refresh" + userAgent, // Unique claim to distinguish refresh token
 	}
 	payload := &Payload{dataBytes, registeredClaim}
 
