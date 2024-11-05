@@ -63,7 +63,7 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 // }
 
 const QueryGetUserByUsernameAndPassword = `
-SELECT id
+SELECT id, password
 FROM users
 WHERE username=$1`
 
@@ -72,7 +72,7 @@ func (r *userRepository) GetUserByUsernameAndPassword(username, password string)
 	user := &entity.User{Username: username}
 
 	in := []interface{}{username}
-	out := []interface{}{&user.Id}
+	out := []interface{}{&user.Id, &user.Password}
 	if err := r.rdbms.QueryRow(QueryGetUserByUsernameAndPassword, in, out); err != nil {
 		r.logger.Error("Error finding user by username and password", zap.Error(err))
 		return nil, err
@@ -87,7 +87,7 @@ func (r *userRepository) GetUserByUsernameAndPassword(username, password string)
 }
 
 const QueryGetUserByEmailAndPassword = `
-SELECT id
+SELECT id, password
 FROM users
 WHERE email=$1`
 
@@ -96,7 +96,7 @@ func (r *userRepository) GetUserByEmailAndPassword(email, password string) (*ent
 	user := &entity.User{Email: email}
 
 	in := []interface{}{email}
-	out := []interface{}{&user.Id}
+	out := []interface{}{&user.Id, &user.Password}
 	if err := r.rdbms.QueryRow(QueryGetUserByEmailAndPassword, in, out); err != nil {
 		r.logger.Error("Error finding user by email and password", zap.Error(err))
 		return nil, err
