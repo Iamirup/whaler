@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -86,14 +87,10 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) Logout(c *fiber.Ctx) error {
-	userAgent := string(c.Request().Header.Peek("User-Agent"))
-	if userAgent == "" {
-		h.server.Logger.Error("Missing user agent header")
-		response := map[string]string{"error": "no user agent header, please provide it"}
-		return c.Status(http.StatusBadRequest).JSON(response)
-	}
-
 	refreshToken, ok := c.Locals("user-refresh_token").(string)
+
+	fmt.Println(refreshToken)
+
 	if !ok || refreshToken == "" {
 		h.server.Logger.Error("Invalid user-refresh_token local")
 		return c.SendStatus(http.StatusInternalServerError)

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
@@ -22,6 +23,10 @@ func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.Refr
 	in := []any{refreshToken.Token, refreshToken.OwnerId}
 	out := []any{&refreshToken.OwnerId}
 	if err := r.rdbms.QueryRow(QueryCreateNewRefreshToken, in, out); err != nil {
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			r.logger.Error(err.Error(), zap.Error(err))
+			return err
+		}
 		r.logger.Error("Error inserting new refresh token", zap.Error(err))
 		return err
 	}

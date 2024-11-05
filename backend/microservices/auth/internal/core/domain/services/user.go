@@ -45,10 +45,10 @@ func (s *UserService) Register(email, username, password, userAgent string) (*se
 	if err := s.userPersistencePort.CreateUser(userEntity); err != nil {
 		if strings.Contains(err.Error(), "users_email_key") {
 			s.logger.Error("User with given email already exists", zap.String("email", email))
-			return &serr.ServiceError{Message: "User with given email already exists", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+			return &serr.ServiceError{Message: "User with given email already exists", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 		} else if strings.Contains(err.Error(), "users_username_key") {
 			s.logger.Error("User with given username already exists", zap.String("username", username))
-			return &serr.ServiceError{Message: "User with given username already exists", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+			return &serr.ServiceError{Message: "User with given username already exists", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 		}
 		s.logger.Error("Error happened while creating the user", zap.Error(err))
 		return &serr.ServiceError{Message: "Error happened while creating the user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
@@ -57,7 +57,7 @@ func (s *UserService) Register(email, username, password, userAgent string) (*se
 		return &serr.ServiceError{Message: "Error invalid user id created", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	accessToken, err := s.token.CreateTokenString(userEntity.Id)
+	newAccessToken, err := s.token.CreateTokenString(userEntity.Id)
 	if err != nil {
 		s.logger.Error("Error creating JWT access token for user", zap.Any("user", userEntity), zap.Error(err))
 		return &serr.ServiceError{Message: "Error creating JWT access token for user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
@@ -75,7 +75,7 @@ func (s *UserService) Register(email, username, password, userAgent string) (*se
 		return &serr.ServiceError{Message: "Error happened while adding the refresh token", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	return nil, entity.AuthTokens{AccessToken: accessToken, RefreshToken: newRefreshToken}
+	return nil, entity.AuthTokens{AccessToken: newAccessToken, RefreshToken: newRefreshToken}
 }
 
 func (s *UserService) Login(email, username, password, userAgent string) (*serr.ServiceError, entity.AuthTokens) {
@@ -103,25 +103,29 @@ func (s *UserService) Login(email, username, password, userAgent string) (*serr.
 		}
 	}
 
-	accessToken, err := s.token.CreateTokenString(user.Id)
+	newAccessToken, err := s.token.CreateTokenString(user.Id)
 	if err != nil {
 		s.logger.Error("Error creating JWT access token for user", zap.Any("user", user), zap.Error(err))
 		return &serr.ServiceError{Message: "Error creating JWT access token for user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	refreshToken, err := s.token.CreateRefreshTokenString(user.Id, userAgent)
+	newRefreshToken, err := s.token.CreateRefreshTokenString(user.Id, userAgent)
 	if err != nil {
 		s.logger.Error("Error creating JWT refresh token for user", zap.Any("user", user), zap.Error(err))
 		return &serr.ServiceError{Message: "Error creating JWT refresh token for user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	newRefreshToken := &entity.RefreshToken{Token: refreshToken, OwnerId: user.Id}
-	if err := s.refreshTokenPersistencePort.CreateNewRefreshToken(newRefreshToken); err != nil {
+	refreshTokenEntity := &entity.RefreshToken{Token: newRefreshToken, OwnerId: user.Id}
+	if err := s.refreshTokenPersistencePort.CreateNewRefreshToken(refreshTokenEntity); err != nil {
+		if strings.Contains(err.Error(), "refresh_tokens_pkey") {
+			s.logger.Error("This user is already logged in", zap.String("email", email))
+			return &serr.ServiceError{Message: "You already logged in", StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
+		}
 		s.logger.Error("Error happened while adding the refresh token", zap.Error(err))
 		return &serr.ServiceError{Message: "Error happened while adding the refresh token", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	return nil, entity.AuthTokens{AccessToken: accessToken, RefreshToken: refreshToken}
+	return nil, entity.AuthTokens{AccessToken: newAccessToken, RefreshToken: newRefreshToken}
 }
 
 func (s *UserService) Logout(refreshToken string) *serr.ServiceError {

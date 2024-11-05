@@ -31,7 +31,6 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 			r.logger.Error(err.Error(), zap.Error(err))
 			return err
 		}
-
 		r.logger.Error("Error inserting user", zap.Error(err))
 		return err
 	}

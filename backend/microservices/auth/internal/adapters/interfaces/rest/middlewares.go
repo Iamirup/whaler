@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,6 +11,8 @@ import (
 
 func (h *UserHandler) fetchUserRefreshToken(c *fiber.Ctx) error {
 	refreshToken := c.Cookies("refresh_token")
+
+	fmt.Println(refreshToken)
 
 	if refreshToken == "" {
 		h.server.Logger.Error("Missing refresh token")
@@ -23,6 +26,8 @@ func (h *UserHandler) fetchUserRefreshToken(c *fiber.Ctx) error {
 		response := map[string]string{"error": "invalid refresh token, please login again"}
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
+
+	fmt.Println(refreshToken)
 
 	c.Locals("user-refresh_token", refreshToken)
 	return c.Next()
