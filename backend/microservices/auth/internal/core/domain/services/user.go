@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/token"
 
@@ -38,11 +37,10 @@ func NewUserService(
 
 func (s *UserService) Register(email, username, password string) (*serr.ServiceError, entity.AuthTokens) {
 
-	user := &entity.User{
-		Email:     email,
-		Username:  username,
-		Password:  password,
-		CreatedAt: time.Now(),
+	userEntity := &entity.User{
+		Email:    email,
+		Username: username,
+		Password: password,
 	}
 
 	user, err := s.userPersistencePort.GetUserByUsername(username)
@@ -54,12 +52,11 @@ func (s *UserService) Register(email, username, password string) (*serr.ServiceE
 		return &serr.ServiceError{Message: "User with given username already exists", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	user = &entity.User{Username: username, Password: password}
-	if err := s.userPersistencePort.CreateUser(user); err != nil {
+	if err := s.userPersistencePort.CreateUser(userEntity); err != nil {
 		s.logger.Error("Error happened while creating the user", zap.Error(err))
 		return &serr.ServiceError{Message: "Error happened while creating the user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
-	} else if user.Id == "" {
-		s.logger.Error("Error invalid user id created", zap.Any("user", user))
+	} else if userEntity.Id == "" {
+		s.logger.Error("Error invalid user id created", zap.Any("user", userEntity))
 		return &serr.ServiceError{Message: "Error invalid user id created", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
