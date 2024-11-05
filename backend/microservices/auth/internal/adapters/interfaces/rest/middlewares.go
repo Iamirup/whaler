@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 )
@@ -62,16 +63,14 @@ func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 				return c.Status(http.StatusUnauthorized).JSON(response)
 			}
 
-			////////////////////////////////////////
-			DBrefreshToken, err := h.refreshTokenAppService.GetRefreshTokenById(id)
-			if err != nil || DBrefreshToken == nil {
+			DBrefreshTokenEntity, err := h.refreshTokenAppService.GetRefreshTokenById(id)
+			if err != nil || DBrefreshTokenEntity == nil {
 				response := map[string]string{"error": err.Message}
 				return c.Status(err.StatusCode).JSON(response)
 			}
-			////////////////////////////////////////
 
-			if refreshToken != DBrefreshToken.Token {
-				h.server.Logger.Error("Invalid refresh token", zap.Error(err))
+			if !entity.CheckTokenHash(refreshToken, DBrefreshTokenEntity.Token) {
+				h.server.Logger.Error("Invalid refresh token")
 				response := map[string]string{"error": "invalid refresh token, please login again"}
 				return c.Status(http.StatusUnauthorized).JSON(response)
 			}

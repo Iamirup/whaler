@@ -20,7 +20,13 @@ func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.Refr
 		return errors.New("insufficient refresh token")
 	}
 
-	in := []any{refreshToken.Token, refreshToken.OwnerId}
+	hashedToken, err := entity.HashToken(refreshToken.Token)
+	if err != nil {
+		r.logger.Error("Error hashing token", zap.Error(err))
+		return err
+	}
+
+	in := []any{hashedToken, refreshToken.OwnerId}
 	out := []any{&refreshToken.OwnerId}
 	if err := r.rdbms.QueryRow(QueryCreateNewRefreshToken, in, out); err != nil {
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
@@ -64,7 +70,13 @@ WHERE refresh_token = $1;`
 
 func (r *refreshTokenRepository) RemoveRefreshToken(refreshToken string) error {
 
-	in := []interface{}{refreshToken}
+	hashedToken, err := entity.HashToken(refreshToken)
+	if err != nil {
+		r.logger.Error("Error hashing token", zap.Error(err))
+		return err
+	}
+
+	in := []interface{}{hashedToken}
 	if err := r.rdbms.Execute(QueryRemoveRefreshToken, in); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
 			r.logger.Error("Error owner refresh token not found", zap.Error(err))

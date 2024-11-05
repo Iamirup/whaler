@@ -27,10 +27,6 @@ func NewRefreshTokenService(
 	}
 }
 
-func (s *RefreshTokenService) Refresh(refreshToken string) *serr.ServiceError {
-	return nil
-}
-
 func (s *RefreshTokenService) GetRefreshTokenById(userId string) (*entity.RefreshToken, *serr.ServiceError) {
 	refreshToken, err := s.refreshTokenPersistencePort.GetRefreshTokenById(userId)
 	if err != nil {

@@ -20,7 +20,6 @@ type (
 
 	// RefreshTokenServicePort defines the methods for interacting with refresh token services
 	RefreshTokenServicePort interface {
-		Refresh(refreshToken string) *serr.ServiceError
 		GetRefreshTokenById(userId string) (*entity.RefreshToken, *serr.ServiceError)
 	}
 )

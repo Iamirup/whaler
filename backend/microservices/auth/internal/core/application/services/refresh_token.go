@@ -16,10 +16,6 @@ func NewRefreshTokenApplicationService(domainService ports.RefreshTokenServicePo
 	}
 }
 
-func (s *RefreshTokenApplicationService) Refresh(refreshToken string) *serr.ServiceError {
-	return s.domainService.Refresh(refreshToken)
-}
-
 func (s *RefreshTokenApplicationService) GetRefreshTokenById(userId string) (*entity.RefreshToken, *serr.ServiceError) {
 	return s.domainService.GetRefreshTokenById(userId)
 }
