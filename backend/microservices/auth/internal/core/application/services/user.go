@@ -23,9 +23,9 @@ func NewUserApplicationService(domainService ports.UserServicePort) *UserApplica
 	}
 }
 
-// RedeemVoucher handles the redemption process of a voucher and interacts with the domain services.
 func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.ServiceError, entity.AuthTokens) {
-	if err := request.Validate(); err != nil {
+	err := request.Validate()
+	if err != nil {
 		s.logger.Error(err.Error(), zap.Error(err))
 		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
@@ -33,9 +33,9 @@ func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.S
 	return s.domainService.Register(request.Email, request.Username, request.Password)
 }
 
-// CreateVoucher create a new voucher
 func (s *UserApplicationService) Login(request *api.LoginRequest) (*serr.ServiceError, entity.AuthTokens) {
-	if err := request.Validate(); err != nil {
+	err := request.Validate()
+	if err != nil {
 		s.logger.Error(err.Error(), zap.Error(err))
 		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}

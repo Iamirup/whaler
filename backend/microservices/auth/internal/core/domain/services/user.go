@@ -16,7 +16,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// UserService provides domain logic related to voucher redemption history.
 type UserService struct {
 	userPersistencePort         ports.UserPersistencePort
 	refreshTokenPersistencePort ports.RefreshTokenPersistencePort
@@ -24,7 +23,6 @@ type UserService struct {
 	token                       token.Token
 }
 
-// NewUserService creates a new instance of UserService.
 func NewUserService(
 	userPersistencePort ports.UserPersistencePort,
 	refreshTokenPersistencePort ports.RefreshTokenPersistencePort,
@@ -38,7 +36,6 @@ func NewUserService(
 	}
 }
 
-// RecordRedemption records a new voucher redemption in the history.
 func (s *UserService) Register(email, username, password string) (*serr.ServiceError, entity.AuthTokens) {
 
 	user := &entity.User{
@@ -87,7 +84,6 @@ func (s *UserService) Register(email, username, password string) (*serr.ServiceE
 	return nil, entity.AuthTokens{AccessToken: accessToken, RefreshToken: refreshToken}
 }
 
-// ListRedeemedHistoriesByCode retrieves the redemption history for a specific voucher's code.
 func (s *UserService) Login(email, username, password string) (*serr.ServiceError, entity.AuthTokens) {
 
 	var user *entity.User
