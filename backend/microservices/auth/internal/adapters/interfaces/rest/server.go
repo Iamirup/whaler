@@ -33,7 +33,7 @@ func New(log *zap.Logger, userRepo ports.UserPersistencePort, refreshTokenRepo p
 	authV1 := server.clientApp.Group("/api/auth/v1")
 
 	userService := domainService.NewUserService(userRepo, refreshTokenRepo, log, token)
-	userHandler := NewUserHandler(server, appService.NewUserApplicationService(userService))
+	userHandler := NewUserHandler(server, appService.NewUserApplicationService(userService, log))
 
 	refreshTokenService := domainService.NewRefreshTokenService(refreshTokenRepo, log, token)
 	refreshTokenHandler := NewRefreshTokenHandler(server, appService.NewRefreshTokenApplicationService(refreshTokenService))

@@ -17,15 +17,15 @@ type UserApplicationService struct {
 	logger        *zap.Logger
 }
 
-func NewUserApplicationService(domainService ports.UserServicePort) *UserApplicationService {
+func NewUserApplicationService(domainService ports.UserServicePort, logger *zap.Logger) *UserApplicationService {
 	return &UserApplicationService{
 		domainService: domainService,
+		logger:        logger,
 	}
 }
 
 func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.ServiceError, entity.AuthTokens) {
-	err := request.Validate()
-	if err != nil {
+	if err := request.Validate(); err != nil {
 		s.logger.Error(err.Error(), zap.Error(err))
 		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
@@ -34,8 +34,7 @@ func (s *UserApplicationService) Register(request *api.RegisterRequest) (*serr.S
 }
 
 func (s *UserApplicationService) Login(request *api.LoginRequest) (*serr.ServiceError, entity.AuthTokens) {
-	err := request.Validate()
-	if err != nil {
+	if err := request.Validate(); err != nil {
 		s.logger.Error(err.Error(), zap.Error(err))
 		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
 	}
