@@ -60,6 +60,8 @@ func (s *UserService) Register(email, username, password string) (*serr.ServiceE
 		return &serr.ServiceError{Message: "Error invalid user id created", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
+	fmt.Println(user)
+
 	accessToken, err := s.token.CreateTokenString(user.Id)
 	if err != nil {
 		s.logger.Error("Error creating JWT access token for user", zap.Any("user", user), zap.Error(err))
