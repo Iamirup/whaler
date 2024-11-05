@@ -11,8 +11,8 @@ import (
 )
 
 type Token interface {
-	CreateTokenString(data any) (string, error)
-	ExtractTokenData(tokenString string, data any) error
+	CreateTokenString(userId, username string) (string, error)
+	ExtractTokenData(tokenString string) (*AccessTokenPayload, error)
 	CreateRefreshTokenString(data any, userAgent string) (string, error)
 	ValidateRefreshToken(tokenString string) error
 	GetRefreshTokenExpiration() time.Duration
@@ -47,21 +47,25 @@ func New(cfg *Config) (Token, error) {
 	return token, nil
 }
 
-type Payload struct {
+type AccessTokenPayload struct {
+	Id       string `json:"user_id"`
+	Username string `json:"user_name"`
+	jwt.RegisteredClaims
+}
+
+type RefreshTokenPayload struct {
 	Data []byte `json:"data"`
 	jwt.RegisteredClaims
 }
 
-func (token *token) CreateTokenString(data any) (string, error) {
-	dataBytes, err := json.Marshal(data)
-	if err != nil {
-		errStr := fmt.Sprintf("error marshal data: %v", err)
-		return "", errors.New(errStr)
+func (token *token) CreateTokenString(userId, username string) (string, error) {
+	payload := &AccessTokenPayload{
+		Id:       userId,
+		Username: username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(token.accessTokenExpiration)),
+		},
 	}
-
-	expiredAt := jwt.NewNumericDate(time.Now().Add(token.accessTokenExpiration))
-	registeredClaim := jwt.RegisteredClaims{ExpiresAt: expiredAt}
-	payload := &Payload{dataBytes, registeredClaim}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodEdDSA, payload)
 	return jwtToken.SignedString(token.privateEd25519Key)
@@ -79,7 +83,7 @@ func (token *token) CreateRefreshTokenString(data any, userAgent string) (string
 		ExpiresAt: expiredAt,
 		ID:        "refresh" + userAgent, // Unique claim to distinguish refresh token
 	}
-	payload := &Payload{dataBytes, registeredClaim}
+	payload := &RefreshTokenPayload{dataBytes, registeredClaim}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodEdDSA, payload)
 	return jwtToken.SignedString(token.privateEd25519Key)
@@ -91,7 +95,7 @@ const (
 	errorUnmarshalData  = "error unmarshaling the data"
 )
 
-func (token *token) ExtractTokenData(tokenString string, data any) error {
+func (token *token) ExtractTokenData(tokenString string) (*AccessTokenPayload, error) {
 	checkSigningMethod := func(jwtToken *jwt.Token) (any, error) {
 		if _, ok := jwtToken.Method.(*jwt.SigningMethodEd25519); !ok {
 			return nil, fmt.Errorf("wrong signing method: %v", jwtToken.Header["alg"])
@@ -99,33 +103,28 @@ func (token *token) ExtractTokenData(tokenString string, data any) error {
 		return token.publicEd25519Key, nil
 	}
 
-	jwtToken, err := jwt.ParseWithClaims(tokenString, &Payload{}, checkSigningMethod, jwt.WithoutClaimsValidation())
+	jwtToken, err := jwt.ParseWithClaims(tokenString, &AccessTokenPayload{}, checkSigningMethod, jwt.WithoutClaimsValidation())
 	if err != nil {
 		errStr := fmt.Sprintf("error: %v, token: %s", err, tokenString)
-		return errors.New(errStr)
+		return nil, errors.New(errStr)
 	}
 
 	if !jwtToken.Valid {
 		errStr := fmt.Sprintf("%s, token: %v", "Invalid token", jwtToken)
-		return errors.New(errStr)
+		return nil, errors.New(errStr)
 	}
 
-	payload, ok := jwtToken.Claims.(*Payload)
+	payload, ok := jwtToken.Claims.(*AccessTokenPayload)
 	if !ok {
 		errStr := fmt.Sprintf("%s: %s, token: %v", "Invalid token", "error mapping payload", jwtToken)
-		return errors.New(errStr)
-	}
-
-	if err := json.Unmarshal([]byte(payload.Data), data); err != nil {
-		errStr := fmt.Sprintf("%s: %s, data: %s", "Invalid token", "error unmarshalling data", payload.Data)
-		return errors.New(errStr)
+		return nil, errors.New(errStr)
 	}
 
 	if payload.ExpiresAt != nil && time.Now().After(payload.ExpiresAt.Time) {
-		return errors.New("error token has expired")
+		return nil, errors.New("error token has expired")
 	}
 
-	return nil
+	return payload, nil
 }
 
 func (token *token) ValidateRefreshToken(tokenString string) error {
@@ -136,7 +135,7 @@ func (token *token) ValidateRefreshToken(tokenString string) error {
 		return token.publicEd25519Key, nil
 	}
 
-	jwtToken, err := jwt.ParseWithClaims(tokenString, &Payload{}, checkSigningMethod)
+	jwtToken, err := jwt.ParseWithClaims(tokenString, &RefreshTokenPayload{}, checkSigningMethod)
 	if err != nil {
 		errStr := fmt.Sprintf("error: %v, token: %s", err, tokenString)
 		return errors.New(errStr)

@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (h *UserHandler) fetchUserRefreshToken(c *fiber.Ctx) error {
+func (h *UserHandler) fetchUserRefreshTokenMiddleware(c *fiber.Ctx) error {
 	refreshToken := c.Cookies("refresh_token")
 
 	fmt.Println(refreshToken)
@@ -33,7 +33,7 @@ func (h *UserHandler) fetchUserRefreshToken(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func (h *RefreshTokenHandler) fetchUserId(c *fiber.Ctx) error {
+func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 	headerBytes := c.Request().Header.Peek("Authorization")
 	header := strings.TrimPrefix(string(headerBytes), "Bearer ")
 
@@ -43,8 +43,8 @@ func (h *RefreshTokenHandler) fetchUserId(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
 
-	var id string
-	err := h.server.Token.ExtractTokenData(header, &id)
+	accessTokenPayload, err := h.server.Token.ExtractTokenData(header)
+	id, username := accessTokenPayload.Id, accessTokenPayload.Username
 	if err != nil {
 		// Attempt to use refresh token if access token is invalid or expired
 		refreshToken := c.Cookies("refresh_token")
@@ -77,7 +77,7 @@ func (h *RefreshTokenHandler) fetchUserId(c *fiber.Ctx) error {
 			}
 
 			// Generate new access token
-			newAccessToken, errs := h.server.Token.CreateTokenString(id)
+			newAccessToken, errs := h.server.Token.CreateTokenString(id, username)
 			if errs != nil {
 				h.server.Logger.Error("Failed to create new access token", zap.Error(errs))
 				response := map[string]string{"error": "failed to create new access token, please login again"}
@@ -95,5 +95,6 @@ func (h *RefreshTokenHandler) fetchUserId(c *fiber.Ctx) error {
 	}
 
 	c.Locals("user-id", id)
+	c.Locals("user-username", username)
 	return c.Next()
 }
