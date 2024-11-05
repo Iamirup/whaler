@@ -12,8 +12,8 @@ type (
 		// CreateUser adds a new user to the database
 		CreateUser(user *entity.User) error
 
-		// GetUserByUsername retrieves a user by its username
-		GetUserByUsername(username string) (*entity.User, error)
+		// // GetUserByUsername retrieves a user by its username
+		// GetUserByUsername(username string) (*entity.User, error)
 
 		// GetUserByUsernameAndPassword retrieves a user by its username and password
 		GetUserByUsernameAndPassword(username, password string) (*entity.User, error)

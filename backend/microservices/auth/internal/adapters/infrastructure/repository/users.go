@@ -2,9 +2,9 @@ package repository
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
-	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
 	"go.uber.org/zap"
 )
 
@@ -27,6 +27,11 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 	in := []any{user.Email, user.Username, hashedPassword}
 	out := []any{&user.Id}
 	if err := r.rdbms.QueryRow(QueryCreateUser, in, out); err != nil {
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			r.logger.Error(err.Error(), zap.Error(err))
+			return err
+		}
+
 		r.logger.Error("Error inserting user", zap.Error(err))
 		return err
 	}
@@ -34,28 +39,28 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 	return nil
 }
 
-const QueryGetUserByUsername = `
-SELECT id
-FROM users
-WHERE username=$1;`
+// const QueryGetUserByUsername = `
+// SELECT id
+// FROM users
+// WHERE username=$1;`
 
-func (r *userRepository) GetUserByUsername(username string) (*entity.User, error) {
+// func (r *userRepository) GetUserByUsername(username string) (*entity.User, error) {
 
-	user := &entity.User{Username: username}
+// 	user := &entity.User{Username: username}
 
-	in := []interface{}{username}
-	out := []interface{}{&user.Id}
-	if err := r.rdbms.QueryRow(QueryGetUserByUsername, in, out); err != nil {
-		if err.Error() == rdbms.ErrNotFound {
-			return nil, err
-		}
+// 	in := []interface{}{username}
+// 	out := []interface{}{&user.Id}
+// 	if err := r.rdbms.QueryRow(QueryGetUserByUsername, in, out); err != nil {
+// 		if err.Error() == rdbms.ErrNotFound {
+// 			return nil, err
+// 		}
 
-		r.logger.Error("Error find user by username", zap.Error(err))
-		return nil, err
-	}
+// 		r.logger.Error("Error find user by username", zap.Error(err))
+// 		return nil, err
+// 	}
 
-	return user, nil
-}
+// 	return user, nil
+// }
 
 const QueryGetUserByUsernameAndPassword = `
 SELECT id

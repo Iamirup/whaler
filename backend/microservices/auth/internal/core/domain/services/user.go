@@ -11,7 +11,6 @@ import (
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 
 	serr "github.com/Iamirup/whaler/backend/microservices/auth/pkg/errors"
-	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
 	"go.uber.org/zap"
 )
 
@@ -43,16 +42,14 @@ func (s *UserService) Register(email, username, password string) (*serr.ServiceE
 		Password: password,
 	}
 
-	user, err := s.userPersistencePort.GetUserByUsername(username)
-	if err != nil && err.Error() != rdbms.ErrNotFound {
-		s.logger.Error("Error while retrieving data from database", zap.Error(err))
-		return &serr.ServiceError{Message: "Error while retrieving data from database", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
-	} else if err == nil || (user != nil && user.Id != "") {
-		s.logger.Error("User with given username already exists", zap.String("username", username))
-		return &serr.ServiceError{Message: "User with given username already exists", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
-	}
-
 	if err := s.userPersistencePort.CreateUser(userEntity); err != nil {
+		if strings.Contains(err.Error(), "users_email_key") {
+			s.logger.Error("User with given email already exists", zap.String("email", email))
+			return &serr.ServiceError{Message: "User with given email already exists", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+		} else if strings.Contains(err.Error(), "users_username_key") {
+			s.logger.Error("User with given username already exists", zap.String("username", username))
+			return &serr.ServiceError{Message: "User with given username already exists", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+		}
 		s.logger.Error("Error happened while creating the user", zap.Error(err))
 		return &serr.ServiceError{Message: "Error happened while creating the user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	} else if userEntity.Id == "" {
