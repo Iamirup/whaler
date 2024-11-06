@@ -9,8 +9,8 @@ type (
 	}
 
 	LoginRequest struct {
-		Email    string `json:"email" validate:"omitempty,email"`
-		Username string `json:"username" validate:"omitempty,username"`
+		Email    string `json:"email,omitempty" validate:"omitempty,email"`
+		Username string `json:"username,omitempty" validate:"omitempty,username"`
 		Password string `json:"password" validate:"required"`
 	}
 )
