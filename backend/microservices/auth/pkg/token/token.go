@@ -12,7 +12,7 @@ import (
 
 type Token interface {
 	CreateTokenString(userId, username string) (string, error)
-	ExtractTokenData(tokenString string) (*AccessTokenPayload, error)
+	ExtractTokenData(tokenString string) (AccessTokenPayload, error)
 	CreateRefreshTokenString(data any, userAgent string) (string, error)
 	ValidateRefreshToken(tokenString string) error
 	GetRefreshTokenExpiration() time.Duration
@@ -95,7 +95,7 @@ const (
 	errorUnmarshalData  = "error unmarshaling the data"
 )
 
-func (token *token) ExtractTokenData(tokenString string) (*AccessTokenPayload, error) {
+func (token *token) ExtractTokenData(tokenString string) (AccessTokenPayload, error) {
 	checkSigningMethod := func(jwtToken *jwt.Token) (any, error) {
 		if _, ok := jwtToken.Method.(*jwt.SigningMethodEd25519); !ok {
 			return nil, fmt.Errorf("wrong signing method: %v", jwtToken.Header["alg"])
@@ -106,22 +106,22 @@ func (token *token) ExtractTokenData(tokenString string) (*AccessTokenPayload, e
 	jwtToken, err := jwt.ParseWithClaims(tokenString, &AccessTokenPayload{}, checkSigningMethod, jwt.WithoutClaimsValidation())
 	if err != nil {
 		errStr := fmt.Sprintf("error: %v, token: %s", err, tokenString)
-		return nil, errors.New(errStr)
+		return AccessTokenPayload{}, errors.New(errStr)
 	}
 
 	if !jwtToken.Valid {
 		errStr := fmt.Sprintf("%s, token: %v", "Invalid token", jwtToken)
-		return nil, errors.New(errStr)
+		return AccessTokenPayload{}, errors.New(errStr)
 	}
 
-	payload, ok := jwtToken.Claims.(*AccessTokenPayload)
+	payload, ok := jwtToken.Claims.(AccessTokenPayload)
 	if !ok {
 		errStr := fmt.Sprintf("%s: %s, token: %v", "Invalid token", "error mapping payload", jwtToken)
-		return nil, errors.New(errStr)
+		return AccessTokenPayload{}, errors.New(errStr)
 	}
 
 	if payload.ExpiresAt != nil && time.Now().After(payload.ExpiresAt.Time) {
-		return nil, errors.New("error token has expired")
+		return AccessTokenPayload{}, errors.New("error token has expired")
 	}
 
 	return payload, nil

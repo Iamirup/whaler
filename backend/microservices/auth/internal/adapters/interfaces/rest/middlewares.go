@@ -45,7 +45,7 @@ func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 
 	accessTokenPayload, err := h.server.Token.ExtractTokenData(header)
 	fmt.Println(accessTokenPayload)
-	id, username := (*accessTokenPayload).Id, (*accessTokenPayload).Username
+	id, username := accessTokenPayload.Id, accessTokenPayload.Username
 	if err != nil {
 		// Attempt to use refresh token if access token is invalid or expired
 		refreshToken := c.Cookies("refresh_token")
@@ -67,6 +67,12 @@ func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 				response := map[string]string{"error": err.Message}
 				return c.Status(err.StatusCode).JSON(response)
 			}
+
+			// if !entity.CheckTokenHash(refreshToken, DBrefreshTokenEntity.Token) {
+			// 	h.server.Logger.Error("Invalid refresh token")
+			// 	response := map[string]string{"error": "invalid refresh token, please login again"}
+			// 	return c.Status(http.StatusUnauthorized).JSON(response)
+			// }
 
 			// Generate new access token
 			newAccessToken, errs := h.server.Token.CreateTokenString(id, username)
