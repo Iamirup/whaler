@@ -36,28 +36,26 @@ func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.Refr
 	return nil
 }
 
-const QueryGetRefreshTokenById = `
+const QueryGetAndCheckRefreshTokenById = `
 SELECT refresh_token
 FROM refresh_tokens
 WHERE owner_id = $1;`
 
-func (r *refreshTokenRepository) GetRefreshTokenById(ownerId string) (*entity.RefreshToken, error) {
-
-	refreshToken := &entity.RefreshToken{OwnerId: ownerId}
+func (r *refreshTokenRepository) GetAndCheckRefreshTokenById(ownerId, refreshToken string) error {
 
 	in := []interface{}{ownerId}
-	out := []interface{}{&refreshToken.Token}
-	if err := r.rdbms.QueryRow(QueryGetRefreshTokenById, in, out); err != nil {
+	out := []interface{}{&refreshToken}
+	if err := r.rdbms.QueryRow(QueryGetAndCheckRefreshTokenById, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
 			r.logger.Error("Error id not found", zap.Error(err))
-			return nil, err
+			return err
 		}
 
 		r.logger.Error("Error find refresh token by id", zap.Error(err))
-		return nil, err
+		return err
 	}
 
-	return refreshToken, nil
+	return nil
 }
 
 const QueryRemoveRefreshToken = `

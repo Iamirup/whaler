@@ -2,7 +2,6 @@ package services
 
 import (
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/ports"
-	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
 	serr "github.com/Iamirup/whaler/backend/microservices/auth/pkg/errors"
 )
 
@@ -16,6 +15,6 @@ func NewRefreshTokenApplicationService(domainService ports.RefreshTokenServicePo
 	}
 }
 
-func (s *RefreshTokenApplicationService) GetRefreshTokenById(userId string) (*entity.RefreshToken, *serr.ServiceError) {
-	return s.domainService.GetRefreshTokenById(userId)
+func (s *RefreshTokenApplicationService) GetAndCheckRefreshTokenById(userId, refreshToken string) *serr.ServiceError {
+	return s.domainService.GetAndCheckRefreshTokenById(userId, refreshToken)
 }
