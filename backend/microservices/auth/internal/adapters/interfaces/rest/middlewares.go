@@ -68,12 +68,6 @@ func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 				return c.Status(err.StatusCode).JSON(response)
 			}
 
-			// if !entity.CheckTokenHash(refreshToken, DBrefreshTokenEntity.Token) {
-			// 	h.server.Logger.Error("Invalid refresh token")
-			// 	response := map[string]string{"error": "invalid refresh token, please login again"}
-			// 	return c.Status(http.StatusUnauthorized).JSON(response)
-			// }
-
 			// Generate new access token
 			newAccessToken, errs := h.server.Token.CreateTokenString(id, username)
 			if errs != nil {
