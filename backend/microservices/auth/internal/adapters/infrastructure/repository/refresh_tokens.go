@@ -20,11 +20,7 @@ func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.Refr
 		return errors.New("insufficient refresh token")
 	}
 
-	hashedToken, err := entity.HashToken(refreshToken.Token, r.config.Pepper)
-	if err != nil {
-		r.logger.Error("Error hashing token", zap.Error(err))
-		return err
-	}
+	hashedToken := entity.HashToken(refreshToken.Token, r.config.Pepper)
 
 	in := []any{hashedToken, refreshToken.OwnerId}
 	out := []any{&refreshToken.OwnerId}
@@ -70,11 +66,7 @@ WHERE refresh_token = $1;`
 
 func (r *refreshTokenRepository) RemoveRefreshToken(refreshToken string) error {
 
-	hashedToken, err := entity.HashToken(refreshToken, r.config.Pepper)
-	if err != nil {
-		r.logger.Error("Error hashing token", zap.Error(err))
-		return err
-	}
+	hashedToken := entity.HashToken(refreshToken, r.config.Pepper)
 
 	in := []interface{}{hashedToken}
 	if err := r.rdbms.Execute(QueryRemoveRefreshToken, in); err != nil {
