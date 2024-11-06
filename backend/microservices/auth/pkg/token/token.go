@@ -95,7 +95,7 @@ const (
 	errorUnmarshalData  = "error unmarshaling the data"
 )
 
-func (token *token) ExtractTokenData(tokenString string) (*AccessTokenPayload, error) {
+func (token *token) ExtractTokenData(tokenString string) (AccessTokenPayload, error) {
 	checkSigningMethod := func(jwtToken *jwt.Token) (any, error) {
 		if _, ok := jwtToken.Method.(*jwt.SigningMethodEd25519); !ok {
 			return nil, fmt.Errorf("wrong signing method: %v", jwtToken.Header["alg"])
