@@ -45,8 +45,8 @@ func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 
 	accessTokenPayload, err := h.server.Token.ExtractTokenData(header)
 	fmt.Println(accessTokenPayload)
-	fmt.Println(*accessTokenPayload)
-	id, username := (*accessTokenPayload).Id, (*accessTokenPayload).Username
+
+	id, username := accessTokenPayload.Id, accessTokenPayload.Username
 	if err != nil {
 		// Attempt to use refresh token if access token is invalid or expired
 		refreshToken := c.Cookies("refresh_token")
