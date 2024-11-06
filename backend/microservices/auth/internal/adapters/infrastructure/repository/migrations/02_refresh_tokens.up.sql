@@ -1,4 +1,4 @@
 CREATE TABLE IF NOT EXISTS refresh_tokens(
-	refresh_token TEXT PRIMARY KEY,
+	refresh_token VARCHAR(72) PRIMARY KEY,
     owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

@@ -24,11 +24,12 @@ func Default() *Config {
 			Database: "db",
 		},
 		Repository: &repository.Config{
-			// CursorSecret: "A?D(G-KaPdSgVkYp",
-			// Limit: struct {
-			// 	Min int "koanf:\"min\""
-			// 	Max int "koanf:\"max\""
-			// }{12, 48},
+			CursorSecret: "A?D(G-KaPdSgVkYp",
+			Limit: struct {
+				Min int "koanf:\"min\""
+				Max int "koanf:\"max\""
+			}{12, 48},
+			Pepper: "WqL2kwU3pQav1Al",
 		},
 		Token: &token.Config{
 			PrivatePem: "-----BEGIN PRIVATE KEY-----\n" +
@@ -38,7 +39,7 @@ func Default() *Config {
 				"MCowBQYDK2VwAyEAqQsZ5iRNP3kdpNn3V/db9o/WkYHY8kkwQqCZGcDvJ+g=\n" +
 				"-----END PUBLIC KEY-----",
 			AccessTokenExpiration:  10 * time.Minute,
-			RefreshTokenExpiration: 24 * 7 * time.Hour,
+			RefreshTokenExpiration: 24 * 14 * time.Hour,
 		},
 	}
 }

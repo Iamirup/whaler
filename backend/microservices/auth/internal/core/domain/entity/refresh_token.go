@@ -3,8 +3,6 @@ package entity
 import (
 	"crypto/sha256"
 	"encoding/hex"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type RefreshToken struct {
@@ -12,29 +10,22 @@ type RefreshToken struct {
 	OwnerId string `json:"id"`
 }
 
-func HashToken(refreshToken string) (string, error) {
-
+func HashToken(refreshToken, pepper string) string {
 	sha256Hash := sha256.New()
-	sha256Hash.Write([]byte(refreshToken))
+	sha256Hash.Write([]byte(refreshToken + pepper))
 	sha256Token := sha256Hash.Sum(nil)
 
 	sha256TokenHex := hex.EncodeToString(sha256Token)
 
-	bcryptHash, err := bcrypt.GenerateFromPassword([]byte(sha256TokenHex), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-
-	return string(bcryptHash), nil
+	return sha256TokenHex
 }
 
-func CheckTokenHash(plainToken, hashedToken string) bool {
+func CheckTokenHash(plainToken, hashedToken, pepper string) bool {
 	sha256Hash := sha256.New()
-	sha256Hash.Write([]byte(plainToken))
+	sha256Hash.Write([]byte(plainToken + pepper))
 	sha256Token := sha256Hash.Sum(nil)
 
 	sha256TokenHex := hex.EncodeToString(sha256Token)
 
-	err := bcrypt.CompareHashAndPassword([]byte(hashedToken), []byte(sha256TokenHex))
-	return err == nil
+	return sha256TokenHex == plainToken
 }

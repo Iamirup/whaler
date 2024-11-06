@@ -20,7 +20,7 @@ func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.Refr
 		return errors.New("insufficient refresh token")
 	}
 
-	hashedToken, err := entity.HashToken(refreshToken.Token)
+	hashedToken, err := entity.HashToken(refreshToken.Token, r.config.Pepper)
 	if err != nil {
 		r.logger.Error("Error hashing token", zap.Error(err))
 		return err
@@ -70,7 +70,7 @@ WHERE refresh_token = $1;`
 
 func (r *refreshTokenRepository) RemoveRefreshToken(refreshToken string) error {
 
-	hashedToken, err := entity.HashToken(refreshToken)
+	hashedToken, err := entity.HashToken(refreshToken, r.config.Pepper)
 	if err != nil {
 		r.logger.Error("Error hashing token", zap.Error(err))
 		return err
