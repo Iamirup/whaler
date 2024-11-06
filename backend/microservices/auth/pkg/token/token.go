@@ -110,8 +110,6 @@ func (token *token) ExtractTokenData(tokenString string) (*AccessTokenPayload, e
 		return nil, errors.New(errStr)
 	}
 
-	fmt.Println("1: ", jwtToken)
-
 	if !jwtToken.Valid {
 		errStr := fmt.Sprintf("%s, token: %v", "Invalid token", jwtToken)
 		return nil, errors.New(errStr)
@@ -123,10 +121,8 @@ func (token *token) ExtractTokenData(tokenString string) (*AccessTokenPayload, e
 		return nil, errors.New(errStr)
 	}
 
-	fmt.Println("2: ", payload)
-
 	if payload.ExpiresAt != nil && time.Now().After(payload.ExpiresAt.Time) {
-		return nil, errors.New("error token has expired")
+		return payload, errors.New("error token has expired")
 	}
 
 	return payload, nil

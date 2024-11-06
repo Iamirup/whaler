@@ -44,9 +44,6 @@ func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 	}
 
 	accessTokenPayload, err := h.server.Token.ExtractTokenData(header)
-	fmt.Println(accessTokenPayload)
-
-	id, username := accessTokenPayload.Id, accessTokenPayload.Username
 	if err != nil {
 		// Attempt to use refresh token if access token is invalid or expired
 		refreshToken := c.Cookies("refresh_token")
@@ -57,6 +54,8 @@ func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 		}
 
 		if err.Error() == "error token has expired" {
+			id, username := accessTokenPayload.Id, accessTokenPayload.Username
+
 			err = h.server.Token.ValidateRefreshToken(refreshToken)
 			if err != nil {
 				h.server.Logger.Error("Invalid refresh token", zap.Error(err))
@@ -87,7 +86,7 @@ func (h *RefreshTokenHandler) fetchUserIdMiddleware(c *fiber.Ctx) error {
 		}
 	}
 
-	c.Locals("user-id", id)
-	c.Locals("user-username", username)
+	c.Locals("user-id", accessTokenPayload.Id)
+	c.Locals("user-username", accessTokenPayload.Username)
 	return c.Next()
 }
