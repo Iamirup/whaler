@@ -48,8 +48,9 @@ func New(cfg *Config) (Token, error) {
 }
 
 type AccessTokenPayload struct {
-	Id       string `json:"user_id"`
-	Username string `json:"user_name"`
+	Id       string `json:"id"`
+	Username string `json:"username"`
+	// UserType string `json:"user_type"`
 	jwt.RegisteredClaims
 }
 
