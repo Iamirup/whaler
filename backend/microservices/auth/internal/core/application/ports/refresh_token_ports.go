@@ -16,10 +16,14 @@ type (
 
 		// RemoveRefreshTokenById removes a refresh token by its owener user id from database
 		RemoveRefreshToken(userId string) error
+
+		// RevokeAllRefreshTokensById removes all refresh token which is related to its owener user id
+		RevokeAllRefreshTokensById(userId string) error
 	}
 
 	// RefreshTokenServicePort defines the methods for interacting with refresh token services
 	RefreshTokenServicePort interface {
 		GetAndCheckRefreshTokenById(userId, refreshToken string) *serr.ServiceError
+		RevokeAllRefreshTokensById(userId string) error
 	}
 )

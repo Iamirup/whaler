@@ -34,3 +34,7 @@ func (s *RefreshTokenService) GetAndCheckRefreshTokenById(userId, refreshToken s
 
 	return nil
 }
+
+func (s *RefreshTokenService) RevokeAllRefreshTokensById(userId string) error {
+	return s.refreshTokenPersistencePort.RevokeAllRefreshTokensById(userId)
+}

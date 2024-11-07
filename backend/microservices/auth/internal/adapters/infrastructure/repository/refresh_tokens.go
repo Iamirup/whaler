@@ -79,3 +79,23 @@ func (r *refreshTokenRepository) RemoveRefreshToken(refreshToken string) error {
 
 	return nil
 }
+
+const QueryRevokeAllRefreshTokensById = `
+DELETE FROM refresh_tokens
+WHERE owner_id = $1;`
+
+func (r *refreshTokenRepository) RevokeAllRefreshTokensById(userId string) error {
+
+	in := []interface{}{userId}
+	if err := r.rdbms.Execute(QueryRevokeAllRefreshTokensById, in); err != nil {
+		if err.Error() == rdbms.ErrNotFound {
+			r.logger.Error("Error owner id not found", zap.Error(err))
+			return err
+		}
+
+		r.logger.Error("Error find owner by its id", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
