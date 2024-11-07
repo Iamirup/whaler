@@ -20,18 +20,17 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 
 	refreshToken := c.Cookies("refresh_token")
 	accessTokenPayload, err := h.server.Token.ExtractTokenData(header)
-	if err != nil {
-		if refreshToken == "" {
-			h.server.Logger.Error("Missing refresh token")
-			response := map[string]string{"error": "no refresh token header, abnormal activity was detected. please login again"}
-			if err := h.refreshTokenAppService.RevokeAllRefreshTokensById(accessTokenPayload.Id); err != nil {
-				h.server.Logger.Error("something went wrong")
-				response := map[string]string{"error": "Something went wrong! please try again later"}
-				return c.Status(http.StatusInternalServerError).JSON(response)
-			}
-			return c.Status(http.StatusBadRequest).JSON(response)
+	if refreshToken == "" {
+		h.server.Logger.Error("Missing refresh token")
+		response := map[string]string{"error": "no refresh token header, abnormal activity was detected. please login again"}
+		if err := h.refreshTokenAppService.RevokeAllRefreshTokensById(accessTokenPayload.Id); err != nil {
+			h.server.Logger.Error("something went wrong")
+			response := map[string]string{"error": "Something went wrong! please try again later"}
+			return c.Status(http.StatusInternalServerError).JSON(response)
 		}
-
+		return c.Status(http.StatusBadRequest).JSON(response)
+	}
+	if err != nil {
 		if err.Error() == "error token has expired" {
 			err = h.server.Token.ValidateRefreshToken(refreshToken)
 			if err != nil {
