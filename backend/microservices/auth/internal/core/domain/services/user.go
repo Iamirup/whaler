@@ -132,7 +132,7 @@ func (s *UserService) Logout(refreshToken string) *serr.ServiceError {
 	err := s.refreshTokenPersistencePort.RemoveRefreshToken(refreshToken)
 	if err != nil {
 		s.logger.Error("Error invalid refresh token", zap.Error(err))
-		return &serr.ServiceError{Message: "invalid refresh token, please login again", StatusCode: http.StatusInternalServerError}
+		return &serr.ServiceError{Message: "Invalid refresh token, abnormal activity was detected. please login again", StatusCode: http.StatusInternalServerError}
 	}
 
 	return nil
