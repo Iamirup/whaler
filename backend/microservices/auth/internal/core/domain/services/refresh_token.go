@@ -29,7 +29,11 @@ func NewRefreshTokenService(
 func (s *RefreshTokenService) GetAndCheckRefreshTokenById(userId, refreshToken string) *serr.ServiceError {
 	if err := s.refreshTokenPersistencePort.GetAndCheckRefreshTokenById(userId, refreshToken); err != nil {
 		s.logger.Error("Error invalid refresh token returned", zap.Error(err))
-		return &serr.ServiceError{Message: "invalid refresh token, please login again", StatusCode: http.StatusInternalServerError}
+		if err := s.refreshTokenPersistencePort.RevokeAllRefreshTokensById(userId); err != nil {
+			s.logger.Error("something went wrong")
+			return &serr.ServiceError{Message: "Something went wrong! please try again later", StatusCode: http.StatusInternalServerError}
+		}
+		return &serr.ServiceError{Message: "invalid refresh token, abnormal activity was detected. please login again", StatusCode: http.StatusInternalServerError}
 	}
 
 	return nil

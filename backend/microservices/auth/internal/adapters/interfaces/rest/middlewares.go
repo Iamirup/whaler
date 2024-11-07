@@ -36,7 +36,7 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 			err = h.server.Token.ValidateRefreshToken(refreshToken)
 			if err != nil {
 				h.server.Logger.Error("Invalid refresh token", zap.Error(err))
-				response := map[string]string{"error": "invalid refresh token, please login again"}
+				response := map[string]string{"error": "invalid refresh token, abnormal activity was detected. please login again"}
 				if err := h.refreshTokenAppService.RevokeAllRefreshTokensById(accessTokenPayload.Id); err != nil {
 					h.server.Logger.Error("something went wrong")
 					response := map[string]string{"error": "Something went wrong! please try again later"}
@@ -53,7 +53,7 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 			newAccessToken, errs := h.server.Token.CreateTokenString(accessTokenPayload.Id, accessTokenPayload.Username)
 			if errs != nil {
 				h.server.Logger.Error("Failed to create new access token", zap.Error(errs))
-				response := map[string]string{"error": "failed to create new access token, please login again"}
+				response := map[string]string{"error": "failed to create new access token, abnormal activity was detected. please login again"}
 				if err := h.refreshTokenAppService.RevokeAllRefreshTokensById(accessTokenPayload.Id); err != nil {
 					h.server.Logger.Error("something went wrong")
 					response := map[string]string{"error": "Something went wrong! please try again later"}
@@ -66,7 +66,7 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 
 		} else {
 			h.server.Logger.Error("Something is wrong with access token")
-			response := map[string]string{"error": "invalid token header, please login again"}
+			response := map[string]string{"error": "invalid token header, abnormal activity was detected. please login again"}
 			if err := h.refreshTokenAppService.RevokeAllRefreshTokensById(accessTokenPayload.Id); err != nil {
 				h.server.Logger.Error("something went wrong")
 				response := map[string]string{"error": "Something went wrong! please try again later"}
