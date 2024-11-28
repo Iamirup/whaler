@@ -25,7 +25,7 @@ func (h *TicketHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
 
-	fmt.Println(accessTokenPayload)
+	fmt.Println(accessTokenPayload.Id)
 
 	c.Locals("user-id", accessTokenPayload.Id)
 	c.Locals("user-username", accessTokenPayload.Username)

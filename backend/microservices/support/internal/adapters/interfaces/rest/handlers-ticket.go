@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -21,6 +22,9 @@ func NewTicketHandler(server *Server, ticketAppService *services.TicketApplicati
 }
 
 func (h *TicketHandler) NewTicket(c *fiber.Ctx) error {
+
+	fmt.Println("1: ", c.Locals("user-id"))
+	fmt.Println("2: ", c.Locals("user-id").(entity.UUID))
 
 	userId, ok := c.Locals("user-id").(entity.UUID)
 	if !ok || userId == "" {

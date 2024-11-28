@@ -24,7 +24,7 @@ jobs:
         run: ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy with rsync
-        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" . ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/whaler
+        run: rsync -avz --delete -e "ssh -p ${{ secrets.PORT }}" . ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/whaler
 
       - name: Deploy
         uses: appleboy/ssh-action@master
