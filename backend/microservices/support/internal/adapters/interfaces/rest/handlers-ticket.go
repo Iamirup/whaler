@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -23,10 +22,7 @@ func NewTicketHandler(server *Server, ticketAppService *services.TicketApplicati
 
 func (h *TicketHandler) NewTicket(c *fiber.Ctx) error {
 
-	fmt.Println("1: ", c.Locals("user-id"))
-	fmt.Println("2: ", c.Locals("user-id").(entity.UUID))
-
-	userId, ok := c.Locals("user-id").(entity.UUID)
+	userId, ok := c.Locals("user-id").(string)
 	if !ok || userId == "" {
 		h.server.Logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
@@ -46,7 +42,7 @@ func (h *TicketHandler) NewTicket(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	ticketId, err := h.ticketAppService.NewTicket(&request, userId, username)
+	ticketId, err := h.ticketAppService.NewTicket(&request, entity.UUID(userId), username)
 	if err != nil {
 		// response := map[string]string{"error": err.Message}
 		response := dto.ErrorResponse{Error: err.Message, NeedRefresh: false}
@@ -62,7 +58,7 @@ func (h *TicketHandler) NewTicket(c *fiber.Ctx) error {
 
 func (h *TicketHandler) MyTickets(c *fiber.Ctx) error {
 
-	userId, ok := c.Locals("user-id").(entity.UUID)
+	userId, ok := c.Locals("user-id").(string)
 	if !ok || userId == "" {
 		h.server.Logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
@@ -71,7 +67,7 @@ func (h *TicketHandler) MyTickets(c *fiber.Ctx) error {
 	cursor := c.Query("cursor")
 	limit, _ := strconv.Atoi(c.Query("limit"))
 
-	tickets, newCursor, err := h.ticketAppService.MyTickets(userId, cursor, limit)
+	tickets, newCursor, err := h.ticketAppService.MyTickets(entity.UUID(userId), cursor, limit)
 	if err != nil {
 		// response := map[string]string{"error": err.Message}
 		response := dto.ErrorResponse{Error: err.Message, NeedRefresh: false}
