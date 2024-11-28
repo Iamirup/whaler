@@ -29,7 +29,7 @@ func NewTicketService(
 	}
 }
 
-func (s *TicketService) NewTicket(title, content string, userId entity.uuid, username string) (entity.uuid, *serr.ServiceError) {
+func (s *TicketService) NewTicket(title, content string, userId entity.UUID, username string) (entity.UUID, *serr.ServiceError) {
 
 	ticketEntity := &entity.Ticket{
 		UserId:   userId,
@@ -50,18 +50,18 @@ func (s *TicketService) NewTicket(title, content string, userId entity.uuid, use
 	return ticketEntity.TicketId, nil
 }
 
-func (s *TicketService) MyTickets(userId entity.uuid) ([]entity.Ticket, *serr.ServiceError) {
+func (s *TicketService) MyTickets(userId entity.UUID, encryptedCursor string, limit int) ([]entity.Ticket, string, *serr.ServiceError) {
 
-	tickets, err := s.ticketPersistencePort.GetMyTickets(userId)
+	tickets, newEncryptedCursor, err := s.ticketPersistencePort.GetMyTickets(userId, encryptedCursor, limit)
 	if err != nil {
 		s.logger.Error("Something went wrong in retrieving tickets", zap.Error(err))
-		return nil, &serr.ServiceError{Message: "Something went wrong in retrieving tickets", StatusCode: http.StatusInternalServerError}
+		return nil, "", &serr.ServiceError{Message: "Something went wrong in retrieving tickets", StatusCode: http.StatusInternalServerError}
 	}
 
-	return tickets, nil
+	return tickets, newEncryptedCursor, nil
 }
 
-func (s *TicketService) ReplyToTicket(ticketId entity.uuid, replyText string) *serr.ServiceError {
+func (s *TicketService) ReplyToTicket(ticketId entity.UUID, replyText string) *serr.ServiceError {
 
 	if err := s.ticketPersistencePort.CheckIfIsReplyForTheTicket(ticketId); err != nil {
 		s.logger.Error("The ticket is already replied by an admin", zap.Error(err))
@@ -76,12 +76,12 @@ func (s *TicketService) ReplyToTicket(ticketId entity.uuid, replyText string) *s
 	return nil
 }
 
-func (s *TicketService) AllTicket() ([]entity.Ticket, *serr.ServiceError) {
-	tickets, err := s.ticketPersistencePort.GetAllTickets()
+func (s *TicketService) AllTicket(encryptedCursor string, limit int) ([]entity.Ticket, string, *serr.ServiceError) {
+	tickets, newEncryptedCursor, err := s.ticketPersistencePort.GetAllTickets(encryptedCursor, limit)
 	if err != nil {
 		s.logger.Error("Something went wrong in retrieving tickets", zap.Error(err))
-		return nil, &serr.ServiceError{Message: "Something went wrong in retrieving tickets", StatusCode: http.StatusInternalServerError}
+		return nil, "", &serr.ServiceError{Message: "Something went wrong in retrieving tickets", StatusCode: http.StatusInternalServerError}
 	}
 
-	return tickets, nil
+	return tickets, newEncryptedCursor, nil
 }

@@ -35,15 +35,14 @@ func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 		myLogger.Panic("Error creating rdbms database", zap.Error(err))
 	}
 
-	userRepo := repository.NewUserRepository(myLogger, cfg.Repository, db)
-	refreshTokenRepo := repository.NewRefreshTokenRepository(myLogger, cfg.Repository, db)
+	ticketRepo := repository.NewTicketRepository(myLogger, cfg.Repository, db)
 
 	theToken, err := token.New(cfg.Token)
 	if err != nil {
 		myLogger.Panic("Error creating token object", zap.Error(err))
 	}
 
-	rest.New(myLogger, userRepo, refreshTokenRepo, theToken).Serve()
+	rest.New(myLogger, ticketRepo, theToken).Serve()
 
 	// Keep this at the bottom of the main function
 	field := zap.String("signal trap", (<-trap).String())

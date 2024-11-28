@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/crypto"
 	"github.com/Iamirup/whaler/backend/microservices/support/internal/core/domain/entity"
+	"github.com/Iamirup/whaler/backend/microservices/support/pkg/crypto"
 	"go.uber.org/zap"
 )
 
@@ -38,7 +38,7 @@ WHERE
 ORDER BY date
 FETCH NEXT $3 ROWS ONLY;`
 
-func (r *ticketRepository) GetMyTickets(userId entity.uuid, encryptedCursor string, limit int) ([]entity.Ticket, string, error) {
+func (r *ticketRepository) GetMyTickets(userId entity.UUID, encryptedCursor string, limit int) ([]entity.Ticket, string, error) {
 	var date time.Time
 
 	if limit < r.config.Limit.Min {
@@ -92,7 +92,7 @@ func (r *ticketRepository) GetMyTickets(userId entity.uuid, encryptedCursor stri
 	var lastTicket entity.Ticket
 
 	for index := limit - 1; index >= 0; index-- {
-		if tickets[index].TicketId != 0 {
+		if tickets[index].TicketId != "" {
 			lastTicket = tickets[index]
 			break
 		} else {
@@ -100,7 +100,7 @@ func (r *ticketRepository) GetMyTickets(userId entity.uuid, encryptedCursor stri
 		}
 	}
 
-	if lastTicket.TicketId == 0 {
+	if lastTicket.TicketId == "" {
 		return tickets, "", nil
 	}
 
@@ -120,12 +120,12 @@ UPDATE tickets
 SET is_done=true, reply_text=$1, reply_date=$2
 WHERE id=$3`
 
-func (r *ticketRepository) CreateReplyForTicket(ticketId entity.uuid, replyText string) error {
+func (r *ticketRepository) CreateReplyForTicket(ticketId entity.UUID, replyText string) error {
 
 	in := []interface{}{replyText, time.Now(), ticketId}
 	if err := r.rdbms.Execute(QueryCreateReplyForTicket, in); err != nil {
 		r.logger.Error("Error inserting new reply", zap.Error(err))
-		return nil, err
+		return err
 	}
 
 	return nil
@@ -136,7 +136,7 @@ SELECT id
 FROM tickets
 WHERE id=$1 and is_done=false`
 
-func (r *ticketRepository) CheckIfIsReplyForTheTicket(ticketId entity.uuid) error {
+func (r *ticketRepository) CheckIfIsReplyForTheTicket(ticketId entity.UUID) error {
 
 	ticket := &entity.Ticket{TicketId: ticketId}
 
@@ -144,7 +144,7 @@ func (r *ticketRepository) CheckIfIsReplyForTheTicket(ticketId entity.uuid) erro
 	out := []interface{}{&ticket.TicketId}
 	if err := r.rdbms.QueryRow(QueryCheckIfIsReplyForTheTicket, in, out); err != nil {
 		r.logger.Error("Error finding ticket by ticketId", zap.Error(err))
-		return nil, err
+		return err
 	}
 
 	return nil
@@ -157,7 +157,7 @@ WHERE date > $1
 ORDER BY date
 FETCH NEXT $2 ROWS ONLY;`
 
-func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]entity.Ticket, error) {
+func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]entity.Ticket, string, error) {
 
 	var date time.Time
 
@@ -212,7 +212,7 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 	var lastTicket entity.Ticket
 
 	for index := limit - 1; index >= 0; index-- {
-		if tickets[index].TicketId != 0 {
+		if tickets[index].TicketId != "" {
 			lastTicket = tickets[index]
 			break
 		} else {
@@ -220,7 +220,7 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 		}
 	}
 
-	if lastTicket.TicketId == 0 {
+	if lastTicket.TicketId == "" {
 		return tickets, "", nil
 	}
 

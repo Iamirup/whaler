@@ -24,7 +24,7 @@ func NewTicketApplicationService(domainService ports.TicketServicePort, logger *
 	}
 }
 
-func (s *TicketApplicationService) NewTicket(request *api.NewTicketRequest, userId entity.uuid, username string) (entity.uuid, *serr.ServiceError) {
+func (s *TicketApplicationService) NewTicket(request *api.NewTicketRequest, userId entity.UUID, username string) (entity.UUID, *serr.ServiceError) {
 	if err := request.Validate(); err != nil {
 		s.logger.Error(err.Error(), zap.Error(err))
 		return "", &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}
@@ -33,19 +33,19 @@ func (s *TicketApplicationService) NewTicket(request *api.NewTicketRequest, user
 	return s.domainService.NewTicket(request.Title, request.Content, userId, username)
 }
 
-func (s *TicketApplicationService) MyTickets(userId entity.uuid) ([]entity.Ticket, *serr.ServiceError) {
-	return s.domainService.MyTickets(userId)
+func (s *TicketApplicationService) MyTickets(userId entity.UUID, encryptedCursor string, limit int) ([]entity.Ticket, string, *serr.ServiceError) {
+	return s.domainService.MyTickets(userId, encryptedCursor, limit)
 }
 
 func (s *TicketApplicationService) ReplyToTicket(request *api.ReplyToTicketRequest) *serr.ServiceError {
 	if err := request.Validate(); err != nil {
 		s.logger.Error(err.Error(), zap.Error(err))
-		return "", &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}
+		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}
 	}
 
 	return s.domainService.ReplyToTicket(request.TicketId, request.ReplyText)
 }
 
-func (s *TicketApplicationService) AllTicket() ([]entity.Ticket, *serr.ServiceError) {
-	return s.domainService.AllTicket()
+func (s *TicketApplicationService) AllTicket(encryptedCursor string, limit int) ([]entity.Ticket, string, *serr.ServiceError) {
+	return s.domainService.AllTicket(encryptedCursor, limit)
 }

@@ -2,9 +2,11 @@ package rest
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Iamirup/whaler/backend/microservices/support/internal/adapters/interfaces/rest/dto"
 	"github.com/Iamirup/whaler/backend/microservices/support/internal/core/application/services"
+	"github.com/Iamirup/whaler/backend/microservices/support/internal/core/domain/entity"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 )
@@ -20,7 +22,7 @@ func NewTicketHandler(server *Server, ticketAppService *services.TicketApplicati
 
 func (h *TicketHandler) NewTicket(c *fiber.Ctx) error {
 
-	userId, ok := c.Locals("user-id").(string)
+	userId, ok := c.Locals("user-id").(entity.UUID)
 	if !ok || userId == "" {
 		h.server.Logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
@@ -56,13 +58,16 @@ func (h *TicketHandler) NewTicket(c *fiber.Ctx) error {
 
 func (h *TicketHandler) MyTickets(c *fiber.Ctx) error {
 
-	userId, ok := c.Locals("user-id").(string)
+	userId, ok := c.Locals("user-id").(entity.UUID)
 	if !ok || userId == "" {
 		h.server.Logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	tickets, err := h.ticketAppService.MyTickets(userId)
+	cursor := c.Query("cursor")
+	limit, _ := strconv.Atoi(c.Query("limit"))
+
+	tickets, newCursor, err := h.ticketAppService.MyTickets(userId, cursor, limit)
 	if err != nil {
 		// response := map[string]string{"error": err.Message}
 		response := dto.ErrorResponse{Error: err.Message, NeedRefresh: false}
@@ -70,7 +75,8 @@ func (h *TicketHandler) MyTickets(c *fiber.Ctx) error {
 	}
 
 	response := dto.MyTicketsResponse{
-		Tickets: tickets,
+		Tickets:   tickets,
+		NewCursor: newCursor,
 	}
 
 	return c.Status(http.StatusOK).JSON(response)
@@ -116,7 +122,10 @@ func (h *TicketHandler) AllTicket(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusForbidden)
 	}
 
-	tickets, err := h.ticketAppService.AllTicket()
+	cursor := c.Query("cursor")
+	limit, _ := strconv.Atoi(c.Query("limit"))
+
+	tickets, newCursor, err := h.ticketAppService.AllTicket(cursor, limit)
 	if err != nil {
 		// response := map[string]string{"error": err.Message}
 		response := dto.ErrorResponse{Error: err.Message, NeedRefresh: false}
@@ -124,7 +133,8 @@ func (h *TicketHandler) AllTicket(c *fiber.Ctx) error {
 	}
 
 	response := dto.AllTicketResponse{
-		Tickets: tickets,
+		Tickets:   tickets,
+		NewCursor: newCursor,
 	}
 
 	return c.Status(http.StatusOK).JSON(response)

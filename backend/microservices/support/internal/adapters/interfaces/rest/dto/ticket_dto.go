@@ -10,27 +10,30 @@ type (
 	}
 
 	MyTicketsRequest struct {
-		// recognizes from jwt data (user id)
+		Cursor string `json:"cursor"     form:"cursor"      validate:"required"`
+		Limit  int    `json:"limit"      form:"limit"       validate:"required"`
 	}
 
 	ReplyToTicketRequest struct {
-		TicketId  entity.uuid `json:"ticket_id"     form:"ticket_id"        validate:"required"`
+		TicketId  entity.UUID `json:"ticket_id"     form:"ticket_id"        validate:"required"`
 		ReplyText string      `json:"reply_text"    form:"reply_text"       validate:"required,min=40,max=500"`
 	}
 
 	AllTicketRequest struct {
-		// recognizes from jwt data (user id)
+		Cursor string `json:"cursor"     form:"cursor"      validate:"required"`
+		Limit  int    `json:"limit"      form:"limit"       validate:"required"`
 	}
 )
 
 // responses in successful status
 type (
 	NewTicketResponse struct {
-		TicketId entity.uuid `json:"ticket_id"  form:"ticket_id"`
+		TicketId entity.UUID `json:"ticket_id"  form:"ticket_id"`
 	}
 
 	MyTicketsResponse struct {
-		Tikcets []entity.Ticket `json:"tickets"   form:"tickets"`
+		Tickets   []entity.Ticket `json:"tickets"   form:"tickets"`
+		NewCursor string          `json:"new_cursor"   form:"new_cursor"`
 	}
 
 	ReplyToTicketResponse struct {
@@ -38,7 +41,8 @@ type (
 	}
 
 	AllTicketResponse struct {
-		Tikcets []entity.Ticket `json:"tickets"   form:"tickets"`
+		Tickets   []entity.Ticket `json:"tickets"   form:"tickets"`
+		NewCursor string          `json:"new_cursor"   form:"new_cursor"`
 	}
 )
 
