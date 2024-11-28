@@ -88,7 +88,7 @@ func (h *TicketHandler) ReplyToTicket(c *fiber.Ctx) error {
 	if !ok {
 		h.server.Logger.Error("Invalid user-is_admin local")
 		return c.SendStatus(http.StatusInternalServerError)
-	} else if isAdmin == false {
+	} else if !isAdmin {
 		h.server.Logger.Error("Forbidden access")
 		return c.SendStatus(http.StatusForbidden)
 	}
@@ -117,7 +117,7 @@ func (h *TicketHandler) AllTicket(c *fiber.Ctx) error {
 	if !ok {
 		h.server.Logger.Error("Invalid user-is_admin local")
 		return c.SendStatus(http.StatusInternalServerError)
-	} else if isAdmin == false {
+	} else if !isAdmin {
 		h.server.Logger.Error("Forbidden access")
 		return c.SendStatus(http.StatusForbidden)
 	}

@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -23,6 +24,8 @@ func (h *TicketHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 		response := dto.ErrorResponse{Error: "need refresh", NeedRefresh: true}
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
+
+	fmt.Println(accessTokenPayload)
 
 	c.Locals("user-id", accessTokenPayload.Id)
 	c.Locals("user-username", accessTokenPayload.Username)
