@@ -29,12 +29,6 @@ func New(cfg *Config) (Token, error) {
 	token := &token{}
 	var err error
 
-	privatePemKey := []byte(cfg.PrivatePem)
-	token.privateEd25519Key, err = jwt.ParseEdPrivateKeyFromPEM(privatePemKey)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse Ed25519 private key: %v", err)
-	}
-
 	publicPemKey := []byte(cfg.PublicPem)
 	token.publicEd25519Key, err = jwt.ParseEdPublicKeyFromPEM(publicPemKey)
 	if err != nil {
@@ -42,7 +36,6 @@ func New(cfg *Config) (Token, error) {
 	}
 
 	token.accessTokenExpiration = cfg.AccessTokenExpiration
-	token.refreshTokenExpiration = cfg.RefreshTokenExpiration
 
 	return token, nil
 }
