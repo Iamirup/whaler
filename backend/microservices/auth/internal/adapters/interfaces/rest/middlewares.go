@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -21,7 +20,6 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 
 	refreshToken := c.Cookies("refresh_token")
 	accessTokenPayload, err := h.server.Token.ExtractTokenData(header)
-	fmt.Println("bebin: ", accessTokenPayload.Id)
 	if refreshToken == "" {
 		h.server.Logger.Error("Missing refresh token")
 		response := map[string]string{"error": "no refresh token header, abnormal activity was detected. please login again"}

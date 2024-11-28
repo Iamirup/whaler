@@ -24,6 +24,5 @@ type (
 		Register(email, username, password, userAgent string) (*serr.ServiceError, entity.AuthTokens)
 		Login(email, username, password, userAgent string) (*serr.ServiceError, entity.AuthTokens)
 		Logout(refreshToken string) *serr.ServiceError
-		CheckIfIsAdmin()
 	}
 )
