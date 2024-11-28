@@ -2,7 +2,6 @@ package token
 
 import (
 	"crypto"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -11,18 +10,12 @@ import (
 )
 
 type Token interface {
-	CreateTokenString(userId, username string, isAdmin bool) (string, error)
 	ExtractTokenData(tokenString string) (*AccessTokenPayload, error)
-	CreateRefreshTokenString(data any, userAgent string) (string, error)
-	ValidateRefreshToken(tokenString string) error
-	GetRefreshTokenExpiration() time.Duration
 }
 
 type token struct {
-	privateEd25519Key      crypto.PrivateKey
-	publicEd25519Key       crypto.PublicKey
-	accessTokenExpiration  time.Duration
-	refreshTokenExpiration time.Duration
+	publicEd25519Key      crypto.PublicKey
+	accessTokenExpiration time.Duration
 }
 
 func New(cfg *Config) (Token, error) {
@@ -43,53 +36,9 @@ func New(cfg *Config) (Token, error) {
 type AccessTokenPayload struct {
 	Id       string `json:"id"`
 	Username string `json:"username"`
-	IsAdmin  bool   `json:"admin"`
-	// UserType string `json:"user_type"`
+	IsAdmin  bool   `json:"is_admin"`
 	jwt.RegisteredClaims
 }
-
-type RefreshTokenPayload struct {
-	Data []byte `json:"data"`
-	jwt.RegisteredClaims
-}
-
-func (token *token) CreateTokenString(userId, username string, isAdmin bool) (string, error) {
-	payload := &AccessTokenPayload{
-		Id:       userId,
-		Username: username,
-		IsAdmin:  isAdmin,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(token.accessTokenExpiration)),
-		},
-	}
-
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodEdDSA, payload)
-	return jwtToken.SignedString(token.privateEd25519Key)
-}
-
-func (token *token) CreateRefreshTokenString(data any, userAgent string) (string, error) {
-	dataBytes, err := json.Marshal(data)
-	if err != nil {
-		errStr := fmt.Sprintf("error marshal data: %v", err)
-		return "", errors.New(errStr)
-	}
-
-	expiredAt := jwt.NewNumericDate(time.Now().Add(token.refreshTokenExpiration))
-	registeredClaim := jwt.RegisteredClaims{
-		ExpiresAt: expiredAt,
-		ID:        "refresh" + userAgent, // Unique claim to distinguish refresh token
-	}
-	payload := &RefreshTokenPayload{dataBytes, registeredClaim}
-
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodEdDSA, payload)
-	return jwtToken.SignedString(token.privateEd25519Key)
-}
-
-const (
-	inValidToken        = "invalid token"
-	errorMappingPayload = "error mapping the payload"
-	errorUnmarshalData  = "error unmarshaling the data"
-)
 
 func (token *token) ExtractTokenData(tokenString string) (*AccessTokenPayload, error) {
 	checkSigningMethod := func(jwtToken *jwt.Token) (any, error) {
@@ -121,30 +70,4 @@ func (token *token) ExtractTokenData(tokenString string) (*AccessTokenPayload, e
 	}
 
 	return payload, nil
-}
-
-func (token *token) ValidateRefreshToken(tokenString string) error {
-	checkSigningMethod := func(jwtToken *jwt.Token) (any, error) {
-		if _, ok := jwtToken.Method.(*jwt.SigningMethodEd25519); !ok {
-			return nil, fmt.Errorf("wrong signing method: %v", jwtToken.Header["alg"])
-		}
-		return token.publicEd25519Key, nil
-	}
-
-	jwtToken, err := jwt.ParseWithClaims(tokenString, &RefreshTokenPayload{}, checkSigningMethod)
-	if err != nil {
-		errStr := fmt.Sprintf("error: %v, token: %s", err, tokenString)
-		return errors.New(errStr)
-	}
-
-	if !jwtToken.Valid {
-		errStr := fmt.Sprintf("%s, token: %v", inValidToken, jwtToken)
-		return errors.New(errStr)
-	}
-
-	return nil
-}
-
-func (token *token) GetRefreshTokenExpiration() time.Duration {
-	return token.refreshTokenExpiration
 }

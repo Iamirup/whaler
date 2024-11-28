@@ -50,8 +50,7 @@ func New(cfg *Config) (Token, error) {
 type AccessTokenPayload struct {
 	Id       string `json:"id"`
 	Username string `json:"username"`
-	IsAdmin  bool   `json:"admin"`
-	// UserType string `json:"user_type"`
+	IsAdmin  bool   `json:"is_admin"`
 	jwt.RegisteredClaims
 }
 
