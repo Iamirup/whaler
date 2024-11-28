@@ -1,0 +1,49 @@
+services:
+  support-microservice:
+    image: iamirup/whaler-support-backend:latest
+    build: ../../backend/microservices/support
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=web_net"
+        - "traefik.http.routers.support-microservice.entrypoints=http"
+        - "traefik.http.routers.support-microservice.rule=(Host(`whaler.ir`) && PathPrefix(`/api/support/v1`))"
+        - "traefik.http.routers.support-microservice.middlewares=https-redirect"
+        - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+        - "traefik.http.routers.support-microservice-secure.entrypoints=https"
+        - "traefik.http.routers.support-microservice-secure.rule=(Host(`whaler.ir`) && PathPrefix(`/api/support/v1`))"
+        - "traefik.http.routers.support-microservice-secure.tls=true"
+        - "traefik.http.routers.support-microservice-secure.tls.options=default"
+        - "traefik.http.routers.support-microservice-secure.tls.certresolver=mycert"
+        - "traefik.http.services.support-microservice.loadbalancer.server.port=8080"
+    depends_on:
+      - rdbms
+    networks:
+      - web_net
+      - whaler_support_net
+
+  rdbms:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    volumes:
+      - /whaler_support_data:/var/lib/postgresql/data
+    networks:
+      - whaler_support_net
+
+networks:
+  web_net:
+    external: true
+    name: web_net
+    driver: overlay
+  whaler_support_net:
+    driver: overlay
+
+volumes:
+  whaler_data:
