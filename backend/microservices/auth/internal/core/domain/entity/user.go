@@ -6,6 +6,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UUID string
+
 type User struct {
 	Id        string    `json:"id"`
 	Email     string    `json:"email"`

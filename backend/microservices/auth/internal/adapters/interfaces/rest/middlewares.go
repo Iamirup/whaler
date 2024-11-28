@@ -46,12 +46,19 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 				return c.Status(http.StatusUnauthorized).JSON(response)
 			}
 
-			if err := h.refreshTokenAppService.GetAndCheckRefreshTokenById(accessTokenPayload.Id, refreshToken); err != nil {
+			if err := h.refreshTokenAppService.CheckRefreshTokenInDBById(accessTokenPayload.Id, refreshToken); err != nil {
 				response := map[string]string{"error": err.Message}
 				return c.Status(err.StatusCode).JSON(response)
 			}
 
-			newAccessToken, errs := h.server.Token.CreateTokenString(accessTokenPayload.Id, accessTokenPayload.Username)
+			isAdmin, err := h.refreshTokenAppService.CheckIfIsAdmin(accessTokenPayload.Id)
+			if err != nil {
+				h.server.Logger.Error("something went wrong")
+				response := map[string]string{"error": "Something went wrong! please try again later"}
+				return c.Status(http.StatusInternalServerError).JSON(response)
+			}
+
+			newAccessToken, errs := h.server.Token.CreateTokenString(accessTokenPayload.Id, accessTokenPayload.Username, isAdmin)
 			if errs != nil {
 				h.server.Logger.Error("Failed to create new access token", zap.Error(errs))
 				response := map[string]string{"error": "failed to create new access token, abnormal activity was detected. please login again"}

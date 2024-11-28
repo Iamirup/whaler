@@ -12,9 +12,6 @@ type (
 		// CreateUser adds a new user to the database
 		CreateUser(user *entity.User) error
 
-		// // GetUserByUsername retrieves a user by its username
-		// GetUserByUsername(username string) (*entity.User, error)
-
 		// GetUserByUsernameAndPassword retrieves a user by its username and password
 		GetUserByUsernameAndPassword(username, password string) (*entity.User, error)
 
@@ -27,5 +24,6 @@ type (
 		Register(email, username, password, userAgent string) (*serr.ServiceError, entity.AuthTokens)
 		Login(email, username, password, userAgent string) (*serr.ServiceError, entity.AuthTokens)
 		Logout(refreshToken string) *serr.ServiceError
+		CheckIfIsAdmin()
 	}
 )

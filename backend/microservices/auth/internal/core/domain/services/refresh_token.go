@@ -26,8 +26,8 @@ func NewRefreshTokenService(
 	}
 }
 
-func (s *RefreshTokenService) GetAndCheckRefreshTokenById(userId, refreshToken string) *serr.ServiceError {
-	if err := s.refreshTokenPersistencePort.GetAndCheckRefreshTokenById(userId, refreshToken); err != nil {
+func (s *RefreshTokenService) CheckRefreshTokenInDBById(userId, refreshToken string) *serr.ServiceError {
+	if err := s.refreshTokenPersistencePort.CheckRefreshTokenInDBById(userId, refreshToken); err != nil {
 		s.logger.Error("Error invalid refresh token returned", zap.Error(err))
 		if err := s.refreshTokenPersistencePort.RevokeAllRefreshTokensById(userId); err != nil {
 			s.logger.Error("something went wrong")
@@ -41,4 +41,8 @@ func (s *RefreshTokenService) GetAndCheckRefreshTokenById(userId, refreshToken s
 
 func (s *RefreshTokenService) RevokeAllRefreshTokensById(userId string) error {
 	return s.refreshTokenPersistencePort.RevokeAllRefreshTokensById(userId)
+}
+
+func (s *RefreshTokenService) CheckIfIsAdmin(userId string) (bool, error) {
+	return s.refreshTokenPersistencePort.CheckIfIsAdmin(userId)
 }

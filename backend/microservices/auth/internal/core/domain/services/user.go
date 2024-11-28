@@ -57,7 +57,13 @@ func (s *UserService) Register(email, username, password, userAgent string) (*se
 		return &serr.ServiceError{Message: "Error invalid user id created", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
 	}
 
-	newAccessToken, err := s.token.CreateTokenString(userEntity.Id, userEntity.Username)
+	isAdmin, err := s.refreshTokenPersistencePort.CheckIfIsAdmin(userEntity.Id)
+	if err != nil {
+		s.logger.Error("something went wrong")
+		return &serr.ServiceError{Message: "Something went wrong! please try again later", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+	}
+
+	newAccessToken, err := s.token.CreateTokenString(userEntity.Id, userEntity.Username, isAdmin)
 	if err != nil {
 		s.logger.Error("Error creating JWT access token for user", zap.Any("user", userEntity), zap.Error(err))
 		return &serr.ServiceError{Message: "Error creating JWT access token for user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
@@ -103,7 +109,13 @@ func (s *UserService) Login(email, username, password, userAgent string) (*serr.
 		}
 	}
 
-	newAccessToken, err := s.token.CreateTokenString(user.Id, user.Username)
+	isAdmin, err := s.refreshTokenPersistencePort.CheckIfIsAdmin(user.Id)
+	if err != nil {
+		s.logger.Error("something went wrong")
+		return &serr.ServiceError{Message: "Something went wrong! please try again later", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}
+	}
+
+	newAccessToken, err := s.token.CreateTokenString(user.Id, user.Username, isAdmin)
 	if err != nil {
 		s.logger.Error("Error creating JWT access token for user", zap.Any("user", user), zap.Error(err))
 		return &serr.ServiceError{Message: "Error creating JWT access token for user", StatusCode: http.StatusInternalServerError}, entity.AuthTokens{}

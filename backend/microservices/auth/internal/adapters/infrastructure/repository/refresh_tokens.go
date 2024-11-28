@@ -36,16 +36,16 @@ func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.Refr
 	return nil
 }
 
-const QueryGetAndCheckRefreshTokenById = `
+const QueryCheckRefreshTokenInDBById = `
 SELECT refresh_token
 FROM refresh_tokens
 WHERE owner_id = $1;`
 
-func (r *refreshTokenRepository) GetAndCheckRefreshTokenById(ownerId, refreshToken string) error {
+func (r *refreshTokenRepository) CheckRefreshTokenInDBById(ownerId, refreshToken string) error {
 
 	in := []interface{}{ownerId}
 	out := []interface{}{&refreshToken}
-	if err := r.rdbms.QueryRow(QueryGetAndCheckRefreshTokenById, in, out); err != nil {
+	if err := r.rdbms.QueryRow(QueryCheckRefreshTokenInDBById, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
 			r.logger.Error("Error id not found", zap.Error(err))
 			return err
@@ -98,4 +98,28 @@ func (r *refreshTokenRepository) RevokeAllRefreshTokensById(userId string) error
 	}
 
 	return nil
+}
+
+const QueryCheckIfIsAdmin = `
+SELECT COUNT(1)
+FROM admins
+WHERE id = $1;`
+
+func (r *refreshTokenRepository) CheckIfIsAdmin(userId string) (bool, error) {
+
+	var isAdmin bool
+
+	in := []interface{}{userId}
+	out := []interface{}{&isAdmin}
+	if err := r.rdbms.QueryRow(QueryCheckIfIsAdmin, in, out); err != nil {
+		if err.Error() == rdbms.ErrNotFound {
+			r.logger.Error("Error id not found", zap.Error(err))
+			return false, err
+		}
+
+		r.logger.Error("Error find refresh token by id", zap.Error(err))
+		return false, err
+	}
+
+	return isAdmin, nil
 }

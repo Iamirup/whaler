@@ -25,19 +25,22 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 	userAgent := string(c.Request().Header.Peek("User-Agent"))
 	if userAgent == "" {
 		h.server.Logger.Error("Missing user agent header")
-		response := map[string]string{"error": "no user agent header, please provide it"}
+		// response := map[string]string{"error": "no user agent header, please provide it"}
+		response := dto.ErrorResponse{Error: "no user agent header, please provide it", NeedLogin: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
-		response := map[string]string{"error": "Error parsing request body"}
+		// response := map[string]string{"error": "Error parsing request body"}
+		response := dto.ErrorResponse{Error: "Error parsing request body", NeedLogin: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	err, authTokens := h.userAppService.Register(&request, userAgent)
 	if err != nil {
-		response := map[string]string{"error": err.Message}
+		// response := map[string]string{"error": err.Message}
+		response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
@@ -48,7 +51,9 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	response := map[string]string{"access_token": authTokens.AccessToken}
+	response := dto.RegisterResponse{
+		AccessToken: authTokens.AccessToken,
+	}
 	return c.Status(http.StatusCreated).JSON(response)
 }
 
@@ -58,19 +63,22 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	userAgent := string(c.Request().Header.Peek("User-Agent"))
 	if userAgent == "" {
 		h.server.Logger.Error("Missing user agent header")
-		response := map[string]string{"error": "no user agent header, please provide it"}
+		// response := map[string]string{"error": "no user agent header, please provide it"}
+		response := dto.ErrorResponse{Error: "no user agent header, please provide it", NeedLogin: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Error(err))
-		response := map[string]string{"error": "Error parsing request body"}
+		// response := map[string]string{"error": "Error parsing request body"}
+		response := dto.ErrorResponse{Error: "Error parsing request body", NeedLogin: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	err, authTokens := h.userAppService.Login(&request, userAgent)
 	if err != nil {
-		response := map[string]string{"error": err.Message}
+		// response := map[string]string{"error": err.Message}
+		response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
@@ -81,7 +89,9 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	response := map[string]string{"access_token": authTokens.AccessToken}
+	response := dto.LoginResponse{
+		AccessToken: authTokens.AccessToken,
+	}
 	return c.Status(http.StatusOK).JSON(response)
 }
 
@@ -90,7 +100,8 @@ func (h *UserHandler) Logout(c *fiber.Ctx) error {
 
 	err := h.userAppService.Logout(refreshToken)
 	if err != nil {
-		response := map[string]string{"error": err.Message}
+		// response := map[string]string{"error": err.Message}
+		response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
