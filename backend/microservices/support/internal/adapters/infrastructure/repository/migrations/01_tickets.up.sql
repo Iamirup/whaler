@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS tickets(
 	content TEXT NOT NULL,
 	date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	is_done BOOLEAN DEFAULT false,
-	reply_text TEXT,
-	reply_date TIMESTAMP
+	reply_text TEXT DEFAULT '',
+	reply_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
