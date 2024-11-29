@@ -5,8 +5,8 @@ import "github.com/Iamirup/whaler/backend/microservices/support/internal/core/do
 // requests
 type (
 	NewTicketRequest struct {
-		Title   string `json:"title"        form:"title"         validate:"required,min=3,max=80"`
-		Content string `json:"content"      form:"content"       validate:"required,min=60,max=600"`
+		Title   string `json:"title"        form:"title"         validate:"required,min=3,max=70"`
+		Content string `json:"content"      form:"content"       validate:"required,min=50,max=600"`
 	}
 
 	MyTicketsRequest struct {

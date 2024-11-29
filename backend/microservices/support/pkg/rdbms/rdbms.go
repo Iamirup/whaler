@@ -80,7 +80,7 @@ func (db *rdbms) Query(query string, in []any, out [][]any) error {
 			return fmt.Errorf("%s\n%v", "Error while scanning the row", err)
 		}
 	}
-	out = out[:index+1]
+	// out = out[:index+1]
 
 	if err := rows.Err(); err != nil {
 		return fmt.Errorf("%s\n%v", "There's an error in result of the query", err)
