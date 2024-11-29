@@ -12,6 +12,7 @@ import (
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/ports"
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
+	"github.com/iancoleman/strcase"
 )
 
 type UserApplicationService struct {
@@ -34,21 +35,21 @@ func (s *UserApplicationService) Register(request *api.RegisterRequest, userAgen
 			var message string
 			switch err.Tag() {
 			case "required":
-				message = fmt.Sprintf("field '%s' is required", err.Field())
+				message = fmt.Sprintf("field '%s' is required", strcase.ToSnake(err.Field()))
 			case "email":
-				message = fmt.Sprintf("field '%s' must be a valid email address", err.Field())
+				message = fmt.Sprintf("field '%s' must be a valid email address", strcase.ToSnake(err.Field()))
 			case "username":
-				message = fmt.Sprintf("field '%s' must be a valid username", err.Field())
+				message = fmt.Sprintf("field '%s' must be a valid username", strcase.ToSnake(err.Field()))
 			case "strong_password":
-				message = fmt.Sprintf("field '%s' must be a strong password", err.Field())
+				message = fmt.Sprintf("field '%s' must be a strong password", strcase.ToSnake(err.Field()))
 			case "eqfield":
-				message = fmt.Sprintf("field '%s' must be equal to '%s'", err.Field(), err.Param())
+				message = fmt.Sprintf("field '%s' must be equal to '%s'", strcase.ToSnake(err.Field()), err.Param())
 			default:
-				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", err.Field(), err.Tag())
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Tag()))
 			}
 
 			validationErrors = append(validationErrors, api.ErrorContent{
-				Field:   err.Field(),
+				Field:   strcase.ToSnake(err.Field()),
 				Message: message,
 			})
 		}
@@ -71,17 +72,17 @@ func (s *UserApplicationService) Login(request *api.LoginRequest, userAgent stri
 			var message string
 			switch err.Tag() {
 			case "required":
-				message = fmt.Sprintf("field '%s' is required", err.Field())
+				message = fmt.Sprintf("field '%s' is required", strcase.ToSnake(err.Field()))
 			case "email":
-				message = fmt.Sprintf("field '%s' must be a valid email address", err.Field())
+				message = fmt.Sprintf("field '%s' must be a valid email address", strcase.ToSnake(err.Field()))
 			case "username":
-				message = fmt.Sprintf("field '%s' must be a valid username", err.Field())
+				message = fmt.Sprintf("field '%s' must be a valid username", strcase.ToSnake(err.Field()))
 			default:
-				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", err.Field(), err.Tag())
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Tag()))
 			}
 
 			validationErrors = append(validationErrors, api.ErrorContent{
-				Field:   err.Field(),
+				Field:   strcase.ToSnake(err.Field()),
 				Message: message,
 			})
 		}
