@@ -10,18 +10,16 @@ type (
 	}
 
 	MyTicketsRequest struct {
-		Cursor string `json:"cursor"     form:"cursor"      validate:"required"`
-		Limit  int    `json:"limit"      form:"limit"       validate:"required"`
+		// nothing (just cursor and limit in query parameters)
 	}
 
 	ReplyToTicketRequest struct {
 		TicketId  entity.UUID `json:"ticket_id"     form:"ticket_id"        validate:"required"`
-		ReplyText string      `json:"reply_text"    form:"reply_text"       validate:"required,min=40,max=500"`
+		ReplyText string      `json:"reply_text"    form:"reply_text"       validate:"required,min=30,max=800"`
 	}
 
 	AllTicketRequest struct {
-		Cursor string `json:"cursor"     form:"cursor"      validate:"required"`
-		Limit  int    `json:"limit"      form:"limit"       validate:"required"`
+		// nothing (just cursor and limit in query parameters)
 	}
 )
 
