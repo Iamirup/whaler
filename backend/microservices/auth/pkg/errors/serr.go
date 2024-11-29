@@ -7,6 +7,7 @@ import (
 type ServiceError struct {
 	Message    string
 	StatusCode int
+	Details    any
 }
 
 func (e ServiceError) Error() string {

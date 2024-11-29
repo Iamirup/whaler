@@ -1,9 +1,11 @@
 package services
 
 import (
+	"fmt"
 	"net/http"
 
 	serr "github.com/Iamirup/whaler/backend/microservices/auth/pkg/errors"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 
 	api "github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest/dto"
@@ -24,19 +26,71 @@ func NewUserApplicationService(domainService ports.UserServicePort, logger *zap.
 	}
 }
 
-func (s *UserApplicationService) Register(request *api.RegisterRequest, userAgent string) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserApplicationService) Register(request *api.RegisterRequest, userAgent string) (entity.AuthTokens, *serr.ServiceError) {
+
 	if err := request.Validate(); err != nil {
-		s.logger.Error(err.Error(), zap.Error(err))
-		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
+		var validationErrors []api.ErrorContent
+		for _, err := range err.(validator.ValidationErrors) {
+			var message string
+			switch err.Tag() {
+			case "required":
+				message = fmt.Sprintf("field '%s' is required", err.Field())
+			case "email":
+				message = fmt.Sprintf("field '%s' must be a valid email address", err.Field())
+			case "username":
+				message = fmt.Sprintf("field '%s' must be a valid username", err.Field())
+			case "strong_password":
+				message = fmt.Sprintf("field '%s' must be a strong password", err.Field())
+			case "eqfield":
+				message = fmt.Sprintf("field '%s' must be equal to '%s'", err.Field(), err.Param())
+			default:
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", err.Field(), err.Tag())
+			}
+
+			validationErrors = append(validationErrors, api.ErrorContent{
+				Field:   err.Field(),
+				Message: message,
+			})
+		}
+		s.logger.Error("Validation error", zap.Any("validationErrors", validationErrors))
+		return entity.AuthTokens{}, &serr.ServiceError{
+			Message:    "Validation failed",
+			StatusCode: http.StatusBadRequest,
+			Details:    validationErrors,
+		}
 	}
 
 	return s.domainService.Register(request.Email, request.Username, request.Password, userAgent)
 }
 
-func (s *UserApplicationService) Login(request *api.LoginRequest, userAgent string) (*serr.ServiceError, entity.AuthTokens) {
+func (s *UserApplicationService) Login(request *api.LoginRequest, userAgent string) (entity.AuthTokens, *serr.ServiceError) {
+
 	if err := request.Validate(); err != nil {
-		s.logger.Error(err.Error(), zap.Error(err))
-		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}, entity.AuthTokens{}
+		var validationErrors []api.ErrorContent
+		for _, err := range err.(validator.ValidationErrors) {
+			var message string
+			switch err.Tag() {
+			case "required":
+				message = fmt.Sprintf("field '%s' is required", err.Field())
+			case "email":
+				message = fmt.Sprintf("field '%s' must be a valid email address", err.Field())
+			case "username":
+				message = fmt.Sprintf("field '%s' must be a valid username", err.Field())
+			default:
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", err.Field(), err.Tag())
+			}
+
+			validationErrors = append(validationErrors, api.ErrorContent{
+				Field:   err.Field(),
+				Message: message,
+			})
+		}
+		s.logger.Error("Validation error", zap.Any("validationErrors", validationErrors))
+		return entity.AuthTokens{}, &serr.ServiceError{
+			Message:    "Validation failed",
+			StatusCode: http.StatusBadRequest,
+			Details:    validationErrors,
+		}
 	}
 
 	return s.domainService.Login(request.Email, request.Username, request.Password, userAgent)

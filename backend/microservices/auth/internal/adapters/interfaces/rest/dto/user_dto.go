@@ -29,8 +29,13 @@ type (
 
 // responses in unsuccessful status
 type (
+	ErrorContent struct {
+		Field   string `json:"field"`
+		Message string `json:"message"`
+	}
+
 	ErrorResponse struct {
-		Error     string `json:"error"        form:"error"`
-		NeedLogin bool   `json:"need_login"   form:"need_login"`
+		Errors    []ErrorContent `json:"errors"`
+		NeedLogin bool           `json:"need_login"`
 	}
 )

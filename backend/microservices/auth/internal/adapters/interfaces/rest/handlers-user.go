@@ -26,21 +26,27 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 	if userAgent == "" {
 		h.server.Logger.Error("Missing user agent header")
 		// response := map[string]string{"error": "no user agent header, please provide it"}
-		response := dto.ErrorResponse{Error: "no user agent header, please provide it", NeedLogin: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "header User-Agent", Message: "no user agent header, please provide it"}}, NeedLogin: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
 		// response := map[string]string{"error": "Error parsing request body"}
-		response := dto.ErrorResponse{Error: "Error parsing request body", NeedLogin: false}
+		// response := dto.ErrorResponse{Error: "Error parsing request body", NeedLogin: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "body", Message: "Error parsing request body"}}, NeedLogin: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	err, authTokens := h.userAppService.Register(&request, userAgent)
+	authTokens, err := h.userAppService.Register(&request, userAgent)
 	if err != nil {
 		// response := map[string]string{"error": err.Message}
-		response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
+		// response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
+		if err.Message == "Validation failed" {
+			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedLogin: false}
+			return c.Status(err.StatusCode).JSON(response)
+		}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedLogin: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
@@ -64,21 +70,28 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	if userAgent == "" {
 		h.server.Logger.Error("Missing user agent header")
 		// response := map[string]string{"error": "no user agent header, please provide it"}
-		response := dto.ErrorResponse{Error: "no user agent header, please provide it", NeedLogin: false}
+		// response := dto.ErrorResponse{Error: "no user agent header, please provide it", NeedLogin: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "header User-Agent", Message: "no user agent header, please provide it"}}, NeedLogin: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Error(err))
 		// response := map[string]string{"error": "Error parsing request body"}
-		response := dto.ErrorResponse{Error: "Error parsing request body", NeedLogin: false}
+		// response := dto.ErrorResponse{Error: "Error parsing request body", NeedLogin: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "body", Message: "Error parsing request body"}}, NeedLogin: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	err, authTokens := h.userAppService.Login(&request, userAgent)
+	authTokens, err := h.userAppService.Login(&request, userAgent)
 	if err != nil {
 		// response := map[string]string{"error": err.Message}
-		response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
+		// response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
+		if err.Message == "Validation failed" {
+			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedLogin: false}
+			return c.Status(err.StatusCode).JSON(response)
+		}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedLogin: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
@@ -101,7 +114,8 @@ func (h *UserHandler) Logout(c *fiber.Ctx) error {
 	err := h.userAppService.Logout(refreshToken)
 	if err != nil {
 		// response := map[string]string{"error": err.Message}
-		response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
+		// response := dto.ErrorResponse{Error: err.Message, NeedLogin: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedLogin: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
