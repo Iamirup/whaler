@@ -1,9 +1,12 @@
 package services
 
 import (
+	"fmt"
 	"net/http"
 
 	serr "github.com/Iamirup/whaler/backend/microservices/support/pkg/errors"
+	"github.com/go-playground/validator/v10"
+	"github.com/iancoleman/strcase"
 	"go.uber.org/zap"
 
 	api "github.com/Iamirup/whaler/backend/microservices/support/internal/adapters/interfaces/rest/dto"
@@ -25,9 +28,32 @@ func NewTicketApplicationService(domainService ports.TicketServicePort, logger *
 }
 
 func (s *TicketApplicationService) NewTicket(request *api.NewTicketRequest, userId entity.UUID, username string) (entity.UUID, *serr.ServiceError) {
+
 	if err := request.Validate(); err != nil {
-		s.logger.Error(err.Error(), zap.Error(err))
-		return "", &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}
+		var validationErrors []api.ErrorContent
+		for _, err := range err.(validator.ValidationErrors) {
+			var message string
+			switch err.Tag() {
+			case "required":
+				message = fmt.Sprintf("field '%s' is required", strcase.ToSnake(err.Field()))
+			case "min":
+				message = fmt.Sprintf("field '%s' must be at least %s characters", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Param()))
+			case "max":
+				message = fmt.Sprintf("field '%s' must be at most %s characters", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Param()))
+			default:
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), err.Tag())
+			}
+			validationErrors = append(validationErrors, api.ErrorContent{
+				Field:   strcase.ToSnake(err.Field()),
+				Message: message,
+			})
+		}
+		s.logger.Error("Validation error", zap.Any("validationErrors", validationErrors))
+		return "", &serr.ServiceError{
+			Message:    "Validation failed",
+			StatusCode: http.StatusBadRequest,
+			Details:    validationErrors,
+		}
 	}
 
 	return s.domainService.NewTicket(request.Title, request.Content, userId, username)
@@ -39,8 +65,30 @@ func (s *TicketApplicationService) MyTickets(userId entity.UUID, encryptedCursor
 
 func (s *TicketApplicationService) ReplyToTicket(request *api.ReplyToTicketRequest) *serr.ServiceError {
 	if err := request.Validate(); err != nil {
-		s.logger.Error(err.Error(), zap.Error(err))
-		return &serr.ServiceError{Message: err.Error(), StatusCode: http.StatusBadRequest}
+		var validationErrors []api.ErrorContent
+		for _, err := range err.(validator.ValidationErrors) {
+			var message string
+			switch err.Tag() {
+			case "required":
+				message = fmt.Sprintf("field '%s' is required", strcase.ToSnake(err.Field()))
+			case "min":
+				message = fmt.Sprintf("field '%s' must be at least %s characters", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Param()))
+			case "max":
+				message = fmt.Sprintf("field '%s' must be at most %s characters", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Param()))
+			default:
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), err.Tag())
+			}
+			validationErrors = append(validationErrors, api.ErrorContent{
+				Field:   strcase.ToSnake(err.Field()),
+				Message: message,
+			})
+		}
+		s.logger.Error("Validation error", zap.Any("validationErrors", validationErrors))
+		return &serr.ServiceError{
+			Message:    "Validation failed",
+			StatusCode: http.StatusBadRequest,
+			Details:    validationErrors,
+		}
 	}
 
 	return s.domainService.ReplyToTicket(request.TicketId, request.ReplyText)

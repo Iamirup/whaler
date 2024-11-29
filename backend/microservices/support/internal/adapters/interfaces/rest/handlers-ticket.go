@@ -37,15 +37,17 @@ func (h *TicketHandler) NewTicket(c *fiber.Ctx) error {
 	var request dto.NewTicketRequest
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
-		// response := map[string]string{"error": "Error parsing request body"}
-		response := dto.ErrorResponse{Error: "Error parsing request body", NeedRefresh: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "Error parsing request body"}}, NeedRefresh: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	ticketId, err := h.ticketAppService.NewTicket(&request, entity.UUID(userId), username)
 	if err != nil {
-		// response := map[string]string{"error": err.Message}
-		response := dto.ErrorResponse{Error: err.Message, NeedRefresh: false}
+		if err.Message == "Validation failed" {
+			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}
+			return c.Status(err.StatusCode).JSON(response)
+		}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
@@ -69,8 +71,7 @@ func (h *TicketHandler) MyTickets(c *fiber.Ctx) error {
 
 	tickets, newCursor, err := h.ticketAppService.MyTickets(entity.UUID(userId), cursor, limit)
 	if err != nil {
-		// response := map[string]string{"error": err.Message}
-		response := dto.ErrorResponse{Error: err.Message, NeedRefresh: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
@@ -96,15 +97,17 @@ func (h *TicketHandler) ReplyToTicket(c *fiber.Ctx) error {
 	var request dto.ReplyToTicketRequest
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
-		// response := map[string]string{"error": "Error parsing request body"}
-		response := dto.ErrorResponse{Error: "Error parsing request body", NeedRefresh: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "Error parsing request body"}}, NeedRefresh: false}
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
 	err := h.ticketAppService.ReplyToTicket(&request)
 	if err != nil {
-		// response := map[string]string{"error": err.Message}
-		response := dto.ErrorResponse{Error: err.Message, NeedRefresh: false}
+		if err.Message == "Validation failed" {
+			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}
+			return c.Status(err.StatusCode).JSON(response)
+		}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
@@ -127,8 +130,7 @@ func (h *TicketHandler) AllTicket(c *fiber.Ctx) error {
 
 	tickets, newCursor, err := h.ticketAppService.AllTicket(cursor, limit)
 	if err != nil {
-		// response := map[string]string{"error": err.Message}
-		response := dto.ErrorResponse{Error: err.Message, NeedRefresh: false}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 

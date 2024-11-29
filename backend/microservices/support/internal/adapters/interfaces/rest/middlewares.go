@@ -20,7 +20,7 @@ func (h *TicketHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 
 	accessTokenPayload, err := h.server.Token.ExtractTokenData(header)
 	if err != nil {
-		response := dto.ErrorResponse{Error: "need refresh", NeedRefresh: true}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "need refresh"}}, NeedRefresh: true}
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
 

@@ -43,9 +43,9 @@ func (s *UserApplicationService) Register(request *api.RegisterRequest, userAgen
 			case "strong_password":
 				message = fmt.Sprintf("field '%s' must be a strong password", strcase.ToSnake(err.Field()))
 			case "eqfield":
-				message = fmt.Sprintf("field '%s' must be equal to '%s'", strcase.ToSnake(err.Field()), err.Param())
+				message = fmt.Sprintf("field '%s' must be equal to '%s'", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Param()))
 			default:
-				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Tag()))
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), err.Tag())
 			}
 
 			validationErrors = append(validationErrors, api.ErrorContent{
@@ -78,7 +78,7 @@ func (s *UserApplicationService) Login(request *api.LoginRequest, userAgent stri
 			case "username":
 				message = fmt.Sprintf("field '%s' must be a valid username", strcase.ToSnake(err.Field()))
 			default:
-				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), strcase.ToSnake(err.Tag()))
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), err.Tag())
 			}
 
 			validationErrors = append(validationErrors, api.ErrorContent{
