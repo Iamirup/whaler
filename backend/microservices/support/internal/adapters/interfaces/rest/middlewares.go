@@ -27,5 +27,6 @@ func (h *TicketHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 	c.Locals("user-id", accessTokenPayload.Id)
 	c.Locals("user-username", accessTokenPayload.Username)
 	c.Locals("user-is_admin", accessTokenPayload.IsAdmin)
+
 	return c.Next()
 }
