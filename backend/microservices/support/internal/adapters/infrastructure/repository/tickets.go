@@ -55,7 +55,7 @@ func (r *ticketRepository) GetMyTickets(userId entity.UUID, encryptedCursor stri
 			panic(err)
 		}
 
-		date, err = time.Parse(time.RFC3339, cursor)
+		date, err = time.Parse(time.RFC3339Nano, cursor)
 		if err != nil {
 			panic(err)
 		}
@@ -105,7 +105,7 @@ func (r *ticketRepository) GetMyTickets(userId entity.UUID, encryptedCursor stri
 		return tickets, "", nil
 	}
 
-	cursor := lastTicket.Date.Format(time.RFC3339)
+	cursor := lastTicket.Date.Format(time.RFC3339Nano)
 
 	// encrypt cursor
 	encryptedCursor, err := crypto.Encrypt(cursor, r.config.CursorSecret)
@@ -180,7 +180,7 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 
 		fmt.Println("cursor: ", cursor)
 
-		date, err = time.Parse(time.RFC3339, cursor)
+		date, err = time.Parse(time.RFC3339Nano, cursor)
 		if err != nil {
 			panic(err)
 		}
@@ -234,7 +234,7 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 
 	fmt.Println("lastTicket: ", lastTicket)
 
-	cursor := lastTicket.Date.Format(time.RFC3339)
+	cursor := lastTicket.Date.Format(time.RFC3339Nano)
 
 	fmt.Println("cursor: ", cursor)
 
