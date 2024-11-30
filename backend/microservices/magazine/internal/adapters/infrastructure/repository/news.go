@@ -10,7 +10,7 @@ import (
 )
 
 const QueryCreateNews = `
-INSERT INTO news(owner_id, username, title, content) VALUES($1, $2, $3, $4)
+INSERT INTO news(title, content) VALUES($1, $2)
 RETURNING id;`
 
 func (r *newsRepository) CreateNews(news *entity.News) error {
@@ -32,9 +32,7 @@ func (r *newsRepository) CreateNews(news *entity.News) error {
 const QueryGetNews = `
 SELECT *
 FROM news
-WHERE 
-    owner_id=$1 AND
-    date > $2
+WHERE date > $2
 ORDER BY date
 FETCH NEXT $3 ROWS ONLY;`
 
