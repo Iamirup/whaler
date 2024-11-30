@@ -32,9 +32,9 @@ func (r *newsRepository) CreateNews(news *entity.News) error {
 const QueryGetNews = `
 SELECT *
 FROM news
-WHERE date > $2
+WHERE date > $1
 ORDER BY date
-FETCH NEXT $3 ROWS ONLY;`
+FETCH NEXT $2 ROWS ONLY;`
 
 func (r *newsRepository) GetNews(encryptedCursor string, limit int) ([]entity.News, string, error) {
 	var date time.Time
