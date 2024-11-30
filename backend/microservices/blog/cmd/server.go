@@ -3,12 +3,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/Iamirup/whaler/backend/microservices/magazine/internal/adapters/infrastructure/repository"
-	"github.com/Iamirup/whaler/backend/microservices/magazine/internal/adapters/interfaces/rest"
-	"github.com/Iamirup/whaler/backend/microservices/magazine/internal/config"
-	"github.com/Iamirup/whaler/backend/microservices/magazine/pkg/logger"
-	"github.com/Iamirup/whaler/backend/microservices/magazine/pkg/rdbms"
-	"github.com/Iamirup/whaler/backend/microservices/magazine/pkg/token"
+	"github.com/Iamirup/whaler/backend/microservices/blog/internal/adapters/infrastructure/repository"
+	"github.com/Iamirup/whaler/backend/microservices/blog/internal/adapters/interfaces/rest"
+	"github.com/Iamirup/whaler/backend/microservices/blog/internal/config"
+	"github.com/Iamirup/whaler/backend/microservices/blog/pkg/logger"
+	"github.com/Iamirup/whaler/backend/microservices/blog/pkg/rdbms"
+	"github.com/Iamirup/whaler/backend/microservices/blog/pkg/token"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -22,7 +22,7 @@ func (cmd Server) Command(trap chan os.Signal) *cobra.Command {
 
 	return &cobra.Command{
 		Use:   "server",
-		Short: "run magazine server",
+		Short: "run blog server",
 		Run:   run,
 	}
 }
@@ -35,14 +35,14 @@ func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 		myLogger.Panic("Error creating rdbms database", zap.Error(err))
 	}
 
-	newsRepo := repository.NewNewsRepository(myLogger, cfg.Repository, db)
+	articleRepo := repository.NewArticleRepository(myLogger, cfg.Repository, db)
 
 	theToken, err := token.New(cfg.Token)
 	if err != nil {
 		myLogger.Panic("Error creating token object", zap.Error(err))
 	}
 
-	rest.New(myLogger, newsRepo, theToken).Serve()
+	rest.New(myLogger, articleRepo, theToken).Serve()
 
 	// Keep this at the bottom of the main function
 	field := zap.String("signal trap", (<-trap).String())

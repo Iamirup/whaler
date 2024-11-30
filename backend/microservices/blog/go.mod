@@ -1,4 +1,4 @@
-module github.com/Iamirup/whaler/backend/microservices/magazine
+module github.com/Iamirup/whaler/backend/microservices/blog
 
 go 1.22.2
 
