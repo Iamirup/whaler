@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Iamirup/whaler/backend/microservices/support/internal/core/domain/entity"
-	"github.com/Iamirup/whaler/backend/microservices/support/pkg/crypto"
+	"github.com/Iamirup/whaler/backend/microservices/magazine/internal/core/domain/entity"
+	"github.com/Iamirup/whaler/backend/microservices/magazine/pkg/crypto"
 	"go.uber.org/zap"
 )
 
