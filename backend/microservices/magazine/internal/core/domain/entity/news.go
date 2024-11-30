@@ -4,7 +4,7 @@ import "time"
 
 type UUID string
 
-type Ticket struct {
+type News struct {
 	NewsId  UUID      `json:"news_id"`
 	Title   string    `json:"title"`
 	Content string    `json:"content"`

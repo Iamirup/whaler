@@ -37,7 +37,7 @@ func (h *NewsHandler) AddNews(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	newsId, err := h.newsAppService.NewNews(&request)
+	newsId, err := h.newsAppService.AddNews(&request)
 	if err != nil {
 		if err.Message == "Validation failed" {
 			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}

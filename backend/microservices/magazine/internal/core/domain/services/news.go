@@ -48,7 +48,7 @@ func (s *NewsService) AddNews(title, content string) (entity.UUID, *serr.Service
 	return newsEntity.NewsId, nil
 }
 
-func (s *NewsService) MyNews(encryptedCursor string, limit int) ([]entity.News, string, *serr.ServiceError) {
+func (s *NewsService) SeeNews(encryptedCursor string, limit int) ([]entity.News, string, *serr.ServiceError) {
 
 	news, newEncryptedCursor, err := s.newsPersistencePort.GetNews(encryptedCursor, limit)
 	if err != nil {
