@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	serr "github.com/Iamirup/whaler/backend/microservices/magazine/pkg/errors"
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 	"github.com/iancoleman/strcase"
 	"go.uber.org/zap"
 
