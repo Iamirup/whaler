@@ -52,12 +52,12 @@ func (r *ticketRepository) GetMyTickets(userId entity.UUID, encryptedCursor stri
 	if len(encryptedCursor) != 0 {
 		cursor, err := crypto.Decrypt(encryptedCursor, r.config.CursorSecret)
 		if err != nil {
-			panic(err)
+			return nil, "", err
 		}
 
 		date, err = time.Parse(time.RFC3339Nano, cursor)
 		if err != nil {
-			panic(err)
+			return nil, "", err
 		}
 	} else {
 		date = time.Unix(0, 0)
@@ -110,7 +110,7 @@ func (r *ticketRepository) GetMyTickets(userId entity.UUID, encryptedCursor stri
 	// encrypt cursor
 	encryptedCursor, err := crypto.Encrypt(cursor, r.config.CursorSecret)
 	if err != nil {
-		panic(err)
+		return nil, "", err
 	}
 
 	return tickets, encryptedCursor, nil
@@ -175,14 +175,14 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 	if len(encryptedCursor) != 0 {
 		cursor, err := crypto.Decrypt(encryptedCursor, r.config.CursorSecret)
 		if err != nil {
-			panic(err)
+			return nil, "", err
 		}
 
 		fmt.Println("cursor: ", cursor)
 
 		date, err = time.Parse(time.RFC3339Nano, cursor)
 		if err != nil {
-			panic(err)
+			return nil, "", err
 		}
 	} else {
 		date = time.Unix(0, 0)
@@ -241,7 +241,7 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 	// encrypt cursor
 	encryptedCursor, err := crypto.Encrypt(cursor, r.config.CursorSecret)
 	if err != nil {
-		panic(err)
+		return nil, "", err
 	}
 
 	return tickets, encryptedCursor, nil

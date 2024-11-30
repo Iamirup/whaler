@@ -38,4 +38,4 @@ jobs:
             cd ~/whaler
             git pull origin main
             sudo docker compose -f deploy/docker/magazine-ms-stack.yaml build --push
-            sudo docker stack deploy -c deploy/docker/magazine-ms-stack.yaml magazine-ms-stack
+            sudo docker stack deploy -c deploy/docker/magazine-ms-stack.yaml magazine-ms-stack --detach=true

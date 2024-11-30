@@ -75,11 +75,11 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 		} else {
 			h.server.Logger.Error("Something is wrong with access token")
 			response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "invalid token header, abnormal activity was detected. please login again"}}, NeedLogin: true}
-			if err := h.refreshTokenAppService.RevokeAllRefreshTokensById(accessTokenPayload.Id); err != nil {
-				h.server.Logger.Error("something went wrong")
-				response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "Something went wrong! please try again later"}}, NeedLogin: false}
-				return c.Status(http.StatusInternalServerError).JSON(response)
-			}
+			// if err := h.refreshTokenAppService.RevokeAllRefreshTokensById(accessTokenPayload.Id); err != nil {
+			// 	h.server.Logger.Error("something went wrong")
+			// 	response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "Something went wrong! please try again later"}}, NeedLogin: false}
+			// 	return c.Status(http.StatusInternalServerError).JSON(response)
+			// }
 			return c.Status(http.StatusBadRequest).JSON(response)
 		}
 	}

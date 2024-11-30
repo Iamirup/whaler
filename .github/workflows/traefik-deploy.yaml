@@ -34,4 +34,4 @@ jobs:
           script: |
             sudo mkdir -p whaler /traefik-acme /traefik
             cd ~/whaler
-            sudo docker stack deploy -c deploy/docker/traefik-stack.yaml traefik-stack
+            sudo docker stack deploy -c deploy/docker/traefik-stack.yaml traefik-stack --detach=true
