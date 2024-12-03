@@ -193,7 +193,6 @@ func (r *articleRepository) CheckIfIsAuthorById(articleId, authorId entity.UUID)
 		r.logger.Error("Error finding article by articleId", zap.Error(err))
 		return err
 	}
-
 	if authorId != article.AuthorId {
 		r.logger.Error("you are not the author of this article!")
 		return errors.New("you are not the author of this article")
