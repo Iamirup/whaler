@@ -33,8 +33,8 @@ func (s *ArticleService) GetAnArticle(urlPath string) (*entity.Article, *serr.Se
 
 	article, err := s.articlePersistencePort.GetAnArticle(urlPath)
 	if err != nil {
-		s.logger.Error("Something went wrong in retrieving articles", zap.Error(err))
-		return &entity.Article{}, &serr.ServiceError{Message: "Something went wrong in retrieving articles", StatusCode: http.StatusInternalServerError}
+		s.logger.Error("Something went wrong in retrieving the article", zap.Error(err))
+		return &entity.Article{}, &serr.ServiceError{Message: "Something went wrong in retrieving the article", StatusCode: http.StatusInternalServerError}
 	}
 
 	return article, nil

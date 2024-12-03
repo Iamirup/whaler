@@ -39,9 +39,19 @@ func (r *articleRepository) GetAnArticle(urlPath string) (*entity.Article, error
 	article := &entity.Article{UrlPath: urlPath}
 
 	in := []any{article.UrlPath}
-	out := []any{&article}
+	out := []any{
+		&article.ArticleId,
+		&article.UrlPath,
+		&article.Title,
+		&article.Content,
+		&article.AuthorId,
+		&article.AuthorUsername,
+		&article.Likes,
+		&article.Date,
+	}
+
 	if err := r.rdbms.QueryRow(QueryGetAnArticle, in, out); err != nil {
-		r.logger.Error("Error inserting article", zap.Error(err))
+		r.logger.Error("Error retrieving article", zap.Error(err))
 		return &entity.Article{}, err
 	}
 
@@ -140,7 +150,7 @@ func (r *articleRepository) UpdateArticleTitle(articleId entity.UUID, title stri
 
 	in := []interface{}{title, articleId}
 	if err := r.rdbms.Execute(QueryUpdateArticleTitle, in); err != nil {
-		r.logger.Error("Error inserting new reply", zap.Error(err))
+		r.logger.Error("Error updating article title", zap.Error(err))
 		return err
 	}
 
@@ -156,7 +166,7 @@ func (r *articleRepository) UpdateArticleContent(articleId entity.UUID, content 
 
 	in := []interface{}{content, articleId}
 	if err := r.rdbms.Execute(QueryUpdateArticleContent, in); err != nil {
-		r.logger.Error("Error inserting new reply", zap.Error(err))
+		r.logger.Error("Error updating article content", zap.Error(err))
 		return err
 	}
 
