@@ -141,6 +141,7 @@ func (s *UserService) Login(email, username, password, userAgent string) (entity
 }
 
 func (s *UserService) Logout(refreshToken string) *serr.ServiceError {
+
 	err := s.refreshTokenPersistencePort.RemoveRefreshToken(refreshToken)
 	if err != nil {
 		s.logger.Error("Error invalid refresh token", zap.Error(err))

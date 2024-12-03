@@ -49,7 +49,6 @@ func (s *NewsService) AddNews(title, content string) (entity.UUID, *serr.Service
 }
 
 func (s *NewsService) SeeNews(encryptedCursor string, limit int) ([]entity.News, string, *serr.ServiceError) {
-
 	news, newEncryptedCursor, err := s.newsPersistencePort.GetNews(encryptedCursor, limit)
 	if err != nil {
 		s.logger.Error("Something went wrong in retrieving news", zap.Error(err))

@@ -77,6 +77,7 @@ func (s *TicketService) ReplyToTicket(ticketId entity.UUID, replyText string) *s
 }
 
 func (s *TicketService) AllTicket(encryptedCursor string, limit int) ([]entity.Ticket, string, *serr.ServiceError) {
+
 	tickets, newEncryptedCursor, err := s.ticketPersistencePort.GetAllTickets(encryptedCursor, limit)
 	if err != nil {
 		s.logger.Error("Something went wrong in retrieving tickets", zap.Error(err))
