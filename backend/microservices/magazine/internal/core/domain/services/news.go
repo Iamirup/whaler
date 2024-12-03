@@ -21,7 +21,6 @@ type NewsService struct {
 func NewNewsService(
 	newsPersistencePort ports.NewsPersistencePort,
 	logger *zap.Logger, token token.Token) ports.NewsServicePort {
-
 	return &NewsService{
 		newsPersistencePort: newsPersistencePort,
 		logger:              logger,

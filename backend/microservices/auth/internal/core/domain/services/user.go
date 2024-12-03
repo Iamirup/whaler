@@ -25,7 +25,6 @@ func NewUserService(
 	userPersistencePort ports.UserPersistencePort,
 	refreshTokenPersistencePort ports.RefreshTokenPersistencePort,
 	logger *zap.Logger, token token.Token) ports.UserServicePort {
-
 	return &UserService{
 		userPersistencePort:         userPersistencePort,
 		refreshTokenPersistencePort: refreshTokenPersistencePort,
