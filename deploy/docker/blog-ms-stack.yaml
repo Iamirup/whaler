@@ -1,0 +1,53 @@
+services:
+  blog-microservice:
+    image: iamirup/whaler-blog-backend:latest
+    build: ../../backend/microservices/blog
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=web_net"
+        - "traefik.http.routers.blog-microservice.entrypoints=http"
+        - "traefik.http.routers.blog-microservice.rule=(Host(`whaler.ir`) && PathPrefix(`/api/blog/v1`))"
+        - "traefik.http.routers.blog-microservice.middlewares=rate-limit"
+        - "traefik.http.middlewares.rate-limit.rateSet.limit=15"
+        - "traefik.http.middlewares.rate-limit.rateSet.period=1m"
+        - "traefik.http.middlewares.rate-limit.rateSet.sourceCriterion.requestHeaderName=X-Forwarded-For"
+        - "traefik.http.routers.blog-microservice.middlewares=https-redirect"
+        - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+        - "traefik.http.routers.blog-microservice-secure.entrypoints=https"
+        - "traefik.http.routers.blog-microservice-secure.rule=(Host(`whaler.ir`) && PathPrefix(`/api/blog/v1`))"
+        - "traefik.http.routers.blog-microservice-secure.tls=true"
+        - "traefik.http.routers.blog-microservice-secure.tls.options=default"
+        - "traefik.http.routers.blog-microservice-secure.tls.certresolver=mycert"
+        - "traefik.http.services.blog-microservice.loadbalancer.server.port=8080"
+    depends_on:
+      - rdbms
+    networks:
+      - web_net
+      - whaler_blog_net
+
+  rdbms:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    volumes:
+      - /whaler_blog_data:/var/lib/postgresql/data
+    networks:
+      - whaler_blog_net
+
+networks:
+  web_net:
+    external: true
+    name: web_net
+    driver: overlay
+  whaler_blog_net:
+    driver: overlay
+
+volumes:
+  whaler_data:

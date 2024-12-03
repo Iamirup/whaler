@@ -35,6 +35,8 @@ func New(log *zap.Logger, articleRepo ports.ArticlePersistencePort, token token.
 
 	blogV1 := server.clientApp.Group("/api/blog/v1", articleHandler.fetchUserDataMiddleware)
 
+	blogV1.Get("/article/:url_path", articleHandler.GetAnArticle)
+	blogV1.Get("/articles", articleHandler.GetArticles)
 	blogV1.Post("/article", articleHandler.NewArticle)
 	blogV1.Patch("/article", articleHandler.UpdateArticle)
 	blogV1.Delete("/article", articleHandler.DeleteArticle)

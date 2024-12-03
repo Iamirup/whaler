@@ -4,6 +4,14 @@ import "github.com/Iamirup/whaler/backend/microservices/blog/internal/core/domai
 
 // requests
 type (
+	GetAnArticleRequest struct {
+		// nothing (just cursor and limit in query parameters)
+	}
+
+	GetArticlesRequest struct {
+		// nothing (just cursor and limit in query parameters)
+	}
+
 	NewArticleRequest struct {
 		Title   string `json:"title"        form:"title"         validate:"required,min=3,max=70"`
 		Content string `json:"content"      form:"content"       validate:"required,min=50,max=600"`
@@ -22,6 +30,15 @@ type (
 
 // responses in successful status
 type (
+	GetAnArticleResponse struct {
+		Article entity.Article `json:"article"     form:"article"`
+	}
+
+	GetArticlesResponse struct {
+		Articles  []entity.Article `json:"articles"     form:"articles"`
+		NewCursor string           `json:"new_cursor"   form:"new_cursor"`
+	}
+
 	NewArticleResponse struct {
 		ArticleId entity.UUID `json:"article_id"  form:"article_id"`
 	}

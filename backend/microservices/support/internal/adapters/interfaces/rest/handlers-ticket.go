@@ -2,7 +2,6 @@ package rest
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/Iamirup/whaler/backend/microservices/support/internal/adapters/interfaces/rest/dto"
 	"github.com/Iamirup/whaler/backend/microservices/support/internal/core/application/services"
@@ -67,7 +66,7 @@ func (h *TicketHandler) MyTickets(c *fiber.Ctx) error {
 	}
 
 	cursor := c.Query("cursor")
-	limit, _ := strconv.Atoi(c.Query("limit"))
+	limit := c.QueryInt("limit")
 
 	tickets, newCursor, err := h.ticketAppService.MyTickets(entity.UUID(userId), cursor, limit)
 	if err != nil {
@@ -126,7 +125,7 @@ func (h *TicketHandler) AllTicket(c *fiber.Ctx) error {
 	}
 
 	cursor := c.Query("cursor")
-	limit, _ := strconv.Atoi(c.Query("limit"))
+	limit := c.QueryInt("limit")
 
 	tickets, newCursor, err := h.ticketAppService.AllTicket(cursor, limit)
 	if err != nil {

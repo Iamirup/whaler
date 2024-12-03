@@ -6,18 +6,22 @@ import (
 
 var validate = validator.New()
 
-func (v *NewTicketRequest) Validate() error {
+func (v *GetAnArticleRequest) Validate() error {
 	return validate.Struct(v)
 }
 
-func (v *MyTicketsRequest) Validate() error {
+func (v *GetArticlesRequest) Validate() error {
 	return validate.Struct(v)
 }
 
-func (v *ReplyToTicketRequest) Validate() error {
+func (v *NewArticleRequest) Validate() error {
 	return validate.Struct(v)
 }
 
-func (v *AllTicketRequest) Validate() error {
+func (v *UpdateArticleRequest) Validate() error {
+	return validate.Struct(v)
+}
+
+func (v *DeleteArticleRequest) Validate() error {
 	return validate.Struct(v)
 }

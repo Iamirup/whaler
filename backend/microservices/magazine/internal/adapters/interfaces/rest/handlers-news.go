@@ -2,7 +2,6 @@ package rest
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/Iamirup/whaler/backend/microservices/magazine/internal/adapters/interfaces/rest/dto"
 	"github.com/Iamirup/whaler/backend/microservices/magazine/internal/core/application/services"
@@ -57,7 +56,7 @@ func (h *NewsHandler) AddNews(c *fiber.Ctx) error {
 func (h *NewsHandler) SeeNews(c *fiber.Ctx) error {
 
 	cursor := c.Query("cursor")
-	limit, _ := strconv.Atoi(c.Query("limit"))
+	limit := c.QueryInt("limit")
 
 	news, newCursor, err := h.newsAppService.SeeNews(cursor, limit)
 	if err != nil {

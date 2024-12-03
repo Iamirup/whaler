@@ -19,6 +19,42 @@ func NewArticleHandler(server *Server, articleAppService *services.ArticleApplic
 	return &ArticleHandler{server: server, articleAppService: articleAppService}
 }
 
+func (h *ArticleHandler) GetAnArticle(c *fiber.Ctx) error {
+
+	urlPath := c.Params("url_path")
+
+	article, err := h.articleAppService.GetAnArticle(urlPath)
+	if err != nil {
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
+		return c.Status(err.StatusCode).JSON(response)
+	}
+
+	response := dto.GetAnArticleResponse{
+		Article: *article,
+	}
+
+	return c.Status(http.StatusOK).JSON(response)
+}
+
+func (h *ArticleHandler) GetArticles(c *fiber.Ctx) error {
+
+	cursor := c.Query("cursor")
+	limit := c.QueryInt("limit")
+
+	articles, newCursor, err := h.articleAppService.GetArticles(cursor, limit)
+	if err != nil {
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
+		return c.Status(err.StatusCode).JSON(response)
+	}
+
+	response := dto.GetArticlesResponse{
+		Articles:  articles,
+		NewCursor: newCursor,
+	}
+
+	return c.Status(http.StatusOK).JSON(response)
+}
+
 func (h *ArticleHandler) NewArticle(c *fiber.Ctx) error {
 
 	userId, ok := c.Locals("user-id").(string)
@@ -72,8 +108,12 @@ func (h *ArticleHandler) UpdateArticle(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	err := h.articleAppService.UpdateArticle(entity.UUID(userId))
+	err := h.articleAppService.UpdateArticle(&request, entity.UUID(userId))
 	if err != nil {
+		if err.Message == "Validation failed" {
+			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}
+			return c.Status(err.StatusCode).JSON(response)
+		}
 		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
@@ -96,7 +136,7 @@ func (h *ArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	err := h.articleAppService.DeleteArticle(&request)
+	err := h.articleAppService.DeleteArticle(&request, entity.UUID(userId))
 	if err != nil {
 		if err.Message == "Validation failed" {
 			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}

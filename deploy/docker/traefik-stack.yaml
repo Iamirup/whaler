@@ -47,6 +47,9 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=web_net"
