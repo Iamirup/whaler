@@ -15,6 +15,7 @@ func main() {
 	root := &cobra.Command{Short: description}
 
 	trap := make(chan os.Signal, 1)
+
 	signal.Notify(trap, syscall.SIGINT, syscall.SIGTERM)
 
 	root.AddCommand(
