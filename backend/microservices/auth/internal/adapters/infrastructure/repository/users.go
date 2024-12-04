@@ -38,29 +38,6 @@ func (r *userRepository) CreateUser(user *entity.User) error {
 	return nil
 }
 
-// const QueryGetUserByUsername = `
-// SELECT id
-// FROM users
-// WHERE username=$1;`
-
-// func (r *userRepository) GetUserByUsername(username string) (*entity.User, error) {
-
-// 	user := &entity.User{Username: username}
-
-// 	in := []interface{}{username}
-// 	out := []interface{}{&user.Id}
-// 	if err := r.rdbms.QueryRow(QueryGetUserByUsername, in, out); err != nil {
-// 		if err.Error() == rdbms.ErrNotFound {
-// 			return nil, err
-// 		}
-
-// 		r.logger.Error("Error find user by username", zap.Error(err))
-// 		return nil, err
-// 	}
-
-// 	return user, nil
-// }
-
 const QueryGetUserByUsernameAndPassword = `
 SELECT id, username, password
 FROM users

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/Iamirup/whaler/backend/microservices/blog/internal/core/domain/entity"
@@ -39,8 +38,6 @@ func (r *articleRepository) GetAnArticle(urlPath string) (*entity.Article, error
 
 	article := &entity.Article{UrlPath: urlPath}
 
-	fmt.Println("article.UrlPath:", article.UrlPath)
-
 	in := []any{article.UrlPath}
 	out := []any{
 		&article.ArticleId,
@@ -64,9 +61,9 @@ func (r *articleRepository) GetAnArticle(urlPath string) (*entity.Article, error
 const QueryGetArticles = `
 SELECT *
 FROM articles
-WHERE date > $2
+WHERE date > $1
 ORDER BY date
-FETCH NEXT $3 ROWS ONLY;`
+FETCH NEXT $2 ROWS ONLY;`
 
 func (r *articleRepository) GetArticles(encryptedCursor string, limit int) ([]entity.Article, string, error) {
 	var date time.Time
