@@ -11,7 +11,7 @@ import (
 )
 
 const QueryCreateArticle = `
-INSERT INTO articles(url_path, title, content, author_id, author_username) VALUES($1, $2, $3, $4)
+INSERT INTO articles(url_path, title, content, author_id, author_username) VALUES($1, $2, $3, $4, $5)
 RETURNING id;`
 
 func (r *articleRepository) CreateArticle(article *entity.Article) error {
@@ -37,9 +37,9 @@ WHERE url_path=$1`
 
 func (r *articleRepository) GetAnArticle(urlPath string) (*entity.Article, error) {
 
-	fmt.Println("urlPath: ", urlPath)
-
 	article := &entity.Article{UrlPath: urlPath}
+
+	fmt.Println("article.UrlPath:", article.UrlPath)
 
 	in := []any{article.UrlPath}
 	out := []any{

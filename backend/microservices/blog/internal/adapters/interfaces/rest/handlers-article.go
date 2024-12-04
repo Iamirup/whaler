@@ -23,7 +23,7 @@ func NewArticleHandler(server *Server, articleAppService *services.ArticleApplic
 func (h *ArticleHandler) GetAnArticle(c *fiber.Ctx) error {
 
 	urlPath := c.Params("url_path")
-	a := string(c.Request().Header.Peek("Authorization"))
+	a := string(c.Request().Header.Peek("X-Forwarded-For"))
 	fmt.Println(a)
 
 	article, err := h.articleAppService.GetAnArticle(urlPath)
