@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Iamirup/whaler/backend/microservices/blog/internal/core/domain/entity"
@@ -35,6 +36,8 @@ FROM articles
 WHERE url_path=$1`
 
 func (r *articleRepository) GetAnArticle(urlPath string) (*entity.Article, error) {
+
+	fmt.Println("urlPath: ", urlPath)
 
 	article := &entity.Article{UrlPath: urlPath}
 
