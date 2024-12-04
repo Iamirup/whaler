@@ -22,6 +22,7 @@ type ArticleService struct {
 func NewArticleService(
 	articlePersistencePort ports.ArticlePersistencePort,
 	logger *zap.Logger, token token.Token) ports.ArticleServicePort {
+
 	return &ArticleService{
 		articlePersistencePort: articlePersistencePort,
 		logger:                 logger,
