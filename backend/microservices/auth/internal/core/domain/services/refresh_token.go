@@ -27,6 +27,7 @@ func NewRefreshTokenService(
 }
 
 func (s *RefreshTokenService) CheckRefreshTokenInDBById(userId, refreshToken string) *serr.ServiceError {
+
 	if err := s.refreshTokenPersistencePort.CheckRefreshTokenInDBById(userId, refreshToken); err != nil {
 		s.logger.Error("Error invalid refresh token returned", zap.Error(err))
 		if err := s.refreshTokenPersistencePort.RevokeAllRefreshTokensById(userId); err != nil {
