@@ -11,11 +11,6 @@ services:
         - "traefik.docker.network=web_net"
         - "traefik.http.routers.auth-microservice.entrypoints=http"
         - "traefik.http.routers.auth-microservice.rule=(Host(`whaler.ir`) && PathPrefix(`/api/auth/v1`))"
-        - "traefik.http.routers.auth-microservice.middlewares=rate-limit"
-        - "traefik.http.middlewares.rate-limit.ratelimit.average=240"
-        - "traefik.http.middlewares.rate-limit.ratelimit.burst=25"
-        - "traefik.http.middlewares.rate-limit.ratelimit.period=1m"
-        - "traefik.http.middlewares.rate-limit.ratelimit.sourcecriterion.requestheadername=X-Forwarded-For"
         - "traefik.http.routers.auth-microservice.middlewares=https-redirect"
         - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
         - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
@@ -25,6 +20,10 @@ services:
         - "traefik.http.routers.auth-microservice-secure.tls.options=default"
         - "traefik.http.routers.auth-microservice-secure.tls.certresolver=mycert"
         - "traefik.http.routers.auth-microservice-secure.middlewares=rate-limit"
+        - "traefik.http.middlewares.rate-limit.ratelimit.average=240"
+        - "traefik.http.middlewares.rate-limit.ratelimit.burst=25"
+        - "traefik.http.middlewares.rate-limit.ratelimit.period=1m"
+        - "traefik.http.middlewares.rate-limit.ratelimit.sourcecriterion.requestheadername=X-Forwarded-For"
         - "traefik.http.services.auth-microservice.loadbalancer.server.port=8080"
     depends_on:
       - rdbms
