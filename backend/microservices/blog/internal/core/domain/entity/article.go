@@ -5,7 +5,7 @@ import "time"
 type UUID string
 
 type Article struct {
-	ArticleId      UUID      `json:"ticket_id"`
+	ArticleId      UUID      `json:"article_id"`
 	UrlPath        string    `json:"url_path"`
 	Title          string    `json:"title"`
 	Content        string    `json:"content"`

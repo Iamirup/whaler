@@ -34,7 +34,7 @@ func (s *ArticleService) GetAnArticle(urlPath string) (*entity.Article, *serr.Se
 	article, err := s.articlePersistencePort.GetAnArticle(urlPath)
 	if err != nil {
 		s.logger.Error("There is no article with this url path", zap.Error(err))
-		return &entity.Article{}, &serr.ServiceError{Message: "There is no article with this url path", StatusCode: http.StatusBadRequest}
+		return &entity.Article{}, &serr.ServiceError{Message: "There is no article with this url path", StatusCode: http.StatusNotFound}
 	}
 
 	return article, nil

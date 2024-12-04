@@ -45,11 +45,12 @@ services:
       - /traefik:/traefik
       - /traefik-acme:/acme
     deploy:
-      restart_policy:
-        condition: on-failure
+      mode: global
       placement:
         constraints:
           - node.role == manager
+      restart_policy:
+        condition: on-failure
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=web_net"

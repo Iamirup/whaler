@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/Iamirup/whaler/backend/microservices/support/internal/core/domain/entity"
@@ -162,9 +161,6 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 
 	var date time.Time
 
-	fmt.Println("encryptedCursor: ", encryptedCursor)
-	fmt.Println("limit: ", limit)
-
 	if limit < r.config.Limit.Min {
 		limit = r.config.Limit.Min
 	} else if limit > r.config.Limit.Max {
@@ -178,8 +174,6 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 			return nil, "", err
 		}
 
-		fmt.Println("cursor: ", cursor)
-
 		date, err = time.Parse(time.RFC3339Nano, cursor)
 		if err != nil {
 			return nil, "", err
@@ -187,8 +181,6 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 	} else {
 		date = time.Unix(0, 0)
 	}
-
-	fmt.Println("date: ", date)
 
 	tickets := make([]entity.Ticket, limit)
 	out := make([][]any, limit)
@@ -232,11 +224,7 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 		return tickets, "", nil
 	}
 
-	fmt.Println("lastTicket: ", lastTicket)
-
 	cursor := lastTicket.Date.Format(time.RFC3339Nano)
-
-	fmt.Println("cursor: ", cursor)
 
 	// encrypt cursor
 	encryptedCursor, err := crypto.Encrypt(cursor, r.config.CursorSecret)
