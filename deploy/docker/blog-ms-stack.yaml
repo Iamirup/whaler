@@ -24,6 +24,7 @@ services:
         - "traefik.http.routers.blog-microservice-secure.tls=true"
         - "traefik.http.routers.blog-microservice-secure.tls.options=default"
         - "traefik.http.routers.blog-microservice-secure.tls.certresolver=mycert"
+        - "traefik.http.routers.blog-microservice-secure.middlewares=rate-limit"
         - "traefik.http.services.blog-microservice.loadbalancer.server.port=8080"
     depends_on:
       - rdbms

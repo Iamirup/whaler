@@ -15,7 +15,7 @@ services:
         # - "traefik.http.middlewares.rate-limit.ratelimit.average=15"
         # - "traefik.http.middlewares.rate-limit.ratelimit.burst=5"
         # - "traefik.http.middlewares.rate-limit.ratelimit.period=1m"
-        # - "traefik.http.middlewares.rate-limit.ratelimit.sourceCriterion.requestHeaderName=X-Forwarded-For"
+        # - "traefik.http.middlewares.rate-limit.ratelimit.sourcecriterion.requestheadername=X-Forwarded-For"
         - "traefik.http.routers.auth-microservice.middlewares=https-redirect"
         - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
         - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
@@ -24,6 +24,7 @@ services:
         - "traefik.http.routers.auth-microservice-secure.tls=true"
         - "traefik.http.routers.auth-microservice-secure.tls.options=default"
         - "traefik.http.routers.auth-microservice-secure.tls.certresolver=mycert"
+        - "traefik.http.routers.auth-microservice-secure.middlewares=rate-limit"
         - "traefik.http.services.auth-microservice.loadbalancer.server.port=8080"
     depends_on:
       - rdbms
