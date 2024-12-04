@@ -210,7 +210,6 @@ func (r *ticketRepository) GetAllTickets(encryptedCursor string, limit int) ([]e
 	}
 
 	var lastTicket entity.Ticket
-
 	for index := limit - 1; index >= 0; index-- {
 		if tickets[index].TicketId != "" {
 			lastTicket = tickets[index]
