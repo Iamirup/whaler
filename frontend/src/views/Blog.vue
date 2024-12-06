@@ -1,9 +1,9 @@
 <template>
-  <blog />
+  <TheArticle />
 </template>
 
 <script setup lang="ts">
-import blog from '../components/blog/TheArticle.vue';
+import TheArticle from '../components/blog/TheArticle.vue';
 
 
 
