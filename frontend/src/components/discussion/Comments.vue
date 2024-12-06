@@ -44,7 +44,7 @@
       //   }
       // };
   
-      // const addComment = () => {
+      const addComment = () => {
       //   if (newCommentText.value.trim() === '') return;
       //   comments.value.push({
       //     id: comments.value.length + 1,
@@ -53,7 +53,7 @@
       //     text: newCommentText.value,
       //   });
       //   newCommentText.value = '';
-      // };
+      };
   
       // onMounted(() => {
       //   fetchComments();
@@ -63,7 +63,7 @@
         currency,
         comments,
         newCommentText,
-        // addComment,
+        addComment,
       };
     },
   });
