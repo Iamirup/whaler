@@ -4,9 +4,33 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/kon',
-      name: 'kon',
-      component: () => import('@/views/Koni.vue'),
+      path: '/',
+      redirect: '/eventor',
+    },
+    {
+      path: '/discussion',
+      name: 'discussion',
+      component: () => import('@/views/Discussion.vue'),
+    },
+    {
+      path: '/blog',
+      name: 'blog',
+      component: () => import('@/views/Blog.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/Login.vue'),
+    },
+    {
+      path: '/magazine',
+      name: 'magazine',
+      component: () => import('@/views/Magazine.vue'),
+    },
+    {
+      path: '/support',
+      name: 'support',
+      component: () => import('@/views/Support.vue'),
     },
     {
       path: '/eventor',
@@ -17,27 +41,3 @@ const router = createRouter({
 })
 
 export default router
-
-// import { createRouter, createWebHistory } from 'vue-router'
-// import Koni from '@/views/Koni.vue'
-// import Eventor from '@/views/Eventor.vue'
-
-// const router = createRouter({
-//   history: createWebHistory(import.meta.env.BASE_URL),
-//   routes: [
-//     {
-//       path: '/kon',
-//       name: 'kon',
-//       component: Koni
-//       // component: () => import('@/components/Koni.vue'),
-//     },
-//     {
-//       path: '/eventor',
-//       name: 'eventor',
-//       component: Eventor
-//       // component: () => import('@/components/Koni.vue'),
-//     },
-//   ],
-// })
-
-// export default router

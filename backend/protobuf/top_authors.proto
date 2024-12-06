@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package author;
+
+option go_package = "github.com/Iamirup/whaler/backend/microservices/blog";
+
+service AuthorService {
+  rpc GetTopAuthors(TopAuthorsRequest) returns (TopAuthorsResponse);
+}
+
+message TopAuthorsRequest {
+  int32 count = 1;
+}
+
+message TopAuthorsResponse {
+  repeated Author authors = 1;
+}
+
+message Author {
+  string id = 1;
+  string username = 2;
+  int32 article_count = 3;
+}
