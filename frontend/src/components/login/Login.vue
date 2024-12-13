@@ -26,7 +26,6 @@
             </form>
         </div>
     
-        
         <div class="container__form container--signin">
             <form @submit.prevent="login" action="#" class="form" id="form2">
                 <h2 class="form__title">Login</h2>
@@ -101,15 +100,10 @@ export default defineComponent({
 			? { email: this.loginData.identifier, password: this.loginData.password }
 			: { username: this.loginData.identifier, password: this.loginData.password }
 
-		console.log("1");
 		await axios.post("/api/auth/v1/login", loginPayload)
 		.then(response => {
-			console.log("2");
-			console.log("3");
 			alertService.showAlert("Successful login", "success");
-			console.log("4");
-			this.routeToApp();
-			console.log("5");
+			this.router.push('/eventor');
 		})
 		.catch(error => {
 			let alertErrorMessage = ""
@@ -120,18 +114,16 @@ export default defineComponent({
 			alertService.showAlert(alertErrorMessage, "error");
 		});
 
-		console.log("6");
 		this.loginData = {
 			identifier: '',
 			password: '',
 		}
-		console.log("7");
 	},
 	async register() {
 		await axios.post("/api/auth/v1/register", this.registerData)
 		.then(response => {
 			alertService.showAlert("Successful regestration", "success");
-			this.routeToApp();
+			this.router.push('/eventor');
 		})
 		.catch(error => {
 			let alertErrorMessage = ""
@@ -152,10 +144,6 @@ export default defineComponent({
 	validateEmail(identifier: string): boolean {
 		const re = /\S+@\S+\.\S+/;
 		return re.test(identifier);
-	},
-	routeToApp() {
-		console.log("4.5");
-		this.router.push('/eventor');
 	},
   },
   setup() {

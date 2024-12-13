@@ -53,13 +53,6 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		Secure:   true,
 	})
 
-	c.Cookie(&fiber.Cookie{
-		Name:     "access_token",
-		Value:    authTokens.AccessToken,
-		HTTPOnly: true,
-		Secure:   true,
-	})
-
 	return c.SendStatus(http.StatusCreated)
 }
 
@@ -112,7 +105,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		Secure:   true,
 	})
 
-	return c.SendStatus(http.StatusCreated)
+	return c.SendStatus(http.StatusOK)
 }
 
 func (h *UserHandler) Logout(c *fiber.Ctx) error {
