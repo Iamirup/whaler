@@ -1,9 +1,11 @@
 <template>
-  <TheArticle />
+  <ArticleList />
+  <ArticleManagement />
 </template>
 
 <script setup lang="ts">
-import TheArticle from '../components/blog/TheArticle.vue';
+import ArticleList from '../components/blog/ArticleList.vue';
+import ArticleManagement from '../components/blog/ArticleManagement.vue';
 
 
 

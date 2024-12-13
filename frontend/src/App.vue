@@ -29,9 +29,31 @@ export default defineComponent({
 
 
 <template >
+  <div class="font">
 <router-view></router-view>
+</div>
 </template>
 
 <style scoped>
+@font-face {
 
+font-family: "CustomFont";
+
+src: url("../src/assets/CustomFont.ttf");
+
+src: url("../src/assets/CustomFont.ttf") format("ttf"),
+
+url("../src/assets/CustomFont.ttf") format("opentype"),
+
+url("../src/assets/CustomFont.svg") format("svg");
+
+}
+
+
+.font {
+
+font-family: 'CustomFont', Arial, sans-serif;
+
+font-weight:normal;
+}
 </style>

@@ -12,20 +12,20 @@
             Lorem ipsum dolor sit amet.
           </div>
           <div></div>
-          <div class="w-60 mt-4 bg-white dark:text-white dark:bg-zinc-900 inline-block opacity-70 rounded-r-2xl pr-2 pt-2.5 pb-2.5">
+          <div class="w-70 mt-4 bg-white dark:text-white dark:bg-zinc-900 inline-block opacity-70 rounded-r-2xl pr-2 pt-2.5 pb-2.5">
             Lorem ipsum dolor sit amet dg.
           </div>
           <div></div>
-          <span class="inline-flex float-start pt-6 pr-2 sm:p-5 xl:p-4.5">
+          <span class="inline-flex float-start pt-6 pr-1 sm:p-4 xl:p-4">
             <svg class="text-white dark:text-orange-400 w-6 h-6 sm:w-7 sm:h-7 xl:w-10 xl:h-10 rotate-180">
               <use href="#chevron-left"></use>
             </svg>
           </span>
-          <div class="w-72 mt-4 bg-white dark:text-white dark:bg-zinc-900 inline-block opacity-90 rounded-r-2xl pr-2 pt-2.5 pb-2.5">
-            Lorem ipsum dolor sit, amet consectet.
+          <div class="w-80 mt-4 bg-white dark:text-white dark:bg-zinc-900 inline-block opacity-90 rounded-r-2xl pr-2 pt-2.5 pb-2.5">
+            Lorem ipsum dolor sit, amet dol.
           </div>
           <div></div>
-          <div class="w-60 mt-4 bg-white dark:text-white dark:bg-zinc-900 inline-block opacity-70 rounded-r-2xl pr-2 pt-2.5 pb-2.5">
+          <div class="w-70 mt-4 bg-white dark:text-white dark:bg-zinc-900 inline-block opacity-70 rounded-r-2xl pr-2 pt-2.5 pb-2.5">
             Lorem ipsum dolor sit amet dg.
           </div>
           <div></div>

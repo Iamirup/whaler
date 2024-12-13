@@ -37,6 +37,17 @@ const router = createRouter({
       name: 'eventor',
       component: () => import('@/views/Eventor.vue'),
     },
+    {
+      path: '/blog/manage',
+      name: 'blog-management',
+      component: () => import('@/components/blog/ArticleManagement.vue'),
+    },
+    {
+      path: '/article/:urlPath',
+      name: 'article',
+      component: () => import('@/components/blog/DisplayedArticle.vue'),
+      props: true,
+    },
   ],
 })
 

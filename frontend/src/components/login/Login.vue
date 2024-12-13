@@ -1,49 +1,163 @@
 <template>
+	
 <div class="assets">
       <div class="container" :class="{ 'right-panel-active': isRightPanelActive }">
-        <!-- Sign Up -->
+        
         <div class="container__form container--signup">
-            <form action="#" class="form" id="form1" @submit.prevent>
-                <h2 class="form__title">Sign Up</h2>
-                <input type="text" placeholder="User" class="input" />
-                <input type="email" placeholder="Email" class="input" />
-                <input type="password" placeholder="Password" class="input" />
-                <button class="btn">Sign Up</button>
+            <form @submit.prevent="register" action="#" class="form" id="form1">
+                <h2 class="form__title">Register</h2>
+				<div class="input-group">
+					<input type="text" required="" name="text" v-model="registerData.username"  autocomplete="off" class="input rounded-xl h-11">
+					<label class="user-label">Username</label>
+				</div>
+				<div class="input-group my-1">
+					<input type="text" required="" name="text" v-model="registerData.email"  autocomplete="off" class="input rounded-xl h-11">
+					<label class="user-label">Email</label>
+				</div>
+				<div class="input-group my-1">
+					<input type="password" required="" name="text" v-model="registerData.password"  autocomplete="off" class="input rounded-xl h-11">
+					<label class="user-label">Password</label>
+				</div>
+				<div class="input-group my-1">
+					<input type="password" required="" name="text" v-model="registerData.confirm_password"  autocomplete="off" class="input rounded-xl h-11">
+					<label class="user-label">Confirm Password</label>
+				</div>
+                <button class="btn w-12 flex justify-center">Register</button>
             </form>
         </div>
     
-        <!-- Sign In -->
+        
         <div class="container__form container--signin">
-            <form action="#" class="form" id="form2">
-                <h2 class="form__title">Sign In</h2>
-                <input type="email" placeholder="Email" class="input" />
-                <input type="password" placeholder="Password" class="input" />
+            <form @submit.prevent="login" action="#" class="form" id="form2">
+                <h2 class="form__title">Login</h2>
+				<div class="input-group my-1">
+					<input type="text" required="" name="text" v-model="loginData.identifier"  autocomplete="off" class="input rounded-xl h-11">
+					<label class="user-label">Email or Username</label>
+				</div>
+				<div class="input-group">
+					<input type="password" required="" name="text" v-model="loginData.password" autocomplete="off" class="input rounded-xl h-11">
+					<label class="user-label">Password</label>
+				</div>
                 <a href="#" class="link">Forgot your password?</a>
-                <button class="btn">Sign In</button>
+                <button class="btn w-12 flex justify-center">Login</button>
             </form>
         </div>
     
-        <!-- Overlay -->
+        
         <div class="container__overlay">
             <div class="overlay">
                 <div class="overlay__panel overlay--left">
-                    <button class="btn" id="signIn" @click="togglePanel(false)">Sign In</button>
+                    <button class="btn" id="signIn" @click="togglePanel(false)">Login</button>
                 </div>
                 <div class="overlay__panel overlay--right">
-                    <button class="btn" id="signUp" @click="togglePanel(true)">Sign Up</button>
+                    <button class="btn" id="signUp" @click="togglePanel(true)">Register</button>
                 </div>
             </div>
         </div>
     </div>
+	
 </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import axios from 'axios';
+import { alertService } from '../alertor';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
+const axioser = axios.create({
+	baseURL: 'https://whaler.ir'
+});
+
+interface RegisterData {
+	username: string;
+	email: string;
+	password: string;
+	confirm_password: string; 
+}
+
+interface LoginData {
+	identifier: string;
+	password: string;
+}
+
+export default defineComponent({
+  name: 'AuthComponent',
+  data() {
+	return {
+		registerData: {
+			username: '',
+			email: '',
+			password: '',
+			confirm_password: '',
+		} as RegisterData,
+		loginData: {
+			identifier: '',
+			password: '',
+		} as LoginData,
+	};
+  },
+  methods: {
+	async login() {
+		const isEmail = this.validateEmail(this.loginData.identifier);
+		const loginPayload = isEmail 
+			? { email: this.loginData.identifier, password: this.loginData.password }
+			: { username: this.loginData.identifier, password: this.loginData.password }
 
 
-export default {
-    name: 'AuthComponent',
+		await axioser.post("/api/auth/v1/login", loginPayload)
+		.then(response => {
+			console.log(response)
+			this.setCookie("access_token", response.data.access_token);
+			alertService.showAlert("Successful login", "success");
+			router.push('/eventor');
+		})
+		.catch(error => {
+			let alertErrorMessage = ""
+			for (const obj of error.response.data.errors) {
+				alertErrorMessage += "- " + obj.message + ".\n";
+			}
+			alertErrorMessage = alertErrorMessage.trim();
+			alertService.showAlert(alertErrorMessage, "error");
+		});
+
+		this.loginData = {
+			identifier: '',
+			password: '',
+		}
+	},
+	async register() {
+		await axioser.post("/api/auth/v1/register", this.registerData)
+		.then(response => {
+			this.setCookie("access_token", response.data.access_token);
+			alertService.showAlert("Successful regestration", "success");
+			router.push('/eventor');
+		})
+		.catch(error => {
+			let alertErrorMessage = ""
+			for (const obj of error.response.data.errors) {
+				alertErrorMessage += "- " + obj.message + ".\n";
+			}
+			alertErrorMessage = alertErrorMessage.trim();
+			alertService.showAlert(alertErrorMessage, "error");
+		});
+
+		this.registerData = {
+			username: '',
+			email: '',
+			password: '',
+			confirm_password: '',
+		}
+	},
+	setCookie(name: string, value: string) {
+		document.cookie = `${name}=${value}; path=/; HttpOnly;`
+	},
+	validateEmail(identifier: string): boolean {
+		const re = /\S+@\S+\.\S+/;
+		return re.test(identifier);
+	}
+  },
   setup() {
     const isRightPanelActive = ref(false);
 
@@ -56,10 +170,50 @@ export default {
       togglePanel
     };
   }
-}
+})
 </script>
 
 <style>
+ 
+.input-group {
+ position: relative;
+ width: 275px;
+}
+
+.input {
+ border: solid 1.5px #9e9e9e;
+ border-radius: 1rem;
+ background: none;
+ padding: 1rem;
+ font-size: 1rem;
+ color: #131212;
+ transition: border 150ms cubic-bezier(0.4,0,0.2,1);
+}
+
+.user-label {
+ position: absolute;
+ left: 15px;
+ color: #adabab;
+ pointer-events: none;
+ transform: translateY(1rem);
+ transition: 150ms cubic-bezier(0.4,0,0.2,1);
+}
+
+.input:focus, input:valid {
+ outline: none;
+ border: 1.5px solid #1a73e8;
+}
+
+.input:focus ~ label, input:valid ~ label {
+ transform: translateY(-50%) scale(0.8);
+ /* background-color: #212121; */
+ padding: 0 .2em;
+ color: #9e9e9e;
+}
+
+
+
+
 
 :root {
 	/* COLORS */
@@ -83,7 +237,7 @@ export default {
 .assets {
 	align-items: center;
 	background-color: var(--white);
-	background: url("../../assets/fh.jpg");
+	background: url("../../assets/dth.jpg");
 	background-attachment: fixed;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -167,7 +321,7 @@ export default {
 
 .overlay {
 	background-color: var(--lightblue);
-	background: url("../../assets/fh.jpg");
+	background: url("../../assets/dth.jpg");
 	background-attachment: fixed;
 	background-position: center;
 	background-repeat: no-repeat;
