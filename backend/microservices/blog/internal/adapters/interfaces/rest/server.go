@@ -35,7 +35,7 @@ func NewRestServer(log *zap.Logger, articleRepo ports.ArticlePersistencePort, to
 
 	blogV1 := restServer.clientApp.Group("/api/blog/v1", articleHandler.fetchUserDataMiddleware)
 
-	blogV1.Get("/article/:urlPath", articleHandler.GetAnArticle)
+	blogV1.Get("/article/:articleId", articleHandler.GetAnArticle)
 	blogV1.Get("/all-articles", articleHandler.GetAllArticles)
 	blogV1.Get("/my-articles", articleHandler.GetMyArticles)
 	blogV1.Post("/article", articleHandler.NewArticle)
