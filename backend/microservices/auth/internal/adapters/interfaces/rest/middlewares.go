@@ -2,7 +2,6 @@ package rest
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest/dto"
 	"github.com/gofiber/fiber/v2"
@@ -10,17 +9,15 @@ import (
 )
 
 func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
-	headerBytes := c.Request().Header.Peek("Authorization")
-	header := strings.TrimPrefix(string(headerBytes), "Bearer ")
-
-	if len(header) == 0 {
-		h.server.Logger.Error("Missing authorization header")
-		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "please provide your authentication information"}}, NeedLogin: false}
+	accessToken := c.Cookies("access_token")
+	if accessToken == "" {
+		h.server.Logger.Error("Missing access token")
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "please provide your authentication information"}}, NeedLogin: true}
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
 
 	refreshToken := c.Cookies("refresh_token")
-	accessTokenPayload, err := h.server.Token.ExtractTokenData(header)
+	accessTokenPayload, err := h.server.Token.ExtractTokenData(accessToken)
 	if refreshToken == "" {
 		h.server.Logger.Error("Missing refresh token")
 		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "no refresh token header, abnormal activity was detected. please login again"}}, NeedLogin: true}
@@ -70,7 +67,12 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 				return c.Status(http.StatusInternalServerError).JSON(response)
 			}
 
-			c.Set("Authorization", "Bearer "+newAccessToken)
+			c.Cookie(&fiber.Cookie{
+				Name:     "access_token",
+				Value:    newAccessToken,
+				HTTPOnly: true,
+				Secure:   true,
+			})
 
 		} else {
 			h.server.Logger.Error("Something is wrong with access token")
