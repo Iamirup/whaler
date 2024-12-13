@@ -24,10 +24,6 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
 
-const axioser = axios.create({
-baseURL: 'https://whaler.ir'
-});
-
 export default defineComponent({
 setup() {
     const articles = ref<Array<{ 
@@ -51,13 +47,13 @@ setup() {
       date: string;
     } | null>(null);
 
-    const fetchArticles = () => {
-    return axioser.get('/api/blog/v1/my-articles')
+    const fetchArticles = async () => {
+    return await axios.get('/api/blog/v1/my-articles')
         .then(response => {
-        articles.value = response.data.articles;
+            articles.value = response.data.articles;
         })
         .catch(error => {
-        console.error('Failed to fetch articles', error);
+            console.error('Failed to fetch articles', error);
         });
     };
 
@@ -74,28 +70,28 @@ setup() {
         };
     };
 
-    const saveArticle = () => {
+    const saveArticle = async () => {
     if (editingArticle.value) {
         const articleData = { title: editingArticle.value.title, content: editingArticle.value.content };
         if (editingArticle.value.article_id) {
         // Update existing article
-        return axioser.put(`/api/blog/v1/articles/${editingArticle.value.article_id}`, articleData)
+        return await axios.patch(`/api/blog/v1/articles/${editingArticle.value.article_id}`, articleData)
             .then(() => {
-            fetchArticles();
-            editingArticle.value = null;
+                fetchArticles();
+                editingArticle.value = null;
             })
             .catch(error => {
-            console.error('Failed to update article', error);
+                console.error('Failed to update article', error);
             });
         } else {
         // Add new article
-        return axioser.post('/api/blog/v1/article', articleData)
+        return await axios.post('/api/blog/v1/article', articleData)
             .then(() => {
-            fetchArticles();
-            editingArticle.value = null;
+                fetchArticles();
+                editingArticle.value = null;
             })
             .catch(error => {
-            console.error('Failed to add article', error);
+                console.error('Failed to add article', error);
             });
         }
     }
@@ -111,28 +107,28 @@ setup() {
       likes: number;
       date: string;
     }) => {
-    editingArticle.value = { ...article };
-    };
+      editingArticle.value = { ...article };
+    }; 
 
-    const deleteArticle = (id: string) => {
-    return axios.delete(`/api/blog/v1/article/${id}`)
+    const deleteArticle = async (id: string) => {
+    return await axios.delete(`/api/blog/v1/article/${id}`)
         .then(() => {
-        fetchArticles();
+            fetchArticles();
         })
         .catch(error => {
-        console.error('Failed to delete article', error);
+            console.error('Failed to delete article', error);
         });
     };
 
     onMounted(fetchArticles);
 
     return {
-    articles,
-    editingArticle,
-    newArticle,
-    saveArticle,
-    editArticle,
-    deleteArticle,
+        articles,
+        editingArticle,
+        newArticle,
+        saveArticle,
+        editArticle,
+        deleteArticle,
     };
 },
 });

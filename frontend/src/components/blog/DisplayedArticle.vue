@@ -10,17 +10,13 @@ import { defineComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 
-const axioser = axios.create({
-	baseURL: 'https://whaler.ir'
-});
-
 export default defineComponent({
   setup() {
     const route = useRoute();
     const article = ref<{ title: string; content: string } | null>(null);
 
-    const fetchArticle = (id: string) => {
-      return axioser.get(`/api/blog/v1/article/${id}`)
+    const fetchArticle = async (id: string) => {
+      return await axios.get(`/api/blog/v1/article/${id}`)
         .then(response => {
           article.value = response.data;
         })

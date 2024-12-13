@@ -13,10 +13,6 @@ import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
-const axioser = axios.create({
-	baseURL: 'https://whaler.ir'
-});
-
 export default defineComponent({
   setup() {
     const articles = ref<Array<{ 
@@ -32,17 +28,17 @@ export default defineComponent({
     const cursor = ref<string | null>(null);
     const router = useRouter();
 
-    const fetchArticles = (cursorParam?: string) => {
+    const fetchArticles = async (cursorParam?: string) => {
       const url = cursorParam ? `/api/blog/v1/all-articles?limit=20&cursor=${cursorParam}` : '/articles?limit=20';
-      return axioser.get(url, {withCredentials: true})
-        .then(response => {
-          articles.value.push(...response.data.articles);
-          cursor.value = response.data.new_cursor;
-        })
-        .catch(error => {
-          console.log(error.response);
-          console.error('Failed to fetch articles', error);
-        });
+      await axios.get(url)
+      .then(response => {
+        articles.value.push(...response.data.articles);
+        cursor.value = response.data.new_cursor;
+      })
+      .catch(error => {
+        console.log(error.response);
+        console.error('Failed to fetch articles', error);
+      });
     };
 
     onMounted(() => fetchArticles());
