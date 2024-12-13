@@ -23,8 +23,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import axios, { type AxiosRequestConfig } from 'axios';
-
-axios.defaults.withCredentials = true;
+import { refreshJWT } from '../refreshJWT';
 
 export default defineComponent({
     setup() {
@@ -51,7 +50,8 @@ export default defineComponent({
                     articles.value = response.data.articles;
                 })
                 .catch(error => {
-                    console.error('Failed to fetch articles', error);
+                    console.error('Failed to get articles', error);
+                    refreshJWT();
                 });
         };
 
@@ -75,6 +75,7 @@ export default defineComponent({
                     })
                     .catch(error => {
                         console.error('Failed to update article', error);
+                        refreshJWT();
                     });
                 } else {
                 // Add new article
@@ -85,6 +86,7 @@ export default defineComponent({
                     })
                     .catch(error => {
                         console.error('Failed to add article', error);
+                        refreshJWT();
                     });
                 }
             }

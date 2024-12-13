@@ -9,8 +9,7 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
-
-axios.defaults.withCredentials = true;
+import { refreshJWT } from '../refreshJWT';
 
 export default defineComponent({
   setup() {
@@ -24,6 +23,7 @@ export default defineComponent({
         })
         .catch(error => {
           console.error('Failed to fetch article', error);
+          refreshJWT();
         });
     };
 

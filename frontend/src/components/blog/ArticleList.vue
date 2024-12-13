@@ -12,8 +12,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-
-axios.defaults.withCredentials = true;
+import { refreshJWT } from '../refreshJWT';
 
 export default defineComponent({
   setup() {
@@ -31,15 +30,14 @@ export default defineComponent({
     const router = useRouter();
 
     const fetchArticles = async (cursorParam?: string) => {
-      const url = cursorParam ? `/api/blog/v1/all-articles?limit=20&cursor=${cursorParam}` : '/articles?limit=20';
+      const url = cursorParam ? `/api/blog/v1/all-articles?limit=20&cursor=${cursorParam}` : '/api/blog/v1/all-articles?limit=20';
       await axios.get(url)
       .then(response => {
         articles.value.push(...response.data.articles);
         cursor.value = response.data.new_cursor;
       })
       .catch(error => {
-        console.log(error.response);
-        console.error('Failed to fetch articles', error);
+        refreshJWT();
       });
     };
 
