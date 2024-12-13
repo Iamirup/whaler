@@ -24,7 +24,7 @@
   <script lang="ts">
   import { defineComponent, ref, onMounted, computed } from 'vue';
   import { useCurrencyStore } from '../../stores/currencyStore';
-  import axios from 'axios';
+  // import axios from 'axios';
   
   export default defineComponent({
     name: 'CommentsBox',
@@ -35,35 +35,35 @@
       const comments = ref([]);
       const newCommentText = ref('');
   
-      const fetchComments = async () => {
-        try {
-          const response = await axios.get(`/api/comments/`);
-          comments.value = response.data;
-        } catch (error) {
-          console.error('Error fetching comments:', error);
-        }
-      };
+      // const fetchComments = async () => {
+      //   try {
+      //     const response = await axios.get(`/api/comments/`);
+      //     comments.value = response.data;
+      //   } catch (error) {
+      //     console.error('Error fetching comments:', error);
+      //   }
+      // };
   
-      const addComment = () => {
-        if (newCommentText.value.trim() === '') return;
-        comments.value.push({
-          id: comments.value.length + 1,
-          userName: 'Anonymous',
-          date: new Date().toISOString().split('T')[0],
-          text: newCommentText.value,
-        });
-        newCommentText.value = '';
-      };
+      // const addComment = () => {
+      //   if (newCommentText.value.trim() === '') return;
+      //   comments.value.push({
+      //     id: comments.value.length + 1,
+      //     userName: 'Anonymous',
+      //     date: new Date().toISOString().split('T')[0],
+      //     text: newCommentText.value,
+      //   });
+      //   newCommentText.value = '';
+      // };
   
-      onMounted(() => {
-        fetchComments();
-      });
+      // onMounted(() => {
+      //   fetchComments();
+      // });
   
       return {
         currency,
         comments,
         newCommentText,
-        addComment,
+        // addComment,
       };
     },
   });
