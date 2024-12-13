@@ -22,7 +22,7 @@ type (
 		GetMyArticles(encryptedCursor string, limit int, authorId entity.UUID) ([]entity.Article, string, error)
 
 		// UpdateArticleTitle updates article title in database
-		UpdateArticleTitle(articleId entity.UUID, title string) error
+		UpdateArticleTitle(articleId entity.UUID, title, urlPath string) error
 
 		// UpdateArticleContent updates article content in database
 		UpdateArticleContent(articleId entity.UUID, content string) error
@@ -40,7 +40,7 @@ type (
 		GetAllArticles(encryptedCursor string, limit int) ([]entity.Article, string, *serr.ServiceError)
 		GetMyArticles(encryptedCursor string, limit int, authorId entity.UUID) ([]entity.Article, string, *serr.ServiceError)
 		NewArticle(title, content, urlPath string, authorId entity.UUID, authorUsername string) (entity.UUID, *serr.ServiceError)
-		UpdateArticle(articleId entity.UUID, title, content string, authorId entity.UUID) *serr.ServiceError
+		UpdateArticle(articleId entity.UUID, title, urlPath, content string, authorId entity.UUID) *serr.ServiceError
 		DeleteArticle(articleId, authorId entity.UUID) *serr.ServiceError
 	}
 )

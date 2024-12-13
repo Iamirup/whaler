@@ -101,7 +101,10 @@ func (s *ArticleApplicationService) UpdateArticle(request *api.UpdateArticleRequ
 			Details:    validationErrors,
 		}
 	}
-	return s.domainService.UpdateArticle(request.ArticleId, request.Title, request.Content, userId)
+
+	encodedURL := url.QueryEscape(request.Title)
+
+	return s.domainService.UpdateArticle(request.ArticleId, request.Title, encodedURL, request.Content, userId)
 }
 
 func (s *ArticleApplicationService) DeleteArticle(request *api.DeleteArticleRequest, userId entity.UUID) *serr.ServiceError {

@@ -84,7 +84,7 @@ func (s *ArticleService) NewArticle(title, content, urlPath string, authorId ent
 	return articleEntity.ArticleId, nil
 }
 
-func (s *ArticleService) UpdateArticle(articleId entity.UUID, title, content string, authorId entity.UUID) *serr.ServiceError {
+func (s *ArticleService) UpdateArticle(articleId entity.UUID, title, urlPath, content string, authorId entity.UUID) *serr.ServiceError {
 
 	err := s.articlePersistencePort.CheckIfIsAuthorById(articleId, authorId)
 	if err != nil {
@@ -97,7 +97,7 @@ func (s *ArticleService) UpdateArticle(articleId entity.UUID, title, content str
 	}
 
 	if strings.TrimSpace(title) != "" {
-		if err := s.articlePersistencePort.UpdateArticleTitle(articleId, title); err != nil {
+		if err := s.articlePersistencePort.UpdateArticleTitle(articleId, title, urlPath); err != nil {
 			s.logger.Error("Wrong article has been given", zap.Error(err))
 			return &serr.ServiceError{Message: "Wrong article has been given", StatusCode: http.StatusBadRequest}
 		}

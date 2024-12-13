@@ -227,12 +227,12 @@ func (r *articleRepository) GetMyArticles(encryptedCursor string, limit int, aut
 
 const QueryUpdateArticleTitle = `
 UPDATE articles
-SET title=$1
-WHERE id=$2`
+SET title=$1, url_path=$2
+WHERE id=$3`
 
-func (r *articleRepository) UpdateArticleTitle(articleId entity.UUID, title string) error {
+func (r *articleRepository) UpdateArticleTitle(articleId entity.UUID, title, urlPath string) error {
 
-	in := []interface{}{title, articleId}
+	in := []interface{}{title, urlPath, articleId}
 	if err := r.rdbms.Execute(QueryUpdateArticleTitle, in); err != nil {
 		r.logger.Error("Error updating article title", zap.Error(err))
 		return err
