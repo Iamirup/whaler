@@ -24,6 +24,8 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import axios, { type AxiosRequestConfig } from 'axios';
 
+axios.defaults.withCredentials = true;
+
 export default defineComponent({
     setup() {
         const articles = ref<Array<{ 
