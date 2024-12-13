@@ -64,7 +64,8 @@ import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { alertService } from '../alertor';
 import { useRouter } from 'vue-router';
-import router from '@/router';
+
+const router = useRouter();
 
 const axioser = axios.create({
 	baseURL: 'https://whaler.ir'
@@ -96,7 +97,6 @@ export default defineComponent({
 			identifier: '',
 			password: '',
 		} as LoginData,
-		router: useRouter(),
 	};
   },
   methods: {
@@ -106,15 +106,10 @@ export default defineComponent({
 			? { email: this.loginData.identifier, password: this.loginData.password }
 			: { username: this.loginData.identifier, password: this.loginData.password }
 
-		console.log("1");
 		await axioser.post("/api/auth/v1/login", loginPayload)
 		.then(response => {
-			console.log("2");
-			console.log("3");
 			alertService.showAlert("Successful login", "success");
-			console.log("4");
-			this.routeToApp();
-			console.log("5");
+			router.push('/eventor');
 		})
 		.catch(error => {
 			let alertErrorMessage = ""
@@ -125,18 +120,16 @@ export default defineComponent({
 			alertService.showAlert(alertErrorMessage, "error");
 		});
 
-		console.log("6");
 		this.loginData = {
 			identifier: '',
 			password: '',
 		}
-		console.log("7");
 	},
 	async register() {
 		await axioser.post("/api/auth/v1/register", this.registerData)
 		.then(response => {
 			alertService.showAlert("Successful regestration", "success");
-			this.routeToApp();
+			router.push('/eventor');
 		})
 		.catch(error => {
 			let alertErrorMessage = ""
@@ -157,10 +150,6 @@ export default defineComponent({
 	validateEmail(identifier: string): boolean {
 		const re = /\S+@\S+\.\S+/;
 		return re.test(identifier);
-	},
-	routeToApp() {
-		console.log("4.5");
-		this.router.push('/eventor');
 	},
   },
   setup() {
