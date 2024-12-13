@@ -10,7 +10,7 @@ import (
 )
 
 const QueryCreateArticle = `
-INSERT INTO articles(title, content, author_id, author_username) VALUES($1, $2, $3, $4, $5)
+INSERT INTO articles(title, content, author_id, author_username) VALUES($1, $2, $3, $4)
 RETURNING id;`
 
 func (r *articleRepository) CreateArticle(article *entity.Article) error {
@@ -225,7 +225,7 @@ func (r *articleRepository) GetMyArticles(encryptedCursor string, limit int, aut
 const QueryUpdateArticleTitle = `
 UPDATE articles
 SET title=$1
-WHERE id=$3`
+WHERE id=$2`
 
 func (r *articleRepository) UpdateArticleTitle(articleId entity.UUID, title string) error {
 
