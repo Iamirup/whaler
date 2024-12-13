@@ -1,11 +1,12 @@
 syntax = "proto3";
 
-package author;
+package blog;
 
 option go_package = "github.com/Iamirup/whaler/backend/microservices/blog";
 
-service AuthorService {
+service BlogService {
   rpc GetTopAuthors(TopAuthorsRequest) returns (TopAuthorsResponse);
+  rpc GetTopArticles(TopArticlesRequest) returns (TopArticlesResponse);
 }
 
 message TopAuthorsRequest {
@@ -20,4 +21,18 @@ message Author {
   string id = 1;
   string username = 2;
   int32 article_count = 3;
+}
+
+message TopArticlesRequest {
+  int32 count = 1;
+}
+
+message TopArticlesResponse {
+  repeated Article articles = 1;
+}
+
+message Article {
+  string id = 1;
+  string title = 2;
+  int32 likes = 3;
 }

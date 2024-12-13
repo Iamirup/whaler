@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS topics(
+	id SERIAL PRIMARY KEY,
+	currency VARCHAR(50)
+);

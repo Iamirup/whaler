@@ -32,8 +32,12 @@ func (s *ArticleApplicationService) GetAnArticle(urlPath string) (*entity.Articl
 	return s.domainService.GetAnArticle(urlPath)
 }
 
-func (s *ArticleApplicationService) GetArticles(encryptedCursor string, limit int) ([]entity.Article, string, *serr.ServiceError) {
-	return s.domainService.GetArticles(encryptedCursor, limit)
+func (s *ArticleApplicationService) GetAllArticles(encryptedCursor string, limit int) ([]entity.Article, string, *serr.ServiceError) {
+	return s.domainService.GetAllArticles(encryptedCursor, limit)
+}
+
+func (s *ArticleApplicationService) GetMyArticles(encryptedCursor string, limit int, authorId entity.UUID) ([]entity.Article, string, *serr.ServiceError) {
+	return s.domainService.GetMyArticles(encryptedCursor, limit, authorId)
 }
 
 func (s *ArticleApplicationService) NewArticle(request *api.NewArticleRequest, userId entity.UUID, username string) (entity.UUID, *serr.ServiceError) {

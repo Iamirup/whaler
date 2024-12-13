@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type Server struct {
+type restServer struct {
 	Logger *zap.Logger
 	Token  token.Token
 
@@ -19,32 +19,33 @@ type Server struct {
 	clientApp    *fiber.App
 }
 
-func New(log *zap.Logger, articleRepo ports.ArticlePersistencePort, token token.Token) *Server {
-	server := &Server{Logger: log, Token: token}
+func NewRestServer(log *zap.Logger, articleRepo ports.ArticlePersistencePort, token token.Token) *restServer {
+	restServer := &restServer{Logger: log, Token: token}
 
-	server.managmentApp = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
-	server.clientApp = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
+	restServer.managmentApp = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
+	restServer.clientApp = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
 
-	kubernetesHandler := NewKubernetesHandler(server)
+	kubernetesHandler := NewKubernetesHandler(restServer)
 
-	server.managmentApp.Get("/healthz/liveness", kubernetesHandler.Liveness)
-	server.managmentApp.Get("/healthz/readiness", kubernetesHandler.Readiness)
+	restServer.managmentApp.Get("/healthz/liveness", kubernetesHandler.Liveness)
+	restServer.managmentApp.Get("/healthz/readiness", kubernetesHandler.Readiness)
 
 	articleService := domainService.NewArticleService(articleRepo, log, token)
-	articleHandler := NewArticleHandler(server, appService.NewArticleApplicationService(articleService, log))
+	articleHandler := NewArticleHandler(restServer, appService.NewArticleApplicationService(articleService, log))
 
-	blogV1 := server.clientApp.Group("/api/blog/v1", articleHandler.fetchUserDataMiddleware)
+	blogV1 := restServer.clientApp.Group("/api/blog/v1", articleHandler.fetchUserDataMiddleware)
 
 	blogV1.Get("/article/:url_path", articleHandler.GetAnArticle)
-	blogV1.Get("/articles", articleHandler.GetArticles)
+	blogV1.Get("/all-articles", articleHandler.GetAllArticles)
+	blogV1.Get("/my-articles", articleHandler.GetMyArticles)
 	blogV1.Post("/article", articleHandler.NewArticle)
 	blogV1.Patch("/article", articleHandler.UpdateArticle)
 	blogV1.Delete("/article", articleHandler.DeleteArticle)
 
-	return server
+	return restServer
 }
 
-func (handler *Server) Serve() {
+func (handler *restServer) Serve() {
 	go func() {
 		err := handler.managmentApp.Listen(":8081")
 		handler.Logger.Fatal("error resolving managment server", zap.Error(err))

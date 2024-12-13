@@ -7,10 +7,10 @@ import (
 )
 
 type KubernetesHandler struct {
-	server *restServer
+	server *Server
 }
 
-func NewKubernetesHandler(server *restServer) *KubernetesHandler {
+func NewKubernetesHandler(server *Server) *KubernetesHandler {
 	return &KubernetesHandler{server: server}
 }
 

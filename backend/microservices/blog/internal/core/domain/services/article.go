@@ -40,9 +40,20 @@ func (s *ArticleService) GetAnArticle(urlPath string) (*entity.Article, *serr.Se
 	return article, nil
 }
 
-func (s *ArticleService) GetArticles(encryptedCursor string, limit int) ([]entity.Article, string, *serr.ServiceError) {
+func (s *ArticleService) GetAllArticles(encryptedCursor string, limit int) ([]entity.Article, string, *serr.ServiceError) {
 
-	articles, newEncryptedCursor, err := s.articlePersistencePort.GetArticles(encryptedCursor, limit)
+	articles, newEncryptedCursor, err := s.articlePersistencePort.GetAllArticles(encryptedCursor, limit)
+	if err != nil {
+		s.logger.Error("Something went wrong in retrieving articles", zap.Error(err))
+		return nil, "", &serr.ServiceError{Message: "Something went wrong in retrieving articles", StatusCode: http.StatusInternalServerError}
+	}
+
+	return articles, newEncryptedCursor, nil
+}
+
+func (s *ArticleService) GetMyArticles(encryptedCursor string, limit int, authorId entity.UUID) ([]entity.Article, string, *serr.ServiceError) {
+
+	articles, newEncryptedCursor, err := s.articlePersistencePort.GetMyArticles(encryptedCursor, limit, authorId)
 	if err != nil {
 		s.logger.Error("Something went wrong in retrieving articles", zap.Error(err))
 		return nil, "", &serr.ServiceError{Message: "Something went wrong in retrieving articles", StatusCode: http.StatusInternalServerError}

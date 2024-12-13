@@ -58,14 +58,14 @@ func (r *articleRepository) GetAnArticle(urlPath string) (*entity.Article, error
 	return article, nil
 }
 
-const QueryGetArticles = `
+const QueryGetAllArticles = `
 SELECT *
 FROM articles
 WHERE date > $1
 ORDER BY date
 FETCH NEXT $2 ROWS ONLY;`
 
-func (r *articleRepository) GetArticles(encryptedCursor string, limit int) ([]entity.Article, string, error) {
+func (r *articleRepository) GetAllArticles(encryptedCursor string, limit int) ([]entity.Article, string, error) {
 	var date time.Time
 
 	if limit < r.config.Limit.Min {
@@ -106,7 +106,91 @@ func (r *articleRepository) GetArticles(encryptedCursor string, limit int) ([]en
 	}
 
 	in := []any{date, limit}
-	if err := r.rdbms.Query(QueryGetArticles, in, out); err != nil {
+	if err := r.rdbms.Query(QueryGetAllArticles, in, out); err != nil {
+		r.logger.Error("Error query articles", zap.Error(err))
+		return nil, "", err
+	}
+
+	if len(articles) == 0 {
+		return articles, "", nil
+	}
+
+	var lastArticle entity.Article
+
+	for index := limit - 1; index >= 0; index-- {
+		if articles[index].ArticleId != "" {
+			lastArticle = articles[index]
+			break
+		} else {
+			articles = articles[:index]
+		}
+	}
+
+	if lastArticle.ArticleId == "" {
+		return articles, "", nil
+	}
+
+	cursor := lastArticle.Date.Format(time.RFC3339Nano)
+
+	// encrypt cursor
+	encryptedCursor, err := crypto.Encrypt(cursor, r.config.CursorSecret)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return articles, encryptedCursor, nil
+}
+
+const QueryGetMyArticles = `
+SELECT *
+FROM articles
+WHERE date > $1
+AND author_id = $2
+ORDER BY date
+FETCH NEXT $3 ROWS ONLY;`
+
+func (r *articleRepository) GetMyArticles(encryptedCursor string, limit int, authorId entity.UUID) ([]entity.Article, string, error) {
+	var date time.Time
+
+	if limit < r.config.Limit.Min {
+		limit = r.config.Limit.Min
+	} else if limit > r.config.Limit.Max {
+		limit = r.config.Limit.Max
+	}
+
+	// decrypt cursor
+	if len(encryptedCursor) != 0 {
+		cursor, err := crypto.Decrypt(encryptedCursor, r.config.CursorSecret)
+		if err != nil {
+			return nil, "", err
+		}
+
+		date, err = time.Parse(time.RFC3339Nano, cursor)
+		if err != nil {
+			return nil, "", err
+		}
+	} else {
+		date = time.Unix(0, 0)
+	}
+
+	articles := make([]entity.Article, limit)
+	out := make([][]any, limit)
+
+	for index := 0; index < limit; index++ {
+		out[index] = []any{
+			&articles[index].ArticleId,
+			&articles[index].UrlPath,
+			&articles[index].Title,
+			&articles[index].Content,
+			&articles[index].AuthorId,
+			&articles[index].AuthorUsername,
+			&articles[index].Likes,
+			&articles[index].Date,
+		}
+	}
+
+	in := []any{date, authorId, limit}
+	if err := r.rdbms.Query(QueryGetMyArticles, in, out); err != nil {
 		r.logger.Error("Error query articles", zap.Error(err))
 		return nil, "", err
 	}

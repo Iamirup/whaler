@@ -15,8 +15,11 @@ type (
 		// GetAnArticle retrieves the article that matches the url path
 		GetAnArticle(urlPath string) (*entity.Article, error)
 
-		// GetArticles retrieves all articles in the system
-		GetArticles(encryptedCursor string, limit int) ([]entity.Article, string, error)
+		// GetAllArticles retrieves all articles in the system
+		GetAllArticles(encryptedCursor string, limit int) ([]entity.Article, string, error)
+
+		// GetMyArticles retrieves all articles in the system that belongs to this author
+		GetMyArticles(encryptedCursor string, limit int, authorId entity.UUID) ([]entity.Article, string, error)
 
 		// UpdateArticleTitle updates article title in database
 		UpdateArticleTitle(articleId entity.UUID, title string) error
@@ -34,7 +37,8 @@ type (
 	// ArticleServicePort defines the methods for interacting with article services
 	ArticleServicePort interface {
 		GetAnArticle(urlPath string) (*entity.Article, *serr.ServiceError)
-		GetArticles(encryptedCursor string, limit int) ([]entity.Article, string, *serr.ServiceError)
+		GetAllArticles(encryptedCursor string, limit int) ([]entity.Article, string, *serr.ServiceError)
+		GetMyArticles(encryptedCursor string, limit int, authorId entity.UUID) ([]entity.Article, string, *serr.ServiceError)
 		NewArticle(title, content, urlPath string, authorId entity.UUID, authorUsername string) (entity.UUID, *serr.ServiceError)
 		UpdateArticle(articleId entity.UUID, title, content string, authorId entity.UUID) *serr.ServiceError
 		DeleteArticle(articleId, authorId entity.UUID) *serr.ServiceError

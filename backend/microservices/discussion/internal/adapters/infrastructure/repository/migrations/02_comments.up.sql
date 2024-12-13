@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS comments(
+	id SERIAL PRIMARY KEY,
+	topic_id INT REFERENCES topics(id),
+    username VARCHAR(32),
+    text TEXT,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
