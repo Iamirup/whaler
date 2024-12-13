@@ -105,7 +105,6 @@ export default defineComponent({
 			? { email: this.loginData.identifier, password: this.loginData.password }
 			: { username: this.loginData.identifier, password: this.loginData.password }
 
-
 		await axioser.post("/api/auth/v1/login", loginPayload)
 		.then(response => {
 			console.log(response)
@@ -193,6 +192,7 @@ export default defineComponent({
 .user-label {
  position: absolute;
  left: 15px;
+ padding-top: 2px;
  color: #adabab;
  pointer-events: none;
  transform: translateY(1rem);
@@ -206,7 +206,6 @@ export default defineComponent({
 
 .input:focus ~ label, input:valid ~ label {
  transform: translateY(-50%) scale(0.8);
- /* background-color: #212121; */
  padding: 0 .2em;
  color: #9e9e9e;
 }
