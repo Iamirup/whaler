@@ -104,11 +104,16 @@ export default defineComponent({
 			? { email: this.loginData.identifier, password: this.loginData.password }
 			: { username: this.loginData.identifier, password: this.loginData.password }
 
+		console.log("1");
 		await axioser.post("/api/auth/v1/login", loginPayload)
 		.then(response => {
+			console.log("2");
 			this.setCookie("access_token", response.data.access_token);
+			console.log("3");
 			alertService.showAlert("Successful login", "success");
+			console.log("4");
 			this.routeToApp();
+			console.log("5");
 		})
 		.catch(error => {
 			let alertErrorMessage = ""
@@ -119,10 +124,12 @@ export default defineComponent({
 			alertService.showAlert(alertErrorMessage, "error");
 		});
 
+		console.log("6");
 		this.loginData = {
 			identifier: '',
 			password: '',
 		}
+		console.log("7");
 	},
 	async register() {
 		await axioser.post("/api/auth/v1/register", this.registerData)
@@ -148,7 +155,9 @@ export default defineComponent({
 		}
 	},
 	setCookie(name: string, value: string) {
+		console.log("2.4");
 		document.cookie = `${name}=${value}; path=/; secure;`
+		console.log("2.6");
 	},
 	validateEmail(identifier: string): boolean {
 		const re = /\S+@\S+\.\S+/;
@@ -156,6 +165,7 @@ export default defineComponent({
 	},
 	routeToApp() {
 		const router = useRouter();
+		console.log("4.5");
 		router.push('/eventor');
 	},
   },
