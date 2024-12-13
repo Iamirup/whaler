@@ -69,7 +69,7 @@ func (s *ArticleApplicationService) NewArticle(request *api.NewArticleRequest, u
 		}
 	}
 
-	encodedURL := url.QueryEscape(request.Title)
+	encodedURL := url.PathEscape(request.Title)
 
 	return s.domainService.NewArticle(request.Title, request.Content, encodedURL, userId, username)
 }
@@ -102,7 +102,7 @@ func (s *ArticleApplicationService) UpdateArticle(request *api.UpdateArticleRequ
 		}
 	}
 
-	encodedURL := url.QueryEscape(request.Title)
+	encodedURL := url.PathEscape(request.Title)
 
 	return s.domainService.UpdateArticle(request.ArticleId, request.Title, encodedURL, request.Content, userId)
 }
