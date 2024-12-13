@@ -4,18 +4,18 @@
         <h2 class="text-2xl font-semibold mb-4 text-blue-700">Comments: {{ currency }}</h2>
         <div class="max-h-64 overflow-y-auto bg-gray-100 rounded-lg p-2">
           <ul>
-            <li v-for="comment in comments" :key="comment.id" class="mb-3 p-2 bg-white rounded-lg shadow-sm">
+            <!-- <li v-for="comment in comments" :key="comment.id" class="mb-3 p-2 bg-white rounded-lg shadow-sm">
               <div class="flex items-center mb-2">
                 <div class="font-bold text-sm mr-2 text-green-600">{{ comment.userName }}</div>
                 <div class="text-gray-500 text-xs">{{ comment.date }}</div>
               </div>
               <p class="text-gray-800">{{ comment.text }}</p>
-            </li>
+            </li> -->
           </ul>
         </div>
         <div class="mt-4">
           <textarea v-model="newCommentText" placeholder="Write a comment..." class="w-full p-2 border rounded"></textarea>
-          <button @click="addComment" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">Add Comment</button>
+          <!-- <button @click="addComment" class="bg-blue-500 text-white px-4 py-2 rounded mt-2">Add Comment</button> -->
         </div>
       </div>
     </div>

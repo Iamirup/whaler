@@ -7,19 +7,19 @@
             <form @submit.prevent="register" action="#" class="form" id="form1">
                 <h2 class="form__title">Register</h2>
 				<div class="input-group">
-					<input type="text" required="" name="text" v-model="registerData.username"  autocomplete="off" class="input rounded-xl h-11">
+					<input type="text" required=true name="text" v-model="registerData.username"  autocomplete="off" class="input rounded-xl h-11">
 					<label class="user-label">Username</label>
 				</div>
 				<div class="input-group my-1">
-					<input type="text" required="" name="text" v-model="registerData.email"  autocomplete="off" class="input rounded-xl h-11">
+					<input type="text" required=true name="text" v-model="registerData.email"  autocomplete="off" class="input rounded-xl h-11">
 					<label class="user-label">Email</label>
 				</div>
 				<div class="input-group my-1">
-					<input type="password" required="" name="text" v-model="registerData.password"  autocomplete="off" class="input rounded-xl h-11">
+					<input type="password" required=true name="text" v-model="registerData.password"  autocomplete="off" class="input rounded-xl h-11">
 					<label class="user-label">Password</label>
 				</div>
 				<div class="input-group my-1">
-					<input type="password" required="" name="text" v-model="registerData.confirm_password"  autocomplete="off" class="input rounded-xl h-11">
+					<input type="password" required=true name="text" v-model="registerData.confirm_password"  autocomplete="off" class="input rounded-xl h-11">
 					<label class="user-label">Confirm Password</label>
 				</div>
                 <button class="btn w-12 flex justify-center">Register</button>
@@ -31,11 +31,11 @@
             <form @submit.prevent="login" action="#" class="form" id="form2">
                 <h2 class="form__title">Login</h2>
 				<div class="input-group my-1">
-					<input type="text" required="" name="text" v-model="loginData.identifier"  autocomplete="off" class="input rounded-xl h-11">
+					<input type="text" required=true name="text" v-model="loginData.identifier"  autocomplete="off" class="input rounded-xl h-11">
 					<label class="user-label">Email or Username</label>
 				</div>
 				<div class="input-group">
-					<input type="password" required="" name="text" v-model="loginData.password" autocomplete="off" class="input rounded-xl h-11">
+					<input type="password" required=true name="text" v-model="loginData.password" autocomplete="off" class="input rounded-xl h-11">
 					<label class="user-label">Password</label>
 				</div>
                 <a href="#" class="link">Forgot your password?</a>
