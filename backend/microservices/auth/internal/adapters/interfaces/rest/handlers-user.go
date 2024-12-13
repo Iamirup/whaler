@@ -50,12 +50,17 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		Value:    authTokens.RefreshToken,
 		Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
 		HTTPOnly: true,
+		Secure:   true,
 	})
 
-	response := dto.RegisterResponse{
-		AccessToken: authTokens.AccessToken,
-	}
-	return c.Status(http.StatusCreated).JSON(response)
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    authTokens.AccessToken,
+		HTTPOnly: true,
+		Secure:   true,
+	})
+
+	return c.SendStatus(http.StatusCreated)
 }
 
 func (h *UserHandler) Login(c *fiber.Ctx) error {
@@ -89,12 +94,25 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		Value:    authTokens.RefreshToken,
 		Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
 		HTTPOnly: true,
+		Secure:   true,
 	})
 
-	response := dto.LoginResponse{
-		AccessToken: authTokens.AccessToken,
-	}
-	return c.Status(http.StatusOK).JSON(response)
+	c.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    authTokens.RefreshToken,
+		Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
+		HTTPOnly: true,
+		Secure:   true,
+	})
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    authTokens.AccessToken,
+		HTTPOnly: true,
+		Secure:   true,
+	})
+
+	return c.SendStatus(http.StatusCreated)
 }
 
 func (h *UserHandler) Logout(c *fiber.Ctx) error {

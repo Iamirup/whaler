@@ -19,11 +19,11 @@ type (
 // responses in successful status
 type (
 	RegisterResponse struct {
-		AccessToken string `json:"access_token"  form:"access_token"`
+		// AccessToken string `json:"access_token"  form:"access_token"`
 	}
 
 	LoginResponse struct {
-		AccessToken string `json:"access_token"  form:"access_token"`
+		// AccessToken string `json:"access_token"  form:"access_token"`
 	}
 )
 

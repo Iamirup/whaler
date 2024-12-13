@@ -64,6 +64,7 @@ import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { alertService } from '../alertor';
 import { useRouter } from 'vue-router';
+import router from '@/router';
 
 const axioser = axios.create({
 	baseURL: 'https://whaler.ir'
@@ -95,6 +96,7 @@ export default defineComponent({
 			identifier: '',
 			password: '',
 		} as LoginData,
+		router: useRouter(),
 	};
   },
   methods: {
@@ -108,7 +110,6 @@ export default defineComponent({
 		await axioser.post("/api/auth/v1/login", loginPayload)
 		.then(response => {
 			console.log("2");
-			this.setCookie("access_token", response.data.access_token);
 			console.log("3");
 			alertService.showAlert("Successful login", "success");
 			console.log("4");
@@ -134,7 +135,6 @@ export default defineComponent({
 	async register() {
 		await axioser.post("/api/auth/v1/register", this.registerData)
 		.then(response => {
-			this.setCookie("access_token", response.data.access_token);
 			alertService.showAlert("Successful regestration", "success");
 			this.routeToApp();
 		})
@@ -154,19 +154,13 @@ export default defineComponent({
 			confirm_password: '',
 		}
 	},
-	setCookie(name: string, value: string) {
-		console.log("2.4");
-		document.cookie = `${name}=${value}; path=/; secure;`
-		console.log("2.6");
-	},
 	validateEmail(identifier: string): boolean {
 		const re = /\S+@\S+\.\S+/;
 		return re.test(identifier);
 	},
 	routeToApp() {
-		const router = useRouter();
 		console.log("4.5");
-		router.push('/eventor');
+		this.router.push('/eventor');
 	},
   },
   setup() {
