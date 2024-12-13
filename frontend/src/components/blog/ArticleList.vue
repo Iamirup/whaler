@@ -13,6 +13,8 @@ import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
+axios.defaults.withCredentials = true;
+
 export default defineComponent({
   setup() {
     const articles = ref<Array<{ 
