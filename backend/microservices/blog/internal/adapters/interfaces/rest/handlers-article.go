@@ -57,7 +57,7 @@ func (h *ArticleHandler) GetAllArticles(c *fiber.Ctx) error {
 
 func (h *ArticleHandler) GetMyArticles(c *fiber.Ctx) error {
 
-	authorId, ok := c.Locals("user-id").(entity.UUID)
+	authorId, ok := c.Locals("user-id").(string)
 	if !ok || authorId == "" {
 		h.server.Logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
@@ -66,7 +66,7 @@ func (h *ArticleHandler) GetMyArticles(c *fiber.Ctx) error {
 	cursor := c.Query("cursor")
 	limit := c.QueryInt("limit")
 
-	articles, newCursor, err := h.articleAppService.GetMyArticles(cursor, limit, authorId)
+	articles, newCursor, err := h.articleAppService.GetMyArticles(cursor, limit, entity.UUID(authorId))
 	if err != nil {
 		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
 		return c.Status(err.StatusCode).JSON(response)
@@ -82,7 +82,7 @@ func (h *ArticleHandler) GetMyArticles(c *fiber.Ctx) error {
 
 func (h *ArticleHandler) NewArticle(c *fiber.Ctx) error {
 
-	userId, ok := c.Locals("user-id").(entity.UUID)
+	userId, ok := c.Locals("user-id").(string)
 	if !ok || userId == "" {
 		h.server.Logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
@@ -101,7 +101,7 @@ func (h *ArticleHandler) NewArticle(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	articleId, err := h.articleAppService.NewArticle(&request, userId, username)
+	articleId, err := h.articleAppService.NewArticle(&request, entity.UUID(userId), username)
 	if err != nil {
 		if err.Message == "Validation failed" {
 			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}
@@ -120,7 +120,7 @@ func (h *ArticleHandler) NewArticle(c *fiber.Ctx) error {
 
 func (h *ArticleHandler) UpdateArticle(c *fiber.Ctx) error {
 
-	userId, ok := c.Locals("user-id").(entity.UUID)
+	userId, ok := c.Locals("user-id").(string)
 	if !ok || userId == "" {
 		h.server.Logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
@@ -133,7 +133,7 @@ func (h *ArticleHandler) UpdateArticle(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	err := h.articleAppService.UpdateArticle(&request, userId)
+	err := h.articleAppService.UpdateArticle(&request, entity.UUID(userId))
 	if err != nil {
 		if err.Message == "Validation failed" {
 			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}
@@ -148,7 +148,7 @@ func (h *ArticleHandler) UpdateArticle(c *fiber.Ctx) error {
 
 func (h *ArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 
-	userId, ok := c.Locals("user-id").(entity.UUID)
+	userId, ok := c.Locals("user-id").(string)
 	if !ok || userId == "" {
 		h.server.Logger.Error("Invalid user-id local")
 		return c.SendStatus(http.StatusInternalServerError)
@@ -161,7 +161,7 @@ func (h *ArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	err := h.articleAppService.DeleteArticle(&request, userId)
+	err := h.articleAppService.DeleteArticle(&request, entity.UUID(userId))
 	if err != nil {
 		if err.Message == "Validation failed" {
 			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}
