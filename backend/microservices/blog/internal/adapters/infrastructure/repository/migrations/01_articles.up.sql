@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS articles(
 	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	url_path TEXT UNIQUE NOT NULL,
 	title VARCHAR(80) NOT NULL,
 	content TEXT NOT NULL,
 	author_id UUID NOT NULL,

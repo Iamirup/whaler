@@ -29,9 +29,9 @@ func NewArticleService(
 	}
 }
 
-func (s *ArticleService) GetAnArticle(urlPath string) (*entity.Article, *serr.ServiceError) {
+func (s *ArticleService) GetAnArticle(articleId entity.UUID) (*entity.Article, *serr.ServiceError) {
 
-	article, err := s.articlePersistencePort.GetAnArticle(urlPath)
+	article, err := s.articlePersistencePort.GetAnArticle(articleId)
 	if err != nil {
 		s.logger.Error("There is no article with this url path", zap.Error(err))
 		return &entity.Article{}, &serr.ServiceError{Message: "There is no article with this url path", StatusCode: http.StatusNotFound}
@@ -62,10 +62,9 @@ func (s *ArticleService) GetMyArticles(encryptedCursor string, limit int, author
 	return articles, newEncryptedCursor, nil
 }
 
-func (s *ArticleService) NewArticle(title, content, urlPath string, authorId entity.UUID, authorUsername string) (entity.UUID, *serr.ServiceError) {
+func (s *ArticleService) NewArticle(title, content string, authorId entity.UUID, authorUsername string) (entity.UUID, *serr.ServiceError) {
 
 	articleEntity := &entity.Article{
-		UrlPath:        urlPath,
 		Title:          title,
 		Content:        content,
 		AuthorId:       authorId,
@@ -84,7 +83,7 @@ func (s *ArticleService) NewArticle(title, content, urlPath string, authorId ent
 	return articleEntity.ArticleId, nil
 }
 
-func (s *ArticleService) UpdateArticle(articleId entity.UUID, title, urlPath, content string, authorId entity.UUID) *serr.ServiceError {
+func (s *ArticleService) UpdateArticle(articleId entity.UUID, title, content string, authorId entity.UUID) *serr.ServiceError {
 
 	err := s.articlePersistencePort.CheckIfIsAuthorById(articleId, authorId)
 	if err != nil {
@@ -97,7 +96,7 @@ func (s *ArticleService) UpdateArticle(articleId entity.UUID, title, urlPath, co
 	}
 
 	if strings.TrimSpace(title) != "" {
-		if err := s.articlePersistencePort.UpdateArticleTitle(articleId, title, urlPath); err != nil {
+		if err := s.articlePersistencePort.UpdateArticleTitle(articleId, title); err != nil {
 			s.logger.Error("Wrong article has been given", zap.Error(err))
 			return &serr.ServiceError{Message: "Wrong article has been given", StatusCode: http.StatusBadRequest}
 		}

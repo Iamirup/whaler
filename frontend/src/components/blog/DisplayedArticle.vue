@@ -32,8 +32,8 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      const urlPath = route.params.urlPath;
-      if (urlPath) fetchArticle(urlPath as string);
+      const articleId = route.params.articleId;
+      if (articleId) fetchArticle(articleId as string);
     });
 
     return { article };

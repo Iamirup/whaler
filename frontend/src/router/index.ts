@@ -43,7 +43,7 @@ const router = createRouter({
       component: () => import('@/components/blog/ArticleManagement.vue'),
     },
     {
-      path: '/article/:urlPath',
+      path: '/article/:articleId',
       name: 'article',
       component: () => import('@/components/blog/DisplayedArticle.vue'),
       props: true,

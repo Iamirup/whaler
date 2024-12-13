@@ -10,16 +10,16 @@ import (
 )
 
 const QueryCreateArticle = `
-INSERT INTO articles(url_path, title, content, author_id, author_username) VALUES($1, $2, $3, $4, $5)
+INSERT INTO articles(title, content, author_id, author_username) VALUES($1, $2, $3, $4, $5)
 RETURNING id;`
 
 func (r *articleRepository) CreateArticle(article *entity.Article) error {
 
-	if len(article.UrlPath) == 0 || len(article.Title) == 0 || len(article.Content) == 0 || len(article.AuthorUsername) == 0 || len(article.AuthorId) == 0 {
+	if len(article.Title) == 0 || len(article.Content) == 0 || len(article.AuthorUsername) == 0 || len(article.AuthorId) == 0 {
 		return errors.New("insufficient information for article")
 	}
 
-	in := []any{article.UrlPath, article.Title, article.Content, article.AuthorId, article.AuthorUsername}
+	in := []any{article.Title, article.Content, article.AuthorId, article.AuthorUsername}
 	out := []any{&article.ArticleId}
 	if err := r.rdbms.QueryRow(QueryCreateArticle, in, out); err != nil {
 		r.logger.Error("Error inserting article", zap.Error(err))
@@ -32,16 +32,15 @@ func (r *articleRepository) CreateArticle(article *entity.Article) error {
 const QueryGetAnArticle = `
 SELECT *
 FROM articles
-WHERE url_path=$1`
+WHERE id=$1`
 
-func (r *articleRepository) GetAnArticle(urlPath string) (*entity.Article, error) {
+func (r *articleRepository) GetAnArticle(articleId entity.UUID) (*entity.Article, error) {
 
-	article := &entity.Article{UrlPath: urlPath}
+	article := &entity.Article{ArticleId: articleId}
 
-	in := []any{article.UrlPath}
+	in := []any{article.ArticleId}
 	out := []any{
 		&article.ArticleId,
-		&article.UrlPath,
 		&article.Title,
 		&article.Content,
 		&article.AuthorId,
@@ -95,7 +94,6 @@ func (r *articleRepository) GetAllArticles(encryptedCursor string, limit int) ([
 	for index := 0; index < limit; index++ {
 		out[index] = []any{
 			&articles[index].ArticleId,
-			&articles[index].UrlPath,
 			&articles[index].Title,
 			&articles[index].Content,
 			&articles[index].AuthorId,
@@ -179,7 +177,6 @@ func (r *articleRepository) GetMyArticles(encryptedCursor string, limit int, aut
 	for index := 0; index < limit; index++ {
 		out[index] = []any{
 			&articles[index].ArticleId,
-			&articles[index].UrlPath,
 			&articles[index].Title,
 			&articles[index].Content,
 			&articles[index].AuthorId,
@@ -227,12 +224,12 @@ func (r *articleRepository) GetMyArticles(encryptedCursor string, limit int, aut
 
 const QueryUpdateArticleTitle = `
 UPDATE articles
-SET title=$1, url_path=$2
+SET title=$1
 WHERE id=$3`
 
-func (r *articleRepository) UpdateArticleTitle(articleId entity.UUID, title, urlPath string) error {
+func (r *articleRepository) UpdateArticleTitle(articleId entity.UUID, title string) error {
 
-	in := []interface{}{title, urlPath, articleId}
+	in := []interface{}{title, articleId}
 	if err := r.rdbms.Execute(QueryUpdateArticleTitle, in); err != nil {
 		r.logger.Error("Error updating article title", zap.Error(err))
 		return err

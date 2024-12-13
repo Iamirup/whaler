@@ -18,7 +18,6 @@ export default defineComponent({
   setup() {
     const articles = ref<Array<{ 
       article_id: string; 
-      url_path: string; 
       title: string; 
       content: string; 
       author_id: string; 
@@ -50,7 +49,6 @@ export default defineComponent({
 
     const selectArticle = (article: { 
       article_id: string; 
-      url_path: string; 
       title: string; 
       content: string; 
       author_id: string; 
@@ -58,7 +56,7 @@ export default defineComponent({
       likes: number;
       date: string;
     }) => {
-      router.push({ path: `/article/${article.url_path}` });
+      router.push({ path: `/article/${article.article_id}` });
     };
 
     const loadMore = () => {

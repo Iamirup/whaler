@@ -21,9 +21,9 @@ func NewArticleHandler(server *restServer, articleAppService *services.ArticleAp
 
 func (h *ArticleHandler) GetAnArticle(c *fiber.Ctx) error {
 
-	urlPath := c.Params("urlPath")
+	articleId := entity.UUID((c.Params("articleId")))
 
-	article, err := h.articleAppService.GetAnArticle(urlPath)
+	article, err := h.articleAppService.GetAnArticle(articleId)
 	if err != nil {
 		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
 		return c.Status(err.StatusCode).JSON(response)

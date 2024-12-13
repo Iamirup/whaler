@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 
 	serr "github.com/Iamirup/whaler/backend/microservices/blog/pkg/errors"
 	"github.com/go-playground/validator/v10"
@@ -28,8 +27,8 @@ func NewArticleApplicationService(domainService ports.ArticleServicePort, logger
 	}
 }
 
-func (s *ArticleApplicationService) GetAnArticle(urlPath string) (*entity.Article, *serr.ServiceError) {
-	return s.domainService.GetAnArticle(urlPath)
+func (s *ArticleApplicationService) GetAnArticle(articleId entity.UUID) (*entity.Article, *serr.ServiceError) {
+	return s.domainService.GetAnArticle(articleId)
 }
 
 func (s *ArticleApplicationService) GetAllArticles(encryptedCursor string, limit int) ([]entity.Article, string, *serr.ServiceError) {
@@ -69,9 +68,7 @@ func (s *ArticleApplicationService) NewArticle(request *api.NewArticleRequest, u
 		}
 	}
 
-	encodedURL := url.PathEscape(request.Title)
-
-	return s.domainService.NewArticle(request.Title, request.Content, encodedURL, userId, username)
+	return s.domainService.NewArticle(request.Title, request.Content, userId, username)
 }
 
 func (s *ArticleApplicationService) UpdateArticle(request *api.UpdateArticleRequest, userId entity.UUID) *serr.ServiceError {
@@ -102,9 +99,7 @@ func (s *ArticleApplicationService) UpdateArticle(request *api.UpdateArticleRequ
 		}
 	}
 
-	encodedURL := url.PathEscape(request.Title)
-
-	return s.domainService.UpdateArticle(request.ArticleId, request.Title, encodedURL, request.Content, userId)
+	return s.domainService.UpdateArticle(request.ArticleId, request.Title, request.Content, userId)
 }
 
 func (s *ArticleApplicationService) DeleteArticle(request *api.DeleteArticleRequest, userId entity.UUID) *serr.ServiceError {

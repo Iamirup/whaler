@@ -29,7 +29,6 @@ export default defineComponent({
     setup() {
         const articles = ref<Array<{ 
             article_id: string; 
-            url_path: string; 
             title: string; 
             content: string; 
             author_id: string; 
