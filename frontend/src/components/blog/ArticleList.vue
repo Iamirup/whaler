@@ -37,7 +37,12 @@ export default defineComponent({
         cursor.value = response.data.new_cursor;
       })
       .catch(error => {
-        refreshJWT();
+        if (error.response.data.need_refresh){
+          refreshJWT();
+          fetchArticles();
+        } else {
+          console.error(error);
+        }
       });
     };
 
@@ -53,7 +58,7 @@ export default defineComponent({
       likes: number;
       date: string;
     }) => {
-      router.push({ path: `/api/blog/v1/article/${article.url_path}` });
+      router.push({ path: `/article/${article.url_path}` });
     };
 
     const loadMore = () => {

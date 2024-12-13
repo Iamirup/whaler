@@ -44,14 +44,18 @@ export default defineComponent({
             content: string; 
         } | null>(null);
 
-        const fetchArticles = async () => {
+        const fetchMyArticles = async () => {
             return await axios.get('/api/blog/v1/my-articles?limit=20')
                 .then(response => {
                     articles.value = response.data.articles;
                 })
                 .catch(error => {
-                    console.error('Failed to get articles', error);
-                    refreshJWT();
+                    if (error.response.data.need_refresh){
+                        refreshJWT();
+                        fetchMyArticles();
+                    } else {
+                        console.error('Failed to get articles', error);
+                    }
                 });
         };
 
@@ -70,23 +74,31 @@ export default defineComponent({
                 // Update existing article
                 return await axios.patch(`/api/blog/v1/article`, articleData)
                     .then(() => {
-                        fetchArticles();
+                        fetchMyArticles();
                         editingArticle.value = null;
                     })
                     .catch(error => {
-                        console.error('Failed to update article', error);
-                        refreshJWT();
+                        if (error.response.data.need_refresh){
+                            refreshJWT();
+                            saveArticle();
+                        } else {
+                            console.error('Failed to update article', error);
+                        }
                     });
                 } else {
                 // Add new article
                 return await axios.post('/api/blog/v1/article', articleData)
                     .then(() => {
-                        fetchArticles();
+                        fetchMyArticles();
                         editingArticle.value = null;
                     })
                     .catch(error => {
-                        console.error('Failed to add article', error);
-                        refreshJWT();
+                        if (error.response.data.need_refresh){
+                            refreshJWT();
+                            saveArticle();
+                        } else {
+                            console.error('Failed to add article', error);
+                        }
                     });
                 }
             }
@@ -107,14 +119,19 @@ export default defineComponent({
             };
             return await axios.delete(`/api/blog/v1/article`, config)
                 .then(() => {
-                    fetchArticles();
+                    fetchMyArticles();
                 })
                 .catch(error => {
-                    console.error('Failed to delete article', error);
+                    if (error.response.data.need_refresh){
+                        refreshJWT();
+                        deleteArticle(id);
+                    } else {
+                        console.error('Failed to delete article', error);
+                    }
                 });
         };
 
-        onMounted(fetchArticles);
+        onMounted(fetchMyArticles);
 
         return {
             articles,

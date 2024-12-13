@@ -22,8 +22,12 @@ export default defineComponent({
           article.value = response.data;
         })
         .catch(error => {
-          console.error('Failed to fetch article', error);
-          refreshJWT();
+          if (error.response.data.need_refresh){
+              refreshJWT();
+              fetchArticle(id);
+          } else {
+              console.error('Failed to fetch article', error);
+          }
         });
     };
 
