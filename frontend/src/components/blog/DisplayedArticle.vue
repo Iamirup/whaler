@@ -19,7 +19,7 @@ export default defineComponent({
     const fetchArticle = async (id: string) => {
       return await axios.get(`/api/blog/v1/article/${id}`)
         .then(response => {
-            article.value = response.data;
+            article.value = response.data.article;
         })
         .catch(error => {
           if (error.response.data.need_refresh){

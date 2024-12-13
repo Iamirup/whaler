@@ -21,7 +21,7 @@ func NewArticleHandler(server *restServer, articleAppService *services.ArticleAp
 
 func (h *ArticleHandler) GetAnArticle(c *fiber.Ctx) error {
 
-	urlPath := c.Params("url_path")
+	urlPath := c.Params("urlPath")
 
 	article, err := h.articleAppService.GetAnArticle(urlPath)
 	if err != nil {
