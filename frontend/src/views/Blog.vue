@@ -18,10 +18,10 @@ export default defineComponent({
     onMounted(async () => {
       const isThereUser = await refreshJWT(); 
       console.log("isThereUser: ", isThereUser);
-      if (!isThereUser) { 
+      if (isThereUser == false) {
         router.push('/login'); 
       } else {
-        isLoggedIn.value = true; // Use .value to update the reactive state
+        isLoggedIn.value = true;
       }
     });
 
