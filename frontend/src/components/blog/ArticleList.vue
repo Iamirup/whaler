@@ -38,7 +38,9 @@ export default defineComponent({
       })
       .catch(error => {
         if (error.response.data.need_refresh){
-          refreshJWT();
+          if (!refreshJWT()) {
+            return
+          }
           fetchArticles();
         } else {
           console.error(error);

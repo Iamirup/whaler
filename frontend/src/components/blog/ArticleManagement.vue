@@ -50,7 +50,9 @@ export default defineComponent({
                 })
                 .catch(error => {
                     if (error.response.data.need_refresh){
-                        refreshJWT();
+                        if (!refreshJWT()) {
+                            return
+                        }
                         fetchMyArticles();
                     } else {
                         console.error('Failed to get articles', error);
@@ -78,7 +80,9 @@ export default defineComponent({
                     })
                     .catch(error => {
                         if (error.response.data.need_refresh){
-                            refreshJWT();
+                            if (!refreshJWT()) {
+                                return
+                            }
                             saveArticle();
                         } else {
                             console.error('Failed to update article', error);
@@ -93,7 +97,9 @@ export default defineComponent({
                     })
                     .catch(error => {
                         if (error.response.data.need_refresh){
-                            refreshJWT();
+                            if (!refreshJWT()) {
+                                return
+                            }
                             saveArticle();
                         } else {
                             console.error('Failed to add article', error);
@@ -122,7 +128,9 @@ export default defineComponent({
                 })
                 .catch(error => {
                     if (error.response.data.need_refresh){
-                        refreshJWT();
+                        if (!refreshJWT()) {
+                            return
+                        }
                         deleteArticle(id);
                     } else {
                         console.error('Failed to delete article', error);

@@ -11,8 +11,11 @@ export const refreshJWT = async () => {
         if (error.response.data.need_login){
             alertService.showAlert("You need to login bro 🎩", "info");
             router.push('/login');
+            return false;
         } else {
             console.error('Failed to refresh jwt', error);
         }
     });
+
+    return true;
 }
