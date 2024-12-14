@@ -51,7 +51,7 @@ export default defineComponent({
                 .catch(error => {
                     if (error.response.data.need_refresh){
                         if (!refreshJWT()) {
-                            return
+                            return;
                         }
                         fetchMyArticles();
                     } else {
@@ -81,7 +81,7 @@ export default defineComponent({
                     .catch(error => {
                         if (error.response.data.need_refresh){
                             if (!refreshJWT()) {
-                                return
+                                return;
                             }
                             saveArticle();
                         } else {
@@ -98,7 +98,7 @@ export default defineComponent({
                     .catch(error => {
                         if (error.response.data.need_refresh){
                             if (!refreshJWT()) {
-                                return
+                                return;
                             }
                             saveArticle();
                         } else {
@@ -129,7 +129,7 @@ export default defineComponent({
                 .catch(error => {
                     if (error.response.data.need_refresh){
                         if (!refreshJWT()) {
-                            return
+                            return;
                         }
                         deleteArticle(id);
                     } else {

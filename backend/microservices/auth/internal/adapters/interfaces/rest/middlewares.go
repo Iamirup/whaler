@@ -13,7 +13,7 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 	accessToken := c.Cookies("access_token")
 	if accessToken == "" {
 		h.server.Logger.Error("Missing access token")
-		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "please provide your authentication information"}}, NeedLogin: true}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "Please provide your authentication information"}}, NeedLogin: true}
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
 

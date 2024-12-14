@@ -24,7 +24,7 @@ export default defineComponent({
         .catch(error => {
           if (error.response.data.need_refresh){
               if (!refreshJWT()) {
-                return
+                return;
               }
               fetchArticle(id);
           } else {
