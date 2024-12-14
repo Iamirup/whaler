@@ -42,7 +42,6 @@
             </form>
         </div>
     
-        
         <div class="container__overlay">
             <div class="overlay">
                 <div class="overlay__panel overlay--left">
@@ -106,6 +105,11 @@ export default defineComponent({
 			this.router.push('/eventor');
 		})
 		.catch(error => {
+			if (error.response.data.message == "You already logged in") {
+				alertService.showAlert("It seems that you alreay logged in 🧐", "question");
+				this.router.push('/eventor');
+				return;
+			}
 			let alertErrorMessage = ""
 			for (const obj of error.response.data.errors) {
 				alertErrorMessage += "- " + obj.message + ".\n";

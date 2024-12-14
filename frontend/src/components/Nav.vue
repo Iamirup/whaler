@@ -6,7 +6,7 @@
         <div class="flex justify-center">
           <div class="inline-block">
             <div class="flex space-x-3">
-              <router-link to="/login" class="button ml-4 px-3 xs:px-2 py-2 xs:py-0.5 font-medium bg-red-600">
+              <dvi @click="logout" class="button ml-4 px-3 xs:px-2 py-2 xs:py-0.5 font-medium bg-red-600">
                 <span class="svg py-2 xs:py-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +22,7 @@
                   </svg>
                 </span>
                 <span class="text text-sm">Log Out</span>
-              </router-link>
+              </dvi>
 
                 <div class="relative group mt-1.5 xs:mt-0.5 text-center">
                   <button class="px-[18px] py-2 xs:px-7">
@@ -143,9 +143,10 @@
 import { defineComponent, computed } from 'vue'
 import { useDarkModeStore } from '../stores/darkModeStore'
 import { useRouter } from 'vue-router'
+import axios from 'axios';
 
 export default defineComponent({
-  name: 'HomeComponent',
+  name: 'NavComponent',
   setup() {
     const darkModeStore = useDarkModeStore()
     const router = useRouter()
@@ -156,14 +157,20 @@ export default defineComponent({
       darkModeStore.toggleDarkMode()
     }
 
-    const goToComponent1 = () => {
-      router.push({ name: 'component1' })
+    const logout = async () => {
+      await axios.post('/api/auth/v1/logout')
+      .then(response => {
+        router.push('/login');
+      })
+      .catch(error => {
+          console.error(error);
+      });
     }
 
     return {
       isDarkMode,
       toggleDarkMode,
-      goToComponent1
+      logout,
     }
     
   },
