@@ -1,7 +1,6 @@
 <template>
-  <div v-if="isLoggedIn">
-    <ArticleList />
-  </div>
+  <ArticleList v-if="isLoggedIn"/>
+  <div v-else>Oh no!</div>
 </template>
 
 <script lang="ts">
@@ -13,15 +12,13 @@ import { defineComponent, ref, onMounted } from 'vue';
 export default defineComponent({
   setup() {
     const router = useRouter();
-    let isLoggedIn = false;
+    const isLoggedIn = ref(false);
 
     onMounted(async () => {
-      const isThereUser = await refreshService.refreshJWT(); 
-      console.log("isThereUser: ", isThereUser);
-      if (isThereUser == false) {
+      isLoggedIn.value = await refreshService.refreshJWT(); 
+      console.log("isLoggedIn.value: ", isLoggedIn.value);
+      if (!isLoggedIn.value) {
         router.push('/login'); 
-      } else {
-        isLoggedIn = true;
       }
     });
 
