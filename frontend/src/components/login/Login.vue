@@ -105,7 +105,7 @@ export default defineComponent({
 			this.router.push('/eventor');
 		})
 		.catch(error => {
-			if (error.response.data.message == "You already logged in") {
+			if (error.response.data.errors.message == "You already logged in") {
 				alertService.showAlert("It seems that you alreay logged in 🧐", "question");
 				this.router.push('/eventor');
 				return;

@@ -47,7 +47,7 @@ export default defineComponent({
       });
     };
 
-    onMounted(() => fetchArticles());
+    onMounted(async () => fetchArticles());
 
     const selectArticle = (article: { 
       article_id: string; 
