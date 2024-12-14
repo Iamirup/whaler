@@ -12,7 +12,7 @@ import { defineComponent, ref, onMounted } from 'vue';
 export default defineComponent({
   setup() {
     const router = useRouter();
-    const isLoggedIn = ref(false);
+    const isLoggedIn = ref<boolean | null>(false);
 
     onMounted(async () => {
       isLoggedIn.value = await refreshService.refreshJWT(); 
