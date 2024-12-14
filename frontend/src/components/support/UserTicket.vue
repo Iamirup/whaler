@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto p-6 bg-gray-100 min-h-screen">
     <div class="bg-white rounded-lg shadow-md p-4">
-      <h1 class="text-3xl font-bold mb-4">Support Tickets</h1>
+      <h1 class="text-3xl font-bold mb-4">My Support Tickets</h1>
 
       <!-- Create New Ticket Form -->
       <form @submit.prevent="createTicket" class="mb-6">
@@ -23,12 +23,6 @@
           <p class="mt-1">{{ ticket.content }}</p>
           <p class="mt-1 text-sm text-gray-600">Status: <span :class="ticket.is_done ? 'text-green-600' : 'text-red-600'">{{ ticket.is_done ? 'Done' : 'Open' }}</span></p>
           <p class="mt-1 text-sm text-gray-600">Created by {{ ticket.username }} on {{ formatDate(ticket.date) }}</p>
-
-          <!-- Reply to Ticket -->
-          <div v-if="!ticket.is_done" class="mt-4">
-            <textarea v-model="ticket.replyText" placeholder="Reply" class="textarea mb-2"></textarea>
-            <button @click="replyToTicket(ticket.ticket_id, ticket.replyText ?? '')" class="btn-secondary">Reply</button>
-          </div>
 
           <!-- Display Replies -->
           <div v-if="ticket.replyText" class="mt-4 bg-gray-200 p-2 rounded-lg">
@@ -63,8 +57,9 @@ export interface Ticket {
   replyDate?: string; // ISO 8601 string
 }
 
+
 export default defineComponent({
-  name: 'SupportTicket',
+  name: 'UserTickets',
   setup() {
     const tickets = ref<Ticket[]>([]);
     const newTicket = ref<Partial<Ticket>>({ title: '', content: '' });
@@ -100,18 +95,6 @@ export default defineComponent({
         });
     };
 
-    const replyToTicket = (ticketId: string, replyText: string): Promise<void> => {
-      return axios.post('/api/support/v1/ticket/reply', { ticketId, replyText: replyText ?? '' })
-        .then(() => {
-          tickets.value = [];
-          cursor.value = null;
-          return fetchMyTickets(null, limit.value);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    };
-
     const formatDate = (date?: string): string => {
       return date ? new Date(date).toLocaleString() : '';
     };
@@ -126,7 +109,7 @@ export default defineComponent({
       fetchMyTickets(null, limit.value);
     });
 
-    return { tickets, newTicket, createTicket, replyToTicket, formatDate, loadMoreTickets, hasMoreTickets };
+    return { tickets, newTicket, createTicket, formatDate, loadMoreTickets, hasMoreTickets };
   },
 });
 </script>
