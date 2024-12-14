@@ -23,7 +23,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import axios, { type AxiosRequestConfig } from 'axios';
-import { refreshJWT } from '../refreshJWT';
+import { refreshService } from '../refreshJWT';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -53,7 +53,7 @@ export default defineComponent({
                 })
                 .catch(async error => {
                     if (error.response.data.need_refresh){
-                        const isRefreshed = await refreshJWT(); 
+                        const isRefreshed = await refreshService.refreshJWT(); 
                         if (!isRefreshed) { router.push('/login'); return; }
                         fetchMyArticles();
                     } else {
@@ -82,7 +82,7 @@ export default defineComponent({
                     })
                     .catch(async error => {
                         if (error.response.data.need_refresh){
-                            const isRefreshed = await refreshJWT(); 
+                            const isRefreshed = await refreshService.refreshJWT(); 
                             if (!isRefreshed) { router.push('/login'); return; }
                             saveArticle();
                         } else {
@@ -98,7 +98,7 @@ export default defineComponent({
                     })
                     .catch(async error => {
                         if (error.response.data.need_refresh){
-                            const isRefreshed = await refreshJWT(); 
+                            const isRefreshed = await refreshService.refreshJWT(); 
                             if (!isRefreshed) { router.push('/login'); return; }
                             saveArticle();
                         } else {
@@ -128,7 +128,7 @@ export default defineComponent({
                 })
                 .catch(async error => {
                     if (error.response.data.need_refresh){
-                        const isRefreshed = await refreshJWT(); 
+                        const isRefreshed = await refreshService.refreshJWT(); 
                         if (!isRefreshed) { router.push('/login'); return; }
                         deleteArticle(id);
                     } else {

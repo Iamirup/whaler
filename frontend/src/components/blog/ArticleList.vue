@@ -13,7 +13,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { refreshJWT } from '../refreshJWT';
+import { refreshService } from '../refreshJWT';
 
 export default defineComponent({
   setup() {
@@ -38,7 +38,7 @@ export default defineComponent({
       })
       .catch(async error => {
         if (error.response.data.need_refresh){
-          const isRefreshed = await refreshJWT(); 
+          const isRefreshed = await refreshService.refreshJWT(); 
           if (!isRefreshed) { router.push('/login'); return; }
           fetchArticles();
         } else {

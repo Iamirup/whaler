@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import ArticleList from '../components/blog/ArticleList.vue';
-import { refreshJWT } from '../components/refreshJWT';
+import { refreshService } from '../components/refreshJWT';
 import { useRouter } from 'vue-router';
 import { defineComponent, ref, onMounted } from 'vue';
 
@@ -16,7 +16,7 @@ export default defineComponent({
     let isLoggedIn = false;
 
     onMounted(async () => {
-      const isThereUser = await refreshJWT(); 
+      const isThereUser = await refreshService.refreshJWT(); 
       console.log("isThereUser: ", isThereUser);
       if (isThereUser == false) {
         router.push('/login'); 
