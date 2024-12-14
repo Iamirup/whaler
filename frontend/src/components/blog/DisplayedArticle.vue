@@ -7,13 +7,14 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { refreshJWT } from '../refreshJWT';
 
 export default defineComponent({
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const article = ref<{ title: string; content: string } | null>(null);
 
     const fetchArticle = async (id: string) => {
@@ -24,7 +25,7 @@ export default defineComponent({
         .catch(async error => {
           if (error.response.data.need_refresh){
               const isRefreshed = await refreshJWT(); 
-              if (!isRefreshed) { return; }
+              if (!isRefreshed) { router.push('/login'); return; }
               fetchArticle(id);
           } else {
               console.error('Failed to fetch article', error);

@@ -39,7 +39,7 @@ export default defineComponent({
       .catch(async error => {
         if (error.response.data.need_refresh){
           const isRefreshed = await refreshJWT(); 
-          if (!isRefreshed) { return; }
+          if (!isRefreshed) { router.push('/login'); return; }
           fetchArticles();
         } else {
           console.error(error);

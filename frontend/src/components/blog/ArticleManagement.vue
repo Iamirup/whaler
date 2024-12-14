@@ -24,6 +24,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import axios, { type AxiosRequestConfig } from 'axios';
 import { refreshJWT } from '../refreshJWT';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
     setup() {
@@ -43,6 +44,8 @@ export default defineComponent({
             content: string; 
         } | null>(null);
 
+        const router = useRouter();
+
         const fetchMyArticles = async () => {
             return await axios.get('/api/blog/v1/my-articles?limit=20')
                 .then(response => {
@@ -51,7 +54,7 @@ export default defineComponent({
                 .catch(async error => {
                     if (error.response.data.need_refresh){
                         const isRefreshed = await refreshJWT(); 
-                        if (!isRefreshed) { return; }
+                        if (!isRefreshed) { router.push('/login'); return; }
                         fetchMyArticles();
                     } else {
                         console.error('Failed to get articles', error);
@@ -80,7 +83,7 @@ export default defineComponent({
                     .catch(async error => {
                         if (error.response.data.need_refresh){
                             const isRefreshed = await refreshJWT(); 
-                            if (!isRefreshed) { return; }
+                            if (!isRefreshed) { router.push('/login'); return; }
                             saveArticle();
                         } else {
                             console.error('Failed to update article', error);
@@ -96,7 +99,7 @@ export default defineComponent({
                     .catch(async error => {
                         if (error.response.data.need_refresh){
                             const isRefreshed = await refreshJWT(); 
-                            if (!isRefreshed) { return; }
+                            if (!isRefreshed) { router.push('/login'); return; }
                             saveArticle();
                         } else {
                             console.error('Failed to add article', error);
@@ -126,7 +129,7 @@ export default defineComponent({
                 .catch(async error => {
                     if (error.response.data.need_refresh){
                         const isRefreshed = await refreshJWT(); 
-                        if (!isRefreshed) { return; }
+                        if (!isRefreshed) { router.push('/login'); return; }
                         deleteArticle(id);
                     } else {
                         console.error('Failed to delete article', error);
