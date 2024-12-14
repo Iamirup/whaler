@@ -1,8 +1,10 @@
 <template>
+  <Nav />
   <ArticleList v-if="isLoggedIn"/>
 </template>
 
 <script setup lang="ts">
+import Nav from '../components/Nav.vue';
 import ArticleList from '../components/blog/ArticleList.vue';
 import { refreshService } from '../components/refreshJWT';
 import { useRouter } from 'vue-router';

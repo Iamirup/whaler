@@ -37,6 +37,11 @@
           </div>
         </div>
       </div>
+
+      <!-- Load More Button -->
+      <div class="flex justify-center mt-4">
+        <button @click="loadMoreTickets" :disabled="!hasMoreTickets" class="btn-secondary">More</button>
+      </div>
     </div>
   </div>
 </template>
@@ -45,6 +50,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
 
+// src/interfaces/Ticket.ts
 export interface Ticket {
   ticket_id: string;
   user_id: string;
@@ -62,30 +68,65 @@ export default defineComponent({
   setup() {
     const tickets = ref<Ticket[]>([]);
     const newTicket = ref<Partial<Ticket>>({ title: '', content: '' });
+    const cursor = ref<string | null>(null);
+    const limit = ref<number>(5); // Default limit
+    const hasMoreTickets = ref<boolean>(true);
 
-    const fetchMyTickets = async () => {
-      const response = await axios.get('/api/support/v1/tickets/me');
-      tickets.value = response.data;
+    const fetchMyTickets = (pageCursor: string | null, pageLimit: number): Promise<void> => {
+      return axios
+        .get('/api/support/v1/tickets/me', {
+          params: { cursor: pageCursor, limit: pageLimit },
+        })
+        .then(response => {
+          tickets.value = [...tickets.value, ...response.data.tickets];
+          cursor.value = response.data.nextCursor;
+          hasMoreTickets.value = !!response.data.nextCursor;
+        })
+        .catch(error => {
+          console.error(error);
+        });
     };
 
-    onMounted(fetchMyTickets);
-
-    const createTicket = async () => {
-      await axios.post('/api/support/v1/ticket/new', newTicket.value);
-      newTicket.value = { title: '', content: '' };
-      await fetchMyTickets();
+    const createTicket = (): Promise<void> => {
+      return axios.post('/api/support/v1/ticket/new', newTicket.value)
+        .then(() => {
+          newTicket.value = { title: '', content: '' };
+          tickets.value = [];
+          cursor.value = null;
+          return fetchMyTickets(null, limit.value);
+        })
+        .catch(error => {
+          console.error(error);
+        });
     };
 
-    const replyToTicket = async (ticketId: string, replyText: string) => {
-      await axios.post('/api/support/v1/ticket/reply', { ticketId, replyText: replyText ?? '' });
-      await fetchMyTickets();
+    const replyToTicket = (ticketId: string, replyText: string): Promise<void> => {
+      return axios.post('/api/support/v1/ticket/reply', { ticketId, replyText: replyText ?? '' })
+        .then(() => {
+          tickets.value = [];
+          cursor.value = null;
+          return fetchMyTickets(null, limit.value);
+        })
+        .catch(error => {
+          console.error(error);
+        });
     };
 
-    const formatDate = (date?: string) => {
+    const formatDate = (date?: string): string => {
       return date ? new Date(date).toLocaleString() : '';
     };
 
-    return { tickets, newTicket, createTicket, replyToTicket, formatDate };
+    const loadMoreTickets = (): void => {
+      if (hasMoreTickets.value) {
+        fetchMyTickets(cursor.value, limit.value);
+      }
+    };
+
+    onMounted(() => {
+      fetchMyTickets(null, limit.value);
+    });
+
+    return { tickets, newTicket, createTicket, replyToTicket, formatDate, loadMoreTickets, hasMoreTickets };
   },
 });
 </script>

@@ -1,4 +1,5 @@
 <template>
+  <Nav />
   <div class="p-6 bg-gray-100 min-h-screen">
     <div v-for="article in articles" :key="article.article_id" @click="selectArticle(article)" class="p-4 bg-white rounded-lg shadow-lg mb-4 cursor-pointer hover:bg-gray-50 transition duration-150">
       <h3 class="text-xl font-bold text-gray-800">{{ article.title }}</h3>
@@ -10,6 +11,7 @@
 </template>
 
 <script lang="ts">
+import Nav from '../Nav.vue';
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';

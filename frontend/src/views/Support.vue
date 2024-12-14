@@ -1,9 +1,11 @@
 <template>
-  <Support />
+  <Nav />
+  <SupportTicket />
 </template>
 
 <script setup lang="ts">
-import Support from '../components/support/Support.vue';
+import Nav from '../components/Nav.vue';
+import SupportTicket from '../components/support/SupportTicket.vue';
 
 
 
