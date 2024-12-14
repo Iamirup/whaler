@@ -48,11 +48,10 @@ export default defineComponent({
                 .then(response => {
                     articles.value = response.data.articles;
                 })
-                .catch(error => {
+                .catch(async error => {
                     if (error.response.data.need_refresh){
-                        if (!refreshJWT()) {
-                            return;
-                        }
+                        const isRefreshed = await refreshJWT(); 
+                        if (!isRefreshed) { return; }
                         fetchMyArticles();
                     } else {
                         console.error('Failed to get articles', error);
@@ -78,11 +77,10 @@ export default defineComponent({
                         fetchMyArticles();
                         editingArticle.value = null;
                     })
-                    .catch(error => {
+                    .catch(async error => {
                         if (error.response.data.need_refresh){
-                            if (!refreshJWT()) {
-                                return;
-                            }
+                            const isRefreshed = await refreshJWT(); 
+                            if (!isRefreshed) { return; }
                             saveArticle();
                         } else {
                             console.error('Failed to update article', error);
@@ -95,11 +93,10 @@ export default defineComponent({
                         fetchMyArticles();
                         editingArticle.value = null;
                     })
-                    .catch(error => {
+                    .catch(async error => {
                         if (error.response.data.need_refresh){
-                            if (!refreshJWT()) {
-                                return;
-                            }
+                            const isRefreshed = await refreshJWT(); 
+                            if (!isRefreshed) { return; }
                             saveArticle();
                         } else {
                             console.error('Failed to add article', error);
@@ -126,11 +123,10 @@ export default defineComponent({
                 .then(() => {
                     fetchMyArticles();
                 })
-                .catch(error => {
+                .catch(async error => {
                     if (error.response.data.need_refresh){
-                        if (!refreshJWT()) {
-                            return;
-                        }
+                        const isRefreshed = await refreshJWT(); 
+                        if (!isRefreshed) { return; }
                         deleteArticle(id);
                     } else {
                         console.error('Failed to delete article', error);

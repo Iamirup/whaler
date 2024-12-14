@@ -1,11 +1,36 @@
 <template>
-  <ArticleList />
+  <div v-if="isLoggedIn">
+    <ArticleList />
+  </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import ArticleList from '../components/blog/ArticleList.vue';
 import { refreshJWT } from '../components/refreshJWT';
-refreshJWT();
+import { useRouter } from 'vue-router';
+import { alertService } from '../components/alertor';
+import { defineComponent, ref, onMounted } from 'vue';
+
+export default defineComponent({
+  setup() {
+    const router = useRouter();
+    const isLoggedIn = ref(false); // Reactive state
+
+    onMounted(async () => {
+      const isThereUser = await refreshJWT(); 
+      if (isThereUser) {  
+        alertService.showAlert("You need to login bro 🎩", "info");
+        isLoggedIn.value = true; // Use .value to update the reactive state
+      } else {
+        router.push('/login');
+      }
+    });
+
+    return {
+      isLoggedIn, // Expose the reactive state to the template
+    };
+  }
+});
 
 
 </script>

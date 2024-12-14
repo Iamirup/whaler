@@ -36,11 +36,10 @@ export default defineComponent({
         articles.value.push(...response.data.articles);
         cursor.value = response.data.new_cursor;
       })
-      .catch(error => {
+      .catch(async error => {
         if (error.response.data.need_refresh){
-          if (!refreshJWT()) {
-            return;
-          }
+          const isRefreshed = await refreshJWT(); 
+          if (!isRefreshed) { return; }
           fetchArticles();
         } else {
           console.error(error);

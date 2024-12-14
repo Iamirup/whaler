@@ -4,7 +4,7 @@ import { alertService } from './alertor';
 
 const router = useRouter();
 
-export const refreshJWT = async () => {
+export const refreshJWT = async (): Promise<boolean> => {
     await axios.get("/api/auth/v1/refresh")
     .then(response => {})
     .catch(error => {

@@ -21,11 +21,10 @@ export default defineComponent({
         .then(response => {
             article.value = response.data.article;
         })
-        .catch(error => {
+        .catch(async error => {
           if (error.response.data.need_refresh){
-              if (!refreshJWT()) {
-                return;
-              }
+              const isRefreshed = await refreshJWT(); 
+              if (!isRefreshed) { return; }
               fetchArticle(id);
           } else {
               console.error('Failed to fetch article', error);
