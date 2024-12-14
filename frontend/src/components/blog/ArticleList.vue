@@ -5,7 +5,7 @@
       <p class="text-gray-600 text-sm mt-1">{{ article.content }}</p>
     </div>
     <button @click="loadMore" v-if="cursor" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700">Load More</button>
-    <button @click="myArticles" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-black-700">My Articles</button>
+    <button @click="myArticles" class="px-4 py-2 bg-black-600 text-white rounded-md shadow-md hover:bg-blue-700">My Articles</button>
   </div>
 </template>
 

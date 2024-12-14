@@ -53,6 +53,14 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		Secure:   true,
 	})
 
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    authTokens.AccessToken,
+		Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
+		HTTPOnly: true,
+		Secure:   true,
+	})
+
 	return c.SendStatus(http.StatusCreated)
 }
 
@@ -91,16 +99,9 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	})
 
 	c.Cookie(&fiber.Cookie{
-		Name:     "refresh_token",
-		Value:    authTokens.RefreshToken,
-		Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
-		HTTPOnly: true,
-		Secure:   true,
-	})
-
-	c.Cookie(&fiber.Cookie{
 		Name:     "access_token",
 		Value:    authTokens.AccessToken,
+		Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
 		HTTPOnly: true,
 		Secure:   true,
 	})

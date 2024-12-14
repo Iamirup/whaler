@@ -2,6 +2,7 @@ package rest
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/adapters/interfaces/rest/dto"
 	"github.com/gofiber/fiber/v2"
@@ -70,6 +71,7 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 			c.Cookie(&fiber.Cookie{
 				Name:     "access_token",
 				Value:    newAccessToken,
+				Expires:  time.Now().Add(h.server.Token.GetRefreshTokenExpiration()),
 				HTTPOnly: true,
 				Secure:   true,
 			})
