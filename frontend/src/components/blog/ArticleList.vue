@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import Nav from '../Nav.vue';
+
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';

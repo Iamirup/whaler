@@ -57,7 +57,6 @@ export interface Ticket {
   replyDate?: string; // ISO 8601 string
 }
 
-
 export default defineComponent({
   name: 'UserTickets',
   setup() {
