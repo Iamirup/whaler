@@ -1,4 +1,5 @@
 <template>
+  <div>{{ isLoggedIn }}</div>
   <ArticleList v-if="isLoggedIn"/>
   <div v-else>Oh no!</div>
 </template>
@@ -16,7 +17,6 @@ export default defineComponent({
 
     onMounted(async () => {
       isLoggedIn.value = await refreshService.refreshJWT(); 
-      console.log("isLoggedIn.value: ", isLoggedIn.value);
       if (!isLoggedIn.value) {
         router.push('/login'); 
       }
