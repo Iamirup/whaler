@@ -5,6 +5,7 @@ export const refreshJWT = async (): Promise<boolean> => {
     await axios.get("/api/auth/v1/refresh")
     .then(response => {})
     .catch(error => {
+        console.log("error.response.data.need_login: ", error.response.data.need_login)
         if (error.response.data.need_login){
             alertService.showAlert("You need to login bro 🎩", "info");
             return false;
