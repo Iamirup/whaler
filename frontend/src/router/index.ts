@@ -8,6 +8,16 @@ const router = createRouter({
       redirect: '/eventor',
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/Login.vue'),
+    },
+    {
+      path: '/apanel',
+      name: 'apanel',
+      component: () => import('@/views/Apanel.vue'),
+    },
+    {
       path: '/discussion',
       name: 'discussion',
       component: () => import('@/views/Discussion.vue'),
@@ -18,9 +28,15 @@ const router = createRouter({
       component: () => import('@/views/Blog.vue'),
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/views/Login.vue'),
+      path: '/blog/manage',
+      name: 'blog-management',
+      component: () => import('@/components/blog/ArticleManagement.vue'),
+    },
+    {
+      path: '/article/:articleId',
+      name: 'article',
+      component: () => import('@/components/blog/DisplayedArticle.vue'),
+      props: true,
     },
     {
       path: '/magazine',
@@ -33,20 +49,14 @@ const router = createRouter({
       component: () => import('@/views/Support.vue'),
     },
     {
+      path: '/support/admin',
+      name: 'admin-support',
+      component: () => import('@/components/support/AdminTicket.vue'),
+    },
+    {
       path: '/eventor',
       name: 'eventor',
       component: () => import('@/views/Eventor.vue'),
-    },
-    {
-      path: '/blog/manage',
-      name: 'blog-management',
-      component: () => import('@/components/blog/ArticleManagement.vue'),
-    },
-    {
-      path: '/article/:articleId',
-      name: 'article',
-      component: () => import('@/components/blog/DisplayedArticle.vue'),
-      props: true,
     },
   ],
 })
