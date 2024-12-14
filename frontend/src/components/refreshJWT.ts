@@ -8,6 +8,7 @@ export const refreshJWT = async () => {
     await axios.get("/api/auth/v1/refresh")
     .then(response => {})
     .catch(error => {
+        console.error(error);
         if (error.response.data.need_login){
             alertService.showAlert("You need to login bro 🎩", "info");
             router.push('/login');

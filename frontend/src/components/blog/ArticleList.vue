@@ -37,7 +37,6 @@ export default defineComponent({
         cursor.value = response.data.new_cursor;
       })
       .catch(error => {
-        console.error(error);
         if (error.response.data.need_refresh){
           if (!refreshJWT()) {
             return;
