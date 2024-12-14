@@ -13,7 +13,7 @@ import { defineComponent, ref, onMounted } from 'vue';
 export default defineComponent({
   setup() {
     const router = useRouter();
-    const isLoggedIn = ref(false); // Reactive state
+    let isLoggedIn = false;
 
     onMounted(async () => {
       const isThereUser = await refreshJWT(); 
@@ -21,7 +21,7 @@ export default defineComponent({
       if (isThereUser == false) {
         router.push('/login'); 
       } else {
-        isLoggedIn.value = true;
+        isLoggedIn = true;
       }
     });
 
