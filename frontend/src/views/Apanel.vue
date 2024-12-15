@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import DeleteUser from '../components/apanel/DeleteUser.vue';
 import OnlineUsers from '../components/apanel/OnlineUsers.vue';
 import AddAdmin from '../components/apanel/AddAdmin.vue';

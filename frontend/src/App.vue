@@ -45,8 +45,6 @@ src: url("../src/assets/CustomFont.ttf") format("ttf"),
 
 url("../src/assets/CustomFont.ttf") format("opentype"),
 
-url("../src/assets/CustomFont.svg") format("svg");
-
 }
 
 
