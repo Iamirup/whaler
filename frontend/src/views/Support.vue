@@ -1,5 +1,5 @@
 <template>
-  <Nav class="bg-gray-100" />
+  <Nav />
   <div  v-if="isLoggedIn" class="mt-6">
     <AdminTicket v-if="isAdmin"/>
     <UserTicket v-else/>

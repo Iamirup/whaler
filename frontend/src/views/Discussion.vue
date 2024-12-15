@@ -1,6 +1,6 @@
 <template>
 <div class="flex flex-col min-h-screen">
-    <Nav class="bg-gray-100"/>
+    <Nav />
     <SelectCrypto />
     <Comments />
     

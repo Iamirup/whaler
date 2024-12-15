@@ -1,5 +1,5 @@
 <template>
-    <Nav class="bg-gray-100"/>
+    <Nav />
     <ArticleList v-if="isLoggedIn"/>
 </template>
 
