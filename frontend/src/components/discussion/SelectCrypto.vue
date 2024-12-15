@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 bg-gray-50 rounded-lg shadow-md max-w-lg mx-auto">
+  <div class="mt-36 p-6 bg-gray-50 rounded-lg shadow-md max-w-lg mx-auto">
     <div class="mb-6">
       <label class="block text-lg font-medium text-gray-700 mb-2">Select a Cryptocurrency:</label>
       <div class="relative">

@@ -1,9 +1,6 @@
 <template>
-  <div class="flex flex-col min-h-screen">
-    <Nav class="bg-gray-800 text-white p-4" />
-    <ArticleList v-if="isLoggedIn" class="flex-1 p-4"/>
-  </div>
-
+    <Nav />
+    <ArticleList v-if="isLoggedIn"/>
 </template>
 
 <script setup lang="ts">
