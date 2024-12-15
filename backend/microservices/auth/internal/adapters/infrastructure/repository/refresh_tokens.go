@@ -115,8 +115,9 @@ WHERE refresh_token = $1;`
 func (r *refreshTokenRepository) CheckRefreshTokenExistsInDB(possibleRefreshToken string) string {
 
 	var userId string
+	hashedToken := entity.HashToken(possibleRefreshToken, r.config.Pepper)
 
-	in := []interface{}{possibleRefreshToken}
+	in := []interface{}{hashedToken}
 	out := []interface{}{&userId}
 	if err := r.rdbms.QueryRow(QueryCheckRefreshTokenExistsInDB, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {

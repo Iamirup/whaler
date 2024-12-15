@@ -89,6 +89,8 @@ func (s *UserService) Login(email, username, password, possibleRefreshToken stri
 	var user *entity.User
 	var err error
 
+	fmt.Println("possibleRefreshToken: ", possibleRefreshToken)
+
 	if possibleRefreshToken != "" {
 		userId := s.refreshTokenPersistencePort.CheckRefreshTokenExistsInDB(possibleRefreshToken)
 		if userId != "" {
