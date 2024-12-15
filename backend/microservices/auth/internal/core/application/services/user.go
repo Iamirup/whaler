@@ -27,7 +27,7 @@ func NewUserApplicationService(domainService ports.UserServicePort, logger *zap.
 	}
 }
 
-func (s *UserApplicationService) Register(request *api.RegisterRequest, userAgent string) (entity.AuthTokens, *serr.ServiceError) {
+func (s *UserApplicationService) Register(request *api.RegisterRequest) (entity.AuthTokens, *serr.ServiceError) {
 
 	if err := request.Validate(); err != nil {
 		var validationErrors []api.ErrorContent
@@ -61,10 +61,10 @@ func (s *UserApplicationService) Register(request *api.RegisterRequest, userAgen
 		}
 	}
 
-	return s.domainService.Register(request.Email, request.Username, request.Password, userAgent)
+	return s.domainService.Register(request.Email, request.Username, request.Password)
 }
 
-func (s *UserApplicationService) Login(request *api.LoginRequest, userAgent string) (entity.AuthTokens, *serr.ServiceError) {
+func (s *UserApplicationService) Login(request *api.LoginRequest, possibleRefreshToken string) (entity.AuthTokens, *serr.ServiceError) {
 
 	if err := request.Validate(); err != nil {
 		var validationErrors []api.ErrorContent
@@ -94,7 +94,7 @@ func (s *UserApplicationService) Login(request *api.LoginRequest, userAgent stri
 		}
 	}
 
-	return s.domainService.Login(request.Email, request.Username, request.Password, userAgent)
+	return s.domainService.Login(request.Email, request.Username, request.Password, possibleRefreshToken)
 }
 
 func (s *UserApplicationService) Logout(refreshToken string) *serr.ServiceError {

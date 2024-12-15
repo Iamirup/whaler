@@ -22,12 +22,6 @@ func NewUserHandler(server *Server, userAppService *services.UserApplicationServ
 func (h *UserHandler) Register(c *fiber.Ctx) error {
 
 	var request dto.RegisterRequest
-	userAgent := string(c.Request().Header.Peek("User-Agent"))
-	if userAgent == "" {
-		h.server.Logger.Error("Missing user agent header")
-		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "header User-Agent", Message: "no user agent header, please provide it"}}, NeedLogin: false}
-		return c.Status(http.StatusBadRequest).JSON(response)
-	}
 
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
@@ -35,7 +29,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	authTokens, err := h.userAppService.Register(&request, userAgent)
+	authTokens, err := h.userAppService.Register(&request)
 	if err != nil {
 		if err.Message == "Validation failed" {
 			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedLogin: false}
@@ -67,12 +61,6 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 func (h *UserHandler) Login(c *fiber.Ctx) error {
 
 	var request dto.LoginRequest
-	userAgent := string(c.Request().Header.Peek("User-Agent"))
-	if userAgent == "" {
-		h.server.Logger.Error("Missing user agent header")
-		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "header User-Agent", Message: "no user agent header, please provide it"}}, NeedLogin: false}
-		return c.Status(http.StatusBadRequest).JSON(response)
-	}
 
 	if err := c.BodyParser(&request); err != nil {
 		h.server.Logger.Error("Error parsing request body", zap.Error(err))
@@ -80,7 +68,9 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	authTokens, err := h.userAppService.Login(&request, userAgent)
+	possibleRefreshToken := c.Cookies("refresh_token")
+
+	authTokens, err := h.userAppService.Login(&request, possibleRefreshToken)
 	if err != nil {
 		if err.Message == "Validation failed" {
 			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedLogin: false}

@@ -15,8 +15,8 @@ func NewRefreshTokenApplicationService(domainService ports.RefreshTokenServicePo
 	}
 }
 
-func (s *RefreshTokenApplicationService) CheckRefreshTokenInDBById(userId, refreshToken string) *serr.ServiceError {
-	return s.domainService.CheckRefreshTokenInDBById(userId, refreshToken)
+func (s *RefreshTokenApplicationService) CheckRefreshTokenInDBById(userId string) *serr.ServiceError {
+	return s.domainService.CheckRefreshTokenInDBById(userId)
 }
 
 func (s *RefreshTokenApplicationService) RevokeAllRefreshTokensById(userId string) error {

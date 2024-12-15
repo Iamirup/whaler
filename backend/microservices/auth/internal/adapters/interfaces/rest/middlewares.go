@@ -43,7 +43,7 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 				return c.Status(http.StatusUnauthorized).JSON(response)
 			}
 
-			if err := h.refreshTokenAppService.CheckRefreshTokenInDBById(accessTokenPayload.Id, refreshToken); err != nil {
+			if err := h.refreshTokenAppService.CheckRefreshTokenInDBById(accessTokenPayload.Id); err != nil {
 				h.server.Logger.Error(err.Message)
 				response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedLogin: false}
 				return c.Status(err.StatusCode).JSON(response)

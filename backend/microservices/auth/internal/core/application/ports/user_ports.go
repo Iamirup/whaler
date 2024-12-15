@@ -21,8 +21,8 @@ type (
 
 	// UserServicePort defines the methods for interacting with user services
 	UserServicePort interface {
-		Register(email, username, password, userAgent string) (entity.AuthTokens, *serr.ServiceError)
-		Login(email, username, password, userAgent string) (entity.AuthTokens, *serr.ServiceError)
+		Register(email, username, password string) (entity.AuthTokens, *serr.ServiceError)
+		Login(email, username, password, possibleRefreshToken string) (entity.AuthTokens, *serr.ServiceError)
 		Logout(refreshToken string) *serr.ServiceError
 	}
 )
