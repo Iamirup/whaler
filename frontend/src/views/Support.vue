@@ -1,7 +1,7 @@
 <template>
   <Nav />
   <div  v-if="isLoggedIn">
-    <AdminTicket v-if="true"/>
+    <AdminTicket v-if="isAdmin"/>
     <UserTicket v-else/>
   </div>
 </template>

@@ -57,7 +57,7 @@ name: 'AdminTickets',
 setup() {
     const tickets = ref<Ticket[]>([]);
     const cursor = ref<string | null>(null);
-    const limit = ref<number>(5); // Default limit
+    const limit = ref<number>(20); // Default limit
     const hasMoreTickets = ref<boolean>(true);
 
     const fetchAllTickets = (pageCursor: string | null, pageLimit: number): Promise<void> => {
@@ -76,7 +76,7 @@ setup() {
     };
 
     const replyToTicket = (ticketId: string, replyText: string): Promise<void> => {
-    return axios.post('/api/support/v1/ticket/reply', { ticketId, replyText: replyText ?? '' })
+    return axios.post('/api/support/v1/ticket/reply', { ticket_id: ticketId, reply_text: replyText ?? '' })
         .then(() => {
         tickets.value = [];
         cursor.value = null;
