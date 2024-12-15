@@ -24,7 +24,7 @@ export default defineComponent({
   },
   methods: {
     deleteAdmin() {
-      axios.delete(`/api/apanel/v1/admin`, { data: { id: this.adminId } })
+      axios.delete(`/api/auth/v1/admin`, { data: { id: this.adminId } })
         .then(() => {
           this.message = 'Admin deleted successfully';
           this.messageClass = 'text-green-600';
