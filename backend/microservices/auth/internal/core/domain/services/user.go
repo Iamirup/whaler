@@ -129,6 +129,7 @@ func (s *UserService) Login(email, username, password, possibleRefreshToken stri
 	}
 
 	newRefreshToken, err := s.token.CreateRefreshTokenString(user.Id)
+	fmt.Println("newRefreshToken: ", newRefreshToken)
 	if err != nil {
 		s.logger.Error("Error creating JWT refresh token for user", zap.Any("user", user), zap.Error(err))
 		return entity.AuthTokens{}, &serr.ServiceError{Message: "Error creating JWT refresh token for user", StatusCode: http.StatusInternalServerError}
