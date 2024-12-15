@@ -21,7 +21,7 @@ type (
 		RevokeAllRefreshTokensById(userId string) error
 
 		// CheckRefreshTokenExistsInDB checks the user carries refresh token or not (to avoid re-login)
-		CheckRefreshTokenExistsInDB(possibleRefreshToken string) (string, error)
+		CheckRefreshTokenExistsInDB(possibleRefreshToken string) string
 
 		// CheckIfIsAdmin checks if a user is admin or not
 		CheckIfIsAdmin(userId string) (bool, error)

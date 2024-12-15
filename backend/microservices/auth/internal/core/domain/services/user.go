@@ -90,7 +90,8 @@ func (s *UserService) Login(email, username, password, possibleRefreshToken stri
 	var err error
 
 	if possibleRefreshToken != "" {
-		if userId, err := s.refreshTokenPersistencePort.CheckRefreshTokenExistsInDB(possibleRefreshToken); userId != "" || err != nil {
+		userId := s.refreshTokenPersistencePort.CheckRefreshTokenExistsInDB(possibleRefreshToken)
+		if userId != "" {
 			s.logger.Error("This user is already logged in", zap.String("email", email))
 			return entity.AuthTokens{}, &serr.ServiceError{Message: "You already logged in", StatusCode: http.StatusBadRequest}
 		}

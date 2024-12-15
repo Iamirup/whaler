@@ -112,7 +112,7 @@ SELECT owner_id
 FROM refresh_tokens
 WHERE refresh_token = $1;`
 
-func (r *refreshTokenRepository) CheckRefreshTokenExistsInDB(possibleRefreshToken string) (string, error) {
+func (r *refreshTokenRepository) CheckRefreshTokenExistsInDB(possibleRefreshToken string) string {
 
 	var userId string
 
@@ -121,14 +121,14 @@ func (r *refreshTokenRepository) CheckRefreshTokenExistsInDB(possibleRefreshToke
 	if err := r.rdbms.QueryRow(QueryCheckRefreshTokenExistsInDB, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
 			r.logger.Error("Error id not found", zap.Error(err))
-			return "", err
+			return ""
 		}
 
 		r.logger.Error("Error find refresh token by id", zap.Error(err))
-		return "", err
+		return ""
 	}
 
-	return userId, nil
+	return userId
 }
 
 const QueryCheckIfIsAdmin = `
