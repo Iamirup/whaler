@@ -113,7 +113,7 @@ func (r *refreshTokenRepository) CheckRefreshTokenExistsInDB(possibleRefreshToke
 
 	in := []interface{}{possibleRefreshToken}
 	out := []interface{}{&userId}
-	if err := r.rdbms.QueryRow(QueryCheckIfIsAdmin, in, out); err != nil {
+	if err := r.rdbms.QueryRow(QueryCheckRefreshTokenExistsInDB, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
 			r.logger.Error("Error id not found", zap.Error(err))
 			return "", err
