@@ -80,10 +80,9 @@ func (token *token) CreateRefreshTokenString(data any) (string, error) {
 		return "", errors.New(errStr)
 	}
 
-	expiredAt := jwt.NewNumericDate(time.Now().Add(token.refreshTokenExpiration))
 	registeredClaim := jwt.RegisteredClaims{
-		ExpiresAt: expiredAt,
-		ID:        fmt.Sprintf("%d", time.Now().UnixNano()/int64(time.Microsecond)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(token.refreshTokenExpiration)),
+		// ID:        fmt.Sprintf("%d", time.Now().UnixNano()/int64(time.Microsecond)),
 	}
 	payload := &RefreshTokenPayload{dataBytes, registeredClaim}
 
