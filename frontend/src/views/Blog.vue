@@ -1,5 +1,5 @@
 <template>
-    <Nav />
+    <Nav class="bg-gray-100"/>
     <ArticleList v-if="isLoggedIn"/>
 </template>
 
@@ -19,7 +19,6 @@ onMounted(async () => {
     router.push('/login'); 
   }
 });
-
 
 </script>
 
