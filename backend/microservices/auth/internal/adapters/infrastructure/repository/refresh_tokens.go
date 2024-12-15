@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
@@ -66,7 +67,11 @@ WHERE refresh_token = $1;`
 
 func (r *refreshTokenRepository) RemoveRefreshToken(refreshToken string) error {
 
+	fmt.Println("refreshToken: ", refreshToken)
+
 	hashedToken := entity.HashToken(refreshToken, r.config.Pepper)
+
+	fmt.Println("hashedToken: ", hashedToken)
 
 	in := []interface{}{hashedToken}
 	if err := r.rdbms.Execute(QueryRemoveRefreshToken, in); err != nil {
