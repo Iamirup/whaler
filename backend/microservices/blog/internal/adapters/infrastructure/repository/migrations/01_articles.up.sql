@@ -4,6 +4,5 @@ CREATE TABLE IF NOT EXISTS articles(
 	content TEXT NOT NULL,
 	author_id UUID NOT NULL,
 	author_username VARCHAR(32),
-	likes INT DEFAULT 0,
 	date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

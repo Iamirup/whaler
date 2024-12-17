@@ -101,6 +101,7 @@ func (s *ArticleService) UpdateArticle(articleId entity.UUID, title, content str
 			return &serr.ServiceError{Message: "Wrong article has been given", StatusCode: http.StatusBadRequest}
 		}
 	}
+
 	if strings.TrimSpace(content) != "" {
 		if err := s.articlePersistencePort.UpdateArticleContent(articleId, content); err != nil {
 			s.logger.Error("Wrong article has been given", zap.Error(err))
@@ -111,7 +112,7 @@ func (s *ArticleService) UpdateArticle(articleId entity.UUID, title, content str
 	return nil
 }
 
-func (s *ArticleService) DeleteArticle(articleId entity.UUID, authorId entity.UUID) *serr.ServiceError {
+func (s *ArticleService) DeleteArticle(articleId, authorId entity.UUID) *serr.ServiceError {
 
 	err := s.articlePersistencePort.CheckIfIsAuthorById(articleId, authorId)
 	if err != nil {
@@ -129,4 +130,37 @@ func (s *ArticleService) DeleteArticle(articleId entity.UUID, authorId entity.UU
 	}
 
 	return nil
+}
+
+func (s *ArticleService) LikeArticle(articleId, likerId entity.UUID) *serr.ServiceError {
+
+	err := s.articlePersistencePort.LikeArticle(articleId, likerId)
+	if err != nil {
+		s.logger.Error("Something went wrong in liking the article", zap.Error(err))
+		return &serr.ServiceError{Message: "Something went wrong in liking the article", StatusCode: http.StatusInternalServerError}
+	}
+
+	return nil
+}
+
+func (s *ArticleService) GetTopAuthors() ([]entity.TopAuthor, *serr.ServiceError) {
+
+	authors, err := s.articlePersistencePort.GetTopAuthors()
+	if err != nil {
+		s.logger.Error("Something went wrong in retrieving top authors", zap.Error(err))
+		return []entity.TopAuthor{}, &serr.ServiceError{Message: "Something went wrong in retrieving top authors", StatusCode: http.StatusInternalServerError}
+	}
+
+	return authors, nil
+}
+
+func (s *ArticleService) GetPopularArticles() ([]entity.Article, *serr.ServiceError) {
+
+	articles, err := s.articlePersistencePort.GetPopularArticles()
+	if err != nil {
+		s.logger.Error("Something went wrong in retrieving popular articles", zap.Error(err))
+		return []entity.Article{}, &serr.ServiceError{Message: "Something went wrong in retrieving popular articles", StatusCode: http.StatusInternalServerError}
+	}
+
+	return articles, nil
 }

@@ -41,6 +41,9 @@ func NewRestServer(log *zap.Logger, articleRepo ports.ArticlePersistencePort, to
 	blogV1.Post("/article", articleHandler.NewArticle)
 	blogV1.Patch("/article", articleHandler.UpdateArticle)
 	blogV1.Delete("/article", articleHandler.DeleteArticle)
+	blogV1.Post("/like-it", articleHandler.LikeArticle)
+	blogV1.Get("/top-authors", articleHandler.GetTopAuthors)           // for admin
+	blogV1.Get("/popular-articles", articleHandler.GetPopularArticles) // for admin
 
 	return restServer
 }

@@ -17,6 +17,12 @@ type (
 
 		// GetUserByEmailAndPassword retrieves a user by its email and password
 		GetUserByEmailAndPassword(email, password string) (*entity.User, error)
+
+		// DeleteUser removes a user from database
+		DeleteUser(userId entity.UUID) error
+
+		// GetOnlineUsers retrieves users that recently use the whaler web app
+		GetOnlineUsers() ([]entity.User, error)
 	}
 
 	// UserServicePort defines the methods for interacting with user services
@@ -24,5 +30,7 @@ type (
 		Register(email, username, password string) (entity.AuthTokens, *serr.ServiceError)
 		Login(email, username, password, possibleRefreshToken string) (entity.AuthTokens, *serr.ServiceError)
 		Logout(refreshToken string) *serr.ServiceError
+		DeleteUser(userId entity.UUID) *serr.ServiceError
+		GetOnlineUsers() ([]entity.User, *serr.ServiceError)
 	}
 )

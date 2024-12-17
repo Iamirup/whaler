@@ -32,6 +32,15 @@ type (
 
 		// CheckIfIsAuthorById checks if the the user is the same author of the article or not
 		CheckIfIsAuthorById(articleId, authorId entity.UUID) error
+
+		// LikeArticle likes an article by a user id
+		LikeArticle(articleId, likerId entity.UUID) error
+
+		// GetTopAuthors retrieves top authors based on the most liked articles that has been published by this author
+		GetTopAuthors() ([]entity.TopAuthor, error)
+
+		// GetPopularArticles retrieves popular articles based on the most liked ones
+		GetPopularArticles() ([]entity.Article, error)
 	}
 
 	// ArticleServicePort defines the methods for interacting with article services
@@ -42,5 +51,8 @@ type (
 		NewArticle(title, content string, authorId entity.UUID, authorUsername string) (entity.UUID, *serr.ServiceError)
 		UpdateArticle(articleId entity.UUID, title, content string, authorId entity.UUID) *serr.ServiceError
 		DeleteArticle(articleId, authorId entity.UUID) *serr.ServiceError
+		LikeArticle(articleId, likerId entity.UUID) *serr.ServiceError
+		GetTopAuthors() ([]entity.TopAuthor, *serr.ServiceError)
+		GetPopularArticles() ([]entity.Article, *serr.ServiceError)
 	}
 )

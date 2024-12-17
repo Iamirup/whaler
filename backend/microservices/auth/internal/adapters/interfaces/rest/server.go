@@ -19,7 +19,7 @@ type Server struct {
 	clientApp    *fiber.App
 }
 
-func New(log *zap.Logger, userRepo ports.UserPersistencePort, refreshTokenRepo ports.RefreshTokenPersistencePort, token token.Token) *Server {
+func New(log *zap.Logger, userRepo ports.UserPersistencePort, adminRepo ports.AdminPersistencePort, refreshTokenRepo ports.RefreshTokenPersistencePort, token token.Token) *Server {
 	server := &Server{Logger: log, Token: token}
 
 	server.managmentApp = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
@@ -35,6 +35,9 @@ func New(log *zap.Logger, userRepo ports.UserPersistencePort, refreshTokenRepo p
 	userService := domainService.NewUserService(userRepo, refreshTokenRepo, log, token)
 	userHandler := NewUserHandler(server, appService.NewUserApplicationService(userService, log))
 
+	adminService := domainService.NewAdminService(adminRepo, log, token)
+	adminHandler := NewAdminHandler(server, appService.NewAdminApplicationService(adminService, log))
+
 	refreshTokenService := domainService.NewRefreshTokenService(refreshTokenRepo, log, token)
 	refreshTokenHandler := NewRefreshTokenHandler(server, appService.NewRefreshTokenApplicationService(refreshTokenService))
 
@@ -42,6 +45,11 @@ func New(log *zap.Logger, userRepo ports.UserPersistencePort, refreshTokenRepo p
 	authV1.Post("/login", userHandler.Login)
 	authV1.Post("/logout", refreshTokenHandler.fetchUserDataMiddleware, userHandler.Logout)
 	authV1.Get("/refresh", refreshTokenHandler.fetchUserDataMiddleware, refreshTokenHandler.Refresh)
+	authV1.Get("/is_admin", refreshTokenHandler.fetchUserDataMiddleware, userHandler.IsAdmin)
+	authV1.Delete("/user", refreshTokenHandler.fetchUserDataMiddleware, userHandler.DeleteUser)     // for admin
+	authV1.Post("/admin", refreshTokenHandler.fetchUserDataMiddleware, adminHandler.AddAdmin)       // for admin
+	authV1.Delete("/admin", refreshTokenHandler.fetchUserDataMiddleware, adminHandler.DeleteAdmin)  // for admin
+	authV1.Get("/onlines", refreshTokenHandler.fetchUserDataMiddleware, userHandler.GetOnlineUsers) // for admin
 
 	return server
 }

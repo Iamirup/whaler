@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
+	"github.com/Iamirup/whaler/backend/microservices/auth/pkg/rdbms"
 	"go.uber.org/zap"
 )
 
@@ -84,4 +85,62 @@ func (r *userRepository) GetUserByEmailAndPassword(email, password string) (*ent
 	}
 
 	return user, nil
+}
+
+const QueryDeleteUser = `
+DELETE FROM users
+WHERE id = $1;`
+
+func (r *userRepository) DeleteUser(userId entity.UUID) error {
+
+	in := []interface{}{userId}
+	if err := r.rdbms.Execute(QueryDeleteUser, in); err != nil {
+		if err.Error() == rdbms.ErrNotFound {
+			r.logger.Error("Error user not found", zap.Error(err))
+			return err
+		}
+
+		r.logger.Error("Error find user by his id", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
+const QueryGetOnlineUsers = `
+SELECT 
+    u.id,
+    u.email,
+    u.username,
+    u.created_at
+FROM 
+    users u
+JOIN 
+    refresh_tokens rt ON u.id = rt.owner_id
+WHERE 
+    rt.last_refresh >= NOW() - INTERVAL '15 minutes'
+LIMIT 5;`
+
+func (r *userRepository) GetOnlineUsers() ([]entity.User, error) {
+
+	limit := 5
+	onlineUsers := make([]entity.User, limit)
+	out := make([][]any, limit)
+
+	for index := 0; index < limit; index++ {
+		out[index] = []any{
+			&onlineUsers[index].Id,
+			&onlineUsers[index].Email,
+			&onlineUsers[index].Username,
+			&onlineUsers[index].CreatedAt,
+		}
+	}
+
+	in := []any{}
+	if err := r.rdbms.Query(QueryGetOnlineUsers, in, out); err != nil {
+		r.logger.Error("Error retrieving onlineUsers", zap.Error(err))
+		return []entity.User{}, err
+	}
+
+	return onlineUsers, nil
 }

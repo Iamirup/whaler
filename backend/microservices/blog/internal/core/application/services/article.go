@@ -127,3 +127,37 @@ func (s *ArticleApplicationService) DeleteArticle(request *api.DeleteArticleRequ
 	}
 	return s.domainService.DeleteArticle(request.ArticleId, userId)
 }
+
+func (s *ArticleApplicationService) LikeArticle(request *api.LikeArticleRequest, userId entity.UUID) *serr.ServiceError {
+	if err := request.Validate(); err != nil {
+		var validationErrors []api.ErrorContent
+		for _, err := range err.(validator.ValidationErrors) {
+			var message string
+			switch err.Tag() {
+			case "required":
+				message = fmt.Sprintf("field '%s' is required", strcase.ToSnake(err.Field()))
+			default:
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), err.Tag())
+			}
+			validationErrors = append(validationErrors, api.ErrorContent{
+				Field:   strcase.ToSnake(err.Field()),
+				Message: message,
+			})
+		}
+		s.logger.Error("Validation error", zap.Any("validationErrors", validationErrors))
+		return &serr.ServiceError{
+			Message:    "Validation failed",
+			StatusCode: http.StatusBadRequest,
+			Details:    validationErrors,
+		}
+	}
+	return s.domainService.LikeArticle(request.ArticleId, userId)
+}
+
+func (s *ArticleApplicationService) GetTopAuthors() ([]entity.TopAuthor, *serr.ServiceError) {
+	return s.domainService.GetTopAuthors()
+}
+
+func (s *ArticleApplicationService) GetPopularArticles() ([]entity.Article, *serr.ServiceError) {
+	return s.domainService.GetPopularArticles()
+}

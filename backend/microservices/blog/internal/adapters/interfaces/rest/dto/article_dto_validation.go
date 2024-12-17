@@ -25,3 +25,15 @@ func (v *UpdateArticleRequest) Validate() error {
 func (v *DeleteArticleRequest) Validate() error {
 	return validate.Struct(v)
 }
+
+func (v *LikeArticleRequest) Validate() error {
+	return validate.Struct(v)
+}
+
+func (v *GetTopAuthorsRequest) Validate() error {
+	return validate.Struct(v)
+}
+
+func (v *GetPopularArticlesRequest) Validate() error {
+	return validate.Struct(v)
+}

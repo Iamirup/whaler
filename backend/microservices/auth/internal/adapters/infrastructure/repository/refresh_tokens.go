@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/domain/entity"
@@ -37,28 +36,28 @@ func (r *refreshTokenRepository) CreateNewRefreshToken(refreshToken *entity.Refr
 	return nil
 }
 
-const QueryCheckRefreshTokenInDBById = `
+const QueryCheckRefreshTokenExists = `
 SELECT refresh_token
 FROM refresh_tokens
 WHERE owner_id = $1;`
 
-func (r *refreshTokenRepository) CheckRefreshTokenInDBById(ownerId string) error {
+func (r *refreshTokenRepository) CheckRefreshTokenExists(ownerId string) (string, error) {
 
 	var refreshToken string
 
 	in := []interface{}{ownerId}
 	out := []interface{}{&refreshToken}
-	if err := r.rdbms.QueryRow(QueryCheckRefreshTokenInDBById, in, out); err != nil {
+	if err := r.rdbms.QueryRow(QueryCheckRefreshTokenExists, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
 			r.logger.Error("Error id not found", zap.Error(err))
-			return err
+			return "", err
 		}
 
 		r.logger.Error("Error find refresh token by id", zap.Error(err))
-		return err
+		return "", err
 	}
 
-	return nil
+	return refreshToken, nil
 }
 
 const QueryRemoveRefreshToken = `
@@ -67,11 +66,7 @@ WHERE refresh_token = $1;`
 
 func (r *refreshTokenRepository) RemoveRefreshToken(refreshToken string) error {
 
-	fmt.Println("refreshToken: ", refreshToken)
-
 	hashedToken := entity.HashToken(refreshToken, r.config.Pepper)
-
-	fmt.Println("hashedToken: ", hashedToken)
 
 	in := []interface{}{hashedToken}
 	if err := r.rdbms.Execute(QueryRemoveRefreshToken, in); err != nil {
@@ -107,19 +102,19 @@ func (r *refreshTokenRepository) RevokeAllRefreshTokensById(userId string) error
 	return nil
 }
 
-const QueryCheckRefreshTokenExistsInDB = `
+const QueryCheckPossibleRefreshTokenExistsInDB = `
 SELECT owner_id
 FROM refresh_tokens
 WHERE refresh_token = $1;`
 
-func (r *refreshTokenRepository) CheckRefreshTokenExistsInDB(possibleRefreshToken string) string {
+func (r *refreshTokenRepository) CheckPossibleRefreshTokenExistsInDB(possibleRefreshToken string) string {
 
 	var userId string
 	hashedToken := entity.HashToken(possibleRefreshToken, r.config.Pepper)
 
 	in := []interface{}{hashedToken}
 	out := []interface{}{&userId}
-	if err := r.rdbms.QueryRow(QueryCheckRefreshTokenExistsInDB, in, out); err != nil {
+	if err := r.rdbms.QueryRow(QueryCheckPossibleRefreshTokenExistsInDB, in, out); err != nil {
 		if err.Error() == rdbms.ErrNotFound {
 			r.logger.Error("Error id not found", zap.Error(err))
 			return ""
@@ -130,6 +125,27 @@ func (r *refreshTokenRepository) CheckRefreshTokenExistsInDB(possibleRefreshToke
 	}
 
 	return userId
+}
+
+const QueryUpdateLastRefreshTime = `
+UPDATE refresh_tokens
+SET last_refresh = CURRENT_TIMESTAMP
+WHERE refresh_token = $1;`
+
+func (r *refreshTokenRepository) UpdateLastRefreshTime(refreshToken string) error {
+
+	in := []interface{}{refreshToken}
+	if err := r.rdbms.Execute(QueryUpdateLastRefreshTime, in); err != nil {
+		if err.Error() == rdbms.ErrNotFound {
+			r.logger.Error("Error owner refresh token not found", zap.Error(err))
+			return err
+		}
+
+		r.logger.Error("Error find refresh token", zap.Error(err))
+		return err
+	}
+
+	return nil
 }
 
 const QueryCheckIfIsAdmin = `

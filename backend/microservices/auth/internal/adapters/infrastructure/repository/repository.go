@@ -19,6 +19,12 @@ type userRepository struct {
 	rdbms  rdbms.RDBMS
 }
 
+type adminRepository struct {
+	logger *zap.Logger
+	config *Config
+	rdbms  rdbms.RDBMS
+}
+
 type refreshTokenRepository struct {
 	logger *zap.Logger
 	config *Config
@@ -37,6 +43,10 @@ type migrationRepository struct {
 
 func NewUserRepository(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) ports.UserPersistencePort {
 	return &userRepository{logger: logger, config: cfg, rdbms: rdbms}
+}
+
+func NewAdminRepository(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) ports.AdminPersistencePort {
+	return &adminRepository{logger: logger, config: cfg, rdbms: rdbms}
 }
 
 func NewRefreshTokenRepository(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) ports.RefreshTokenPersistencePort {

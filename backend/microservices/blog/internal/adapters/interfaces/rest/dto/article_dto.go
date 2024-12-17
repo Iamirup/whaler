@@ -26,6 +26,18 @@ type (
 	DeleteArticleRequest struct {
 		ArticleId entity.UUID `json:"article_id"     form:"article_id"        validate:"required"`
 	}
+
+	LikeArticleRequest struct {
+		ArticleId entity.UUID `json:"article_id"     form:"article_id"     validate:"required"`
+	}
+
+	GetTopAuthorsRequest struct {
+		// nothing
+	}
+
+	GetPopularArticlesRequest struct {
+		// nothing
+	}
 )
 
 // responses in successful status
@@ -49,6 +61,18 @@ type (
 
 	DeleteArticleResponse struct {
 		// nothing
+	}
+
+	LikeArticleResponse struct {
+		// nothing
+	}
+
+	GetTopAuthorsResponse struct {
+		TopAuthors []entity.TopAuthor `json:"authors"  form:"authors"`
+	}
+
+	GetPopularArticlesResponse struct {
+		Articles []entity.Article `json:"articles"     form:"articles"`
 	}
 )
 

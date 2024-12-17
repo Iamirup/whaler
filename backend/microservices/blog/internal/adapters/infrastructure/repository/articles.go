@@ -30,9 +30,22 @@ func (r *articleRepository) CreateArticle(article *entity.Article) error {
 }
 
 const QueryGetAnArticle = `
-SELECT *
-FROM articles
-WHERE id=$1`
+SELECT 
+    a.id, 
+    a.title, 
+    a.content, 
+    a.author_id, 
+    a.author_username, 
+    a.date, 
+    COUNT(l.article_id) AS likes_count
+FROM 
+    articles a
+LEFT JOIN 
+    likes l ON a.id = l.article_id
+WHERE 
+    a.id = :article_id
+GROUP BY 
+    a.id, a.title, a.content, a.author_id, a.author_username, a.date;`
 
 func (r *articleRepository) GetAnArticle(articleId entity.UUID) (*entity.Article, error) {
 
@@ -45,8 +58,8 @@ func (r *articleRepository) GetAnArticle(articleId entity.UUID) (*entity.Article
 		&article.Content,
 		&article.AuthorId,
 		&article.AuthorUsername,
-		&article.Likes,
 		&article.Date,
+		&article.Likes,
 	}
 
 	if err := r.rdbms.QueryRow(QueryGetAnArticle, in, out); err != nil {
@@ -58,10 +71,24 @@ func (r *articleRepository) GetAnArticle(articleId entity.UUID) (*entity.Article
 }
 
 const QueryGetAllArticles = `
-SELECT *
-FROM articles
-WHERE date > $1
-ORDER BY date
+SELECT 
+    a.id, 
+    a.title, 
+    a.content, 
+    a.author_id, 
+    a.author_username, 
+    a.date, 
+    COUNT(l.article_id) AS likes_count
+FROM 
+    articles a
+LEFT JOIN 
+    likes l ON a.id = l.article_id
+WHERE
+    date > $1
+GROUP BY 
+    a.id, a.title, a.content, a.author_id, a.author_username, a.date
+ORDER BY 
+    a.date ASC
 FETCH NEXT $2 ROWS ONLY;`
 
 func (r *articleRepository) GetAllArticles(encryptedCursor string, limit int) ([]entity.Article, string, error) {
@@ -98,8 +125,8 @@ func (r *articleRepository) GetAllArticles(encryptedCursor string, limit int) ([
 			&articles[index].Content,
 			&articles[index].AuthorId,
 			&articles[index].AuthorUsername,
-			&articles[index].Likes,
 			&articles[index].Date,
+			&articles[index].Likes,
 		}
 	}
 
@@ -181,7 +208,6 @@ func (r *articleRepository) GetMyArticles(encryptedCursor string, limit int, aut
 			&articles[index].Content,
 			&articles[index].AuthorId,
 			&articles[index].AuthorUsername,
-			&articles[index].Likes,
 			&articles[index].Date,
 		}
 	}
@@ -291,4 +317,106 @@ func (r *articleRepository) CheckIfIsAuthorById(articleId, authorId entity.UUID)
 	}
 
 	return nil
+}
+
+const QueryLikeArticle = `
+INSERT INTO likes(liker_id, article_id) VALUES($1, $2)
+RETURNING article_id;`
+
+func (r *articleRepository) LikeArticle(articleId, likerId entity.UUID) error {
+
+	var a string
+
+	in := []any{likerId, articleId}
+	out := []any{&a}
+	if err := r.rdbms.QueryRow(QueryLikeArticle, in, out); err != nil {
+		r.logger.Error("Error inserting new likes record", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
+const QueryGetTopAuthors = `
+SELECT 
+    a.author_id,
+    a.author_username,
+    COUNT(l.article_id) AS total_likes
+FROM 
+    articles a
+JOIN 
+    likes l ON a.id = l.article_id
+GROUP BY 
+    a.author_id, a.author_username
+ORDER BY 
+    total_likes DESC
+LIMIT 5;`
+
+func (r *articleRepository) GetTopAuthors() ([]entity.TopAuthor, error) {
+
+	limit := 5
+	topAuthor := make([]entity.TopAuthor, limit)
+	out := make([][]any, limit)
+
+	for index := 0; index < limit; index++ {
+		out[index] = []any{
+			&topAuthor[index].AuthorId,
+			&topAuthor[index].AuthorUsername,
+			&topAuthor[index].Likes,
+		}
+	}
+
+	in := []any{}
+	if err := r.rdbms.Query(QueryGetTopAuthors, in, out); err != nil {
+		r.logger.Error("Error retrieving top authors", zap.Error(err))
+		return []entity.TopAuthor{}, err
+	}
+
+	return topAuthor, nil
+}
+
+const QueryGetPopularArticles = `
+SELECT 
+    a.id, 
+    a.title, 
+    a.content, 
+    a.author_id, 
+    a.author_username, 
+    a.date, 
+    COUNT(l.article_id) AS likes_count
+FROM 
+    articles a
+LEFT JOIN 
+    likes l ON a.id = l.article_id
+GROUP BY 
+    a.id, a.title, a.content, a.author_id, a.author_username, a.date
+ORDER BY 
+    likes_count DESC
+LIMIT 5;`
+
+func (r *articleRepository) GetPopularArticles() ([]entity.Article, error) {
+
+	limit := 5
+	articles := make([]entity.Article, limit)
+	out := make([][]any, limit)
+
+	for index := 0; index < limit; index++ {
+		out[index] = []any{
+			&articles[index].ArticleId,
+			&articles[index].Title,
+			&articles[index].Content,
+			&articles[index].AuthorId,
+			&articles[index].AuthorUsername,
+			&articles[index].Date,
+			&articles[index].Likes,
+		}
+	}
+
+	in := []any{}
+	if err := r.rdbms.Query(QueryGetPopularArticles, in, out); err != nil {
+		r.logger.Error("Error retrieving popular articles", zap.Error(err))
+		return []entity.Article{}, err
+	}
+
+	return articles, nil
 }

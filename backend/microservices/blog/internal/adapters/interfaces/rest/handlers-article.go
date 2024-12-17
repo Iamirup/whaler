@@ -173,3 +173,79 @@ func (h *ArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 
 	return c.SendStatus(http.StatusOK)
 }
+
+func (h *ArticleHandler) LikeArticle(c *fiber.Ctx) error {
+
+	userId, ok := c.Locals("user-id").(string)
+	if !ok || userId == "" {
+		h.server.Logger.Error("Invalid user-id local")
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	var request dto.LikeArticleRequest
+	if err := c.BodyParser(&request); err != nil {
+		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "Error parsing request body"}}, NeedRefresh: false}
+		return c.Status(http.StatusBadRequest).JSON(response)
+	}
+
+	err := h.articleAppService.LikeArticle(&request, entity.UUID(userId))
+	if err != nil {
+		if err.Message == "Validation failed" {
+			response := dto.ErrorResponse{Errors: err.Details.([]dto.ErrorContent), NeedRefresh: false}
+			return c.Status(err.StatusCode).JSON(response)
+		}
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
+		return c.Status(err.StatusCode).JSON(response)
+	}
+
+	return c.SendStatus(http.StatusOK)
+}
+
+func (h *ArticleHandler) GetTopAuthors(c *fiber.Ctx) error {
+
+	isAdmin, ok := c.Locals("user-is_admin").(bool)
+	if !ok {
+		h.server.Logger.Error("Invalid user-is_admin local")
+		return c.SendStatus(http.StatusInternalServerError)
+	} else if !isAdmin {
+		h.server.Logger.Error("Forbidden access")
+		return c.SendStatus(http.StatusForbidden)
+	}
+
+	topAuthors, err := h.articleAppService.GetTopAuthors()
+	if err != nil {
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
+		return c.Status(err.StatusCode).JSON(response)
+	}
+
+	response := dto.GetTopAuthorsResponse{
+		TopAuthors: topAuthors,
+	}
+
+	return c.Status(http.StatusOK).JSON(response)
+}
+
+func (h *ArticleHandler) GetPopularArticles(c *fiber.Ctx) error {
+
+	isAdmin, ok := c.Locals("user-is_admin").(bool)
+	if !ok {
+		h.server.Logger.Error("Invalid user-is_admin local")
+		return c.SendStatus(http.StatusInternalServerError)
+	} else if !isAdmin {
+		h.server.Logger.Error("Forbidden access")
+		return c.SendStatus(http.StatusForbidden)
+	}
+
+	articles, err := h.articleAppService.GetPopularArticles()
+	if err != nil {
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
+		return c.Status(err.StatusCode).JSON(response)
+	}
+
+	response := dto.GetPopularArticlesResponse{
+		Articles: articles,
+	}
+
+	return c.Status(http.StatusOK).JSON(response)
+}

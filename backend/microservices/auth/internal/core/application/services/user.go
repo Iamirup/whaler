@@ -100,3 +100,33 @@ func (s *UserApplicationService) Login(request *api.LoginRequest, possibleRefres
 func (s *UserApplicationService) Logout(refreshToken string) *serr.ServiceError {
 	return s.domainService.Logout(refreshToken)
 }
+
+func (s *UserApplicationService) DeleteUser(request *api.DeleteUserRequest) *serr.ServiceError {
+	if err := request.Validate(); err != nil {
+		var validationErrors []api.ErrorContent
+		for _, err := range err.(validator.ValidationErrors) {
+			var message string
+			switch err.Tag() {
+			case "required":
+				message = fmt.Sprintf("field '%s' is required", strcase.ToSnake(err.Field()))
+			default:
+				message = fmt.Sprintf("field '%s' failed validation on the '%s' tag", strcase.ToSnake(err.Field()), err.Tag())
+			}
+			validationErrors = append(validationErrors, api.ErrorContent{
+				Field:   strcase.ToSnake(err.Field()),
+				Message: message,
+			})
+		}
+		s.logger.Error("Validation error", zap.Any("validationErrors", validationErrors))
+		return &serr.ServiceError{
+			Message:    "Validation failed",
+			StatusCode: http.StatusBadRequest,
+			Details:    validationErrors,
+		}
+	}
+	return s.domainService.DeleteUser(request.UserId)
+}
+
+func (s *UserApplicationService) GetOnlineUsers() ([]entity.User, *serr.ServiceError) {
+	return s.domainService.GetOnlineUsers()
+}

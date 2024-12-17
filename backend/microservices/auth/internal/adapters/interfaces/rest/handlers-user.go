@@ -110,3 +110,65 @@ func (h *UserHandler) Logout(c *fiber.Ctx) error {
 
 	return c.SendStatus(http.StatusOK)
 }
+
+func (h *UserHandler) IsAdmin(c *fiber.Ctx) error {
+	isAdmin, ok := c.Locals("user-is_admin").(bool)
+	if !ok {
+		h.server.Logger.Error("Invalid user-is_admin local")
+		return c.SendStatus(http.StatusInternalServerError)
+	} else if !isAdmin {
+		h.server.Logger.Error("Forbidden access")
+		return c.SendStatus(http.StatusForbidden)
+	}
+
+	return c.SendStatus(http.StatusOK)
+}
+
+func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
+	isAdmin, ok := c.Locals("user-is_admin").(bool)
+	if !ok {
+		h.server.Logger.Error("Invalid user-is_admin local")
+		return c.SendStatus(http.StatusInternalServerError)
+	} else if !isAdmin {
+		h.server.Logger.Error("Forbidden access")
+		return c.SendStatus(http.StatusForbidden)
+	}
+
+	var request dto.DeleteUserRequest
+	if err := c.BodyParser(&request); err != nil {
+		h.server.Logger.Error("Error parsing request body", zap.Any("request", request), zap.Error(err))
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: "Error parsing request body"}}, NeedLogin: false}
+		return c.Status(http.StatusBadRequest).JSON(response)
+	}
+
+	err := h.userAppService.DeleteUser(&request)
+	if err != nil {
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedLogin: false}
+		return c.Status(err.StatusCode).JSON(response)
+	}
+
+	return c.SendStatus(http.StatusOK)
+}
+
+func (h *UserHandler) GetOnlineUsers(c *fiber.Ctx) error {
+	isAdmin, ok := c.Locals("user-is_admin").(bool)
+	if !ok {
+		h.server.Logger.Error("Invalid user-is_admin local")
+		return c.SendStatus(http.StatusInternalServerError)
+	} else if !isAdmin {
+		h.server.Logger.Error("Forbidden access")
+		return c.SendStatus(http.StatusForbidden)
+	}
+
+	onlineUsers, err := h.userAppService.GetOnlineUsers()
+	if err != nil {
+		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedLogin: false}
+		return c.Status(err.StatusCode).JSON(response)
+	}
+
+	response := dto.GetOnlineUsersResponse{
+		OnlineUsers: onlineUsers,
+	}
+
+	return c.Status(http.StatusOK).JSON(response)
+}

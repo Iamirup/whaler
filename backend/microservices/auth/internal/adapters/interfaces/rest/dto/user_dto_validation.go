@@ -54,3 +54,15 @@ func (v *LoginRequest) Validate() error {
 func (v *RegisterRequest) Validate() error {
 	return validate.Struct(v)
 }
+
+func (v *AddAdminRequest) Validate() error {
+	return validate.Struct(v)
+}
+
+func (v *DeleteAdminRequest) Validate() error {
+	return validate.Struct(v)
+}
+
+func (v *DeleteUserRequest) Validate() error {
+	return validate.Struct(v)
+}

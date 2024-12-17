@@ -92,7 +92,7 @@ func (s *UserService) Login(email, username, password, possibleRefreshToken stri
 	fmt.Println("possibleRefreshToken: ", possibleRefreshToken)
 
 	if possibleRefreshToken != "" {
-		userId := s.refreshTokenPersistencePort.CheckRefreshTokenExistsInDB(possibleRefreshToken)
+		userId := s.refreshTokenPersistencePort.CheckPossibleRefreshTokenExistsInDB(possibleRefreshToken)
 		if userId != "" {
 			s.logger.Error("This user is already logged in", zap.String("email", email))
 			return entity.AuthTokens{}, &serr.ServiceError{Message: "You already logged in", StatusCode: http.StatusBadRequest}
@@ -156,4 +156,25 @@ func (s *UserService) Logout(refreshToken string) *serr.ServiceError {
 	}
 
 	return nil
+}
+
+func (s *UserService) DeleteUser(userId entity.UUID) *serr.ServiceError {
+
+	if err := s.userPersistencePort.DeleteUser(userId); err != nil {
+		s.logger.Error("Error failed to fetch online users", zap.Error(err))
+		return &serr.ServiceError{Message: "failed to fetch online users", StatusCode: http.StatusInternalServerError}
+	}
+
+	return nil
+}
+
+func (s *UserService) GetOnlineUsers() ([]entity.User, *serr.ServiceError) {
+
+	onlineUsers, err := s.userPersistencePort.GetOnlineUsers()
+	if err != nil {
+		s.logger.Error("Error failed to fetch online users", zap.Error(err))
+		return []entity.User{}, &serr.ServiceError{Message: "failed to fetch online users", StatusCode: http.StatusInternalServerError}
+	}
+
+	return onlineUsers, nil
 }

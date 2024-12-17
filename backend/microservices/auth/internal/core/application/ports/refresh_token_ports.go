@@ -11,8 +11,11 @@ type (
 		// CreateNewRefreshToken adds a new refresh token to the database
 		CreateNewRefreshToken(refreshToken *entity.RefreshToken) error
 
-		// CheckRefreshTokenInDBById checks a refresh token is valid in database by its owner user id
-		CheckRefreshTokenInDBById(userId string) error
+		// CheckRefreshTokenExists checks a refresh token is valid in database by its owner user id
+		CheckRefreshTokenExists(userId string) (string, error)
+
+		// UpdateLastRefreshTime updates last refresh time in database
+		UpdateLastRefreshTime(refreshToken string) error
 
 		// RemoveRefreshTokenById removes a refresh token by its owener user id from database
 		RemoveRefreshToken(userId string) error
@@ -21,7 +24,7 @@ type (
 		RevokeAllRefreshTokensById(userId string) error
 
 		// CheckRefreshTokenExistsInDB checks the user carries refresh token or not (to avoid re-login)
-		CheckRefreshTokenExistsInDB(possibleRefreshToken string) string
+		CheckPossibleRefreshTokenExistsInDB(possibleRefreshToken string) string
 
 		// CheckIfIsAdmin checks if a user is admin or not
 		CheckIfIsAdmin(userId string) (bool, error)
