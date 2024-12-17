@@ -58,6 +58,11 @@ const router = createRouter({
       name: 'eventor',
       component: () => import('@/views/Eventor.vue'),
     },
+    {
+      path: '*', 
+      name: 'not-found', 
+      component: () => import('@/components/NotFound.vue'),
+    },
   ],
 })
 

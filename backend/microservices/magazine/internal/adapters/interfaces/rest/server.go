@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/Iamirup/whaler/backend/microservices/magazine/internal/core/application/ports"
 	appService "github.com/Iamirup/whaler/backend/microservices/magazine/internal/core/application/services"
@@ -37,6 +38,11 @@ func New(log *zap.Logger, newsRepo ports.NewsPersistencePort, token token.Token)
 
 	magazineV1.Post("/news", newsHandler.AddNews) // only for admins
 	magazineV1.Get("/news", newsHandler.SeeNews)  // for both users and admins
+
+	// 404 Handler
+	magazineV1.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(http.StatusNotFound)
+	})
 
 	return server
 }

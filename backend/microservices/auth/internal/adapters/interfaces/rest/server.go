@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/ports"
 	appService "github.com/Iamirup/whaler/backend/microservices/auth/internal/core/application/services"
@@ -50,6 +51,11 @@ func New(log *zap.Logger, userRepo ports.UserPersistencePort, adminRepo ports.Ad
 	authV1.Post("/admin", refreshTokenHandler.fetchUserDataMiddleware, adminHandler.AddAdmin)       // for admin
 	authV1.Delete("/admin", refreshTokenHandler.fetchUserDataMiddleware, adminHandler.DeleteAdmin)  // for admin
 	authV1.Get("/onlines", refreshTokenHandler.fetchUserDataMiddleware, userHandler.GetOnlineUsers) // for admin
+
+	// 404 Handler
+	authV1.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(http.StatusNotFound)
+	})
 
 	return server
 }

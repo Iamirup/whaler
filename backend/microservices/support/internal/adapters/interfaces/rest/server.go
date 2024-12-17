@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/Iamirup/whaler/backend/microservices/support/internal/core/application/ports"
 	appService "github.com/Iamirup/whaler/backend/microservices/support/internal/core/application/services"
@@ -39,6 +40,11 @@ func New(log *zap.Logger, ticketRepo ports.TicketPersistencePort, token token.To
 	supportV1.Get("/tickets/me", ticketHandler.MyTickets)        // for users
 	supportV1.Post("/ticket/reply", ticketHandler.ReplyToTicket) // for admin
 	supportV1.Get("/tickets/all", ticketHandler.AllTicket)       // for admin
+
+	// 404 Handler
+	supportV1.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(http.StatusNotFound)
+	})
 
 	return server
 }

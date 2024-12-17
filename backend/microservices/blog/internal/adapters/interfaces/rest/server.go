@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/Iamirup/whaler/backend/microservices/blog/internal/core/application/ports"
 	appService "github.com/Iamirup/whaler/backend/microservices/blog/internal/core/application/services"
@@ -44,6 +45,11 @@ func NewRestServer(log *zap.Logger, articleRepo ports.ArticlePersistencePort, to
 	blogV1.Post("/like-it", articleHandler.LikeArticle)
 	blogV1.Get("/top-authors", articleHandler.GetTopAuthors)           // for admin
 	blogV1.Get("/popular-articles", articleHandler.GetPopularArticles) // for admin
+
+	// 404 Handler
+	blogV1.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(http.StatusNotFound)
+	})
 
 	return restServer
 }
