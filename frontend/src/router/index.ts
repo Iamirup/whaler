@@ -59,7 +59,7 @@ const router = createRouter({
       component: () => import('@/views/Eventor.vue'),
     },
     {
-      path: '/:notFound', 
+      path: '/:notFound(.*)', 
       name: 'not found', 
       component: () => import('@/components/NotFound.vue'),
     },
