@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import NotFound from '../components/NotFound.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,7 +30,7 @@ const router = createRouter({
     },
     {
       path: '/blog/manage',
-      name: 'blog-management',
+      name: 'blog management',
       component: () => import('@/components/blog/ArticleManagement.vue'),
     },
     {
@@ -50,7 +51,7 @@ const router = createRouter({
     },
     {
       path: '/support/admin',
-      name: 'admin-support',
+      name: 'admin support',
       component: () => import('@/components/support/AdminTicket.vue'),
     },
     {
@@ -60,8 +61,8 @@ const router = createRouter({
     },
     {
       path: '*', 
-      name: 'not-found', 
-      component: () => import('@/components/NotFound.vue'),
+      name: 'not found', 
+      component: NotFound,
     },
   ],
 })
