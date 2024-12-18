@@ -115,13 +115,12 @@ func (h *UserHandler) IsAdmin(c *fiber.Ctx) error {
 	isAdmin, ok := c.Locals("user-is_admin").(bool)
 	if !ok {
 		h.server.Logger.Error("Invalid user-is_admin local")
-		return c.SendStatus(http.StatusInternalServerError)
+		return c.Status(http.StatusInternalServerError).JSON(dto.IsAdminResponse{IsAdmin: false})
 	} else if !isAdmin {
-		h.server.Logger.Error("Forbidden access")
-		return c.SendStatus(http.StatusForbidden)
+		return c.Status(http.StatusOK).JSON(dto.IsAdminResponse{IsAdmin: false})
 	}
 
-	return c.SendStatus(http.StatusOK)
+	return c.Status(http.StatusOK).JSON(dto.IsAdminResponse{IsAdmin: true})
 }
 
 func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {

@@ -48,6 +48,10 @@ type (
 		// nothing
 	}
 
+	IsAdminResponse struct {
+		IsAdmin bool `json:"is_admin"    form:"is_admin"`
+	}
+
 	DeleteAdminResponse struct {
 		// nothing
 	}
