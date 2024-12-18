@@ -44,6 +44,8 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
 import { alertService } from '../alertor';
+import { useRouter } from 'vue-router';
+import { refreshService } from '../refreshJWT';
 
 export interface Ticket {
   ticket_id: string;
@@ -60,6 +62,8 @@ export interface Ticket {
 export default defineComponent({
   name: 'UserTickets',
   setup() {
+    const router = useRouter()
+
     const tickets = ref<Ticket[]>([]);
     const newTicket = ref<Partial<Ticket>>({ title: '', content: '' });
     const cursor = ref<string | null>(null);
@@ -74,8 +78,14 @@ export default defineComponent({
         tickets.value = [...tickets.value, ...response.data.tickets];
         cursor.value = response.data.new_cursor;
       } catch (error: any) {
-        alertService.showAlert(error.response.data.errors[0].message, "error");
-        console.error(error);
+        if (error.response.data.need_refresh){
+          const isRefreshed = await refreshService.refreshJWT(); 
+          if (!isRefreshed) { router.push('/login'); return; }
+          fetchMyTickets(eCursor, limit);
+        } else {
+          alertService.showAlert(error.response.data.errors[0].message, "error");
+          console.error(error);
+        }
       }
     };
 
@@ -87,8 +97,14 @@ export default defineComponent({
         cursor.value = null;
         return await fetchMyTickets(null, limit.value);
       } catch (error: any) {
-        alertService.showAlert(error.response.data.errors[0].message, "error");
-        console.error(error);
+        if (error.response.data.need_refresh){
+          const isRefreshed = await refreshService.refreshJWT(); 
+          if (!isRefreshed) { router.push('/login'); return; }
+          createTicket();
+        } else {
+          alertService.showAlert(error.response.data.errors[0].message, "error");
+          console.error(error);
+        }
       }
     };
 
