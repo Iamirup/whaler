@@ -65,7 +65,7 @@ setup() {
     const limit = ref<number>(20); 
   
     const fetchAllTickets = async (eCursor: string | null, limit: number): Promise<void> => {
-    try {
+      try {
         const response = await axios
           .get('/api/support/v1/tickets/all', {
             params: { cursor: eCursor, limit: limit },
@@ -85,7 +85,7 @@ setup() {
     };
 
     const replyToTicket = async (ticketId: string, reply_text: string): Promise<void> => {
-    try {
+      try {
         await axios.post('/api/support/v1/ticket/reply', { ticket_id: ticketId, reply_text: reply_text ?? '' });
         tickets.value = [];
         cursor.value = null;
@@ -103,15 +103,15 @@ setup() {
     };
 
     const formatDate = (date?: string): string => {
-    return date ? new Date(date).toLocaleString() : '';
+      return date ? new Date(date).toLocaleString() : '';
     };
 
     const loadMoreTickets = (): void => {
       fetchAllTickets(cursor.value, limit.value);
     };
 
-    onMounted(() => {
-    fetchAllTickets(null, limit.value);
+    onMounted(async () => {
+      await fetchAllTickets(null, limit.value);
     });
 
     return { tickets, replyToTicket, formatDate, loadMoreTickets };

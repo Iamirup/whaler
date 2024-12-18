@@ -1,4 +1,3 @@
-// src/components/TopAuthors.vue
 <template>
   <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Top Authors</h2>
@@ -10,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
 
 interface TopAuthor {
@@ -20,21 +19,28 @@ interface TopAuthor {
 }
 
 export default defineComponent({
-  data() {
-    return {
-      topAuthors: [] as TopAuthor[],
-    };
-  },
-  methods: {
-    async fetchTopAuthors() {
+  setup() {
+
+    const topAuthors = ref<TopAuthor[]>([]);
+
+    const fetchTopAuthors = async () => {
       await axios.get(`/api/blog/v1/top-authors`)
         .then(response => {
-          this.topAuthors = response.data.authors;
+          topAuthors.value = response.data.authors;
         })
-        .catch(() => {
-          alert('Failed to fetch top authors');
+        .catch(error => {
+          console.error(error);
         });
-    },
-  },
+    }
+
+    onMounted(async () => {
+      await fetchTopAuthors();
+    });
+
+    return {
+      fetchTopAuthors,
+      topAuthors
+    }
+  }
 });
 </script>
