@@ -16,21 +16,21 @@
             <!-- Reply to Ticket -->
             <div v-if="!ticket.is_done" class="mt-4">
               <label for="reply" class="block text-sm font-medium text-gray-700">Reply</label>
-              <textarea v-model="ticket.replyText" id="reply" placeholder="Reply" class="textarea mb-2"></textarea>
-              <button @click="replyToTicket(ticket.ticket_id, ticket.replyText ?? '')" class="btn-secondary">Reply</button>
+              <textarea v-model="ticket.reply_text" id="reply" placeholder="Reply" class="textarea mb-2"></textarea>
+              <button @click="replyToTicket(ticket.ticket_id, ticket.reply_text ?? '')" class="btn-secondary">Reply</button>
             </div>
   
             <!-- Display Replies -->
-            <div v-if="ticket.replyText" class="mt-4 bg-gray-200 p-4 rounded-lg">
-              <p><strong>Reply:</strong> {{ ticket.replyText }}</p>
-              <p class="text-sm text-gray-600">Replied on {{ formatDate(ticket.replyDate) }}</p>
+            <div v-if="ticket.reply_text" class="mt-4 bg-gray-200 p-4 rounded-lg">
+              <p><strong>Reply:</strong> {{ ticket.reply_text }}</p>
+              <p class="text-sm text-gray-600">Replied on {{ formatDate(ticket.reply_date) }}</p>
             </div>
           </div>
         </div>
-  
+
         <!-- Load More Button -->
         <div class="flex justify-center mt-6">
-          <button @click="loadMoreTickets" :disabled="!hasMoreTickets" class="btn-secondary">More</button>
+          <button @click="loadMoreTickets" class="btn-secondary">More</button>
         </div>
       </div>
     </div>
@@ -39,17 +39,17 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
-// src/interfaces/Ticket.ts
+
 export interface Ticket {
   ticket_id: string;
   user_id: string;
   username: string;
   title: string;
   content: string;
-  date: string; // ISO 8601 string
+  date: string;
   is_done: boolean;
-  replyText?: string;
-  replyDate?: string; // ISO 8601 string
+  reply_text?: string;
+  reply_date?: string;
 }
 
 export default defineComponent({
@@ -57,34 +57,30 @@ name: 'AdminTickets',
 setup() {
     const tickets = ref<Ticket[]>([]);
     const cursor = ref<string | null>(null);
-    const limit = ref<number>(20); // Default limit
-    const hasMoreTickets = ref<boolean>(true);
+    const limit = ref<number>(20); 
 
-    const fetchAllTickets = (pageCursor: string | null, pageLimit: number): Promise<void> => {
-    return axios
-        .get('/api/support/v1/tickets/all', {
-        params: { cursor: pageCursor, limit: pageLimit },
-        })
-        .then(response => {
+    const fetchAllTickets = async (eCursor: string | null, limit: number): Promise<void> => {
+    try {
+        const response = await axios
+          .get('/api/support/v1/tickets/all', {
+            params: { cursor: eCursor, limit: limit },
+          });
         tickets.value = [...tickets.value, ...response.data.tickets];
-        cursor.value = response.data.nextCursor;
-        hasMoreTickets.value = !!response.data.nextCursor;
-        })
-        .catch(error => {
+        cursor.value = response.data.new_cursor;
+      } catch (error) {
         console.error(error);
-        });
+      }
     };
 
-    const replyToTicket = (ticketId: string, replyText: string): Promise<void> => {
-    return axios.post('/api/support/v1/ticket/reply', { ticket_id: ticketId, reply_text: replyText ?? '' })
-        .then(() => {
+    const replyToTicket = async (ticketId: string, reply_text: string): Promise<void> => {
+    try {
+        await axios.post('/api/support/v1/ticket/reply', { ticket_id: ticketId, reply_text: reply_text ?? '' });
         tickets.value = [];
         cursor.value = null;
-        return fetchAllTickets(null, limit.value);
-        })
-        .catch(error => {
+        return await fetchAllTickets(null, limit.value);
+      } catch (error) {
         console.error(error);
-        });
+      }
     };
 
     const formatDate = (date?: string): string => {
@@ -92,16 +88,14 @@ setup() {
     };
 
     const loadMoreTickets = (): void => {
-    if (hasMoreTickets.value) {
-        fetchAllTickets(cursor.value, limit.value);
-    }
+      fetchAllTickets(cursor.value, limit.value);
     };
 
     onMounted(() => {
     fetchAllTickets(null, limit.value);
     });
 
-    return { tickets, replyToTicket, formatDate, loadMoreTickets, hasMoreTickets };
+    return { tickets, replyToTicket, formatDate, loadMoreTickets };
 },
 });
 </script>

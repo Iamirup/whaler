@@ -25,16 +25,16 @@
           <p class="mt-1 text-sm text-gray-600">Created by {{ ticket.username }} on {{ formatDate(ticket.date) }}</p>
 
           <!-- Display Replies -->
-          <div v-if="ticket.replyText" class="mt-4 bg-gray-200 p-2 rounded-lg">
-            <p><strong>Reply:</strong> {{ ticket.replyText }}</p>
-            <p class="text-sm text-gray-600">Replied on {{ formatDate(ticket.replyDate) }}</p>
+          <div v-if="ticket.reply_text" class="mt-4 bg-gray-200 p-2 rounded-lg">
+            <p><strong>Reply:</strong> {{ ticket.reply_text }}</p>
+            <p class="text-sm text-gray-600">Replied on {{ formatDate(ticket.reply_date) }}</p>
           </div>
         </div>
       </div>
 
       <!-- Load More Button -->
       <div class="flex justify-center mt-4">
-        <button @click="loadMoreTickets" :disabled="!hasMoreTickets" class="btn-secondary">More</button>
+        <button @click="loadMoreTickets" class="btn-secondary">More</button>
       </div>
     </div>
   </div>
@@ -44,17 +44,16 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
 
-// src/interfaces/Ticket.ts
 export interface Ticket {
   ticket_id: string;
   user_id: string;
   username: string;
   title: string;
   content: string;
-  date: string; // ISO 8601 string
+  date: string;
   is_done: boolean;
-  replyText?: string;
-  replyDate?: string; // ISO 8601 string
+  reply_text?: string;
+  reply_date?: string;
 }
 
 export default defineComponent({
@@ -63,35 +62,31 @@ export default defineComponent({
     const tickets = ref<Ticket[]>([]);
     const newTicket = ref<Partial<Ticket>>({ title: '', content: '' });
     const cursor = ref<string | null>(null);
-    const limit = ref<number>(5); // Default limit
-    const hasMoreTickets = ref<boolean>(true);
+    const limit = ref<number>(5);
 
-    const fetchMyTickets = (pageCursor: string | null, pageLimit: number): Promise<void> => {
-      return axios
-        .get('/api/support/v1/tickets/me', {
-          params: { cursor: pageCursor, limit: pageLimit },
-        })
-        .then(response => {
-          tickets.value = [...tickets.value, ...response.data.tickets];
-          cursor.value = response.data.nextCursor;
-          hasMoreTickets.value = !!response.data.nextCursor;
-        })
-        .catch(error => {
-          console.error(error);
-        });
+    const fetchMyTickets = async (eCursor: string | null, limit: number): Promise<void> => {
+      try {
+        const response = await axios
+          .get('/api/support/v1/tickets/me', {
+            params: { cursor: eCursor, limit: limit },
+          });
+        tickets.value = [...tickets.value, ...response.data.tickets];
+        cursor.value = response.data.new_cursor;
+      } catch (error) {
+        console.error(error);
+      }
     };
 
-    const createTicket = (): Promise<void> => {
-      return axios.post('/api/support/v1/ticket/new', newTicket.value)
-        .then(() => {
-          newTicket.value = { title: '', content: '' };
-          tickets.value = [];
-          cursor.value = null;
-          return fetchMyTickets(null, limit.value);
-        })
-        .catch(error => {
-          console.error(error);
-        });
+    const createTicket = async (): Promise<void> => {
+      try {
+        await axios.post('/api/support/v1/ticket/new', newTicket.value);
+        newTicket.value = { title: '', content: '' };
+        tickets.value = [];
+        cursor.value = null;
+        return await fetchMyTickets(null, limit.value);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     const formatDate = (date?: string): string => {
@@ -99,16 +94,14 @@ export default defineComponent({
     };
 
     const loadMoreTickets = (): void => {
-      if (hasMoreTickets.value) {
-        fetchMyTickets(cursor.value, limit.value);
-      }
+      fetchMyTickets(cursor.value, limit.value);
     };
 
     onMounted(() => {
       fetchMyTickets(null, limit.value);
     });
 
-    return { tickets, newTicket, createTicket, formatDate, loadMoreTickets, hasMoreTickets };
+    return { tickets, newTicket, createTicket, formatDate, loadMoreTickets };
   },
 });
 </script>
