@@ -39,6 +39,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
+import { alertService } from '../alertor';
 
 export interface Ticket {
   ticket_id: string;
@@ -67,7 +68,8 @@ setup() {
           });
         tickets.value = [...tickets.value, ...response.data.tickets];
         cursor.value = response.data.new_cursor;
-      } catch (error) {
+      } catch (error: any) {
+        alertService.showAlert(error.response.data.errors[0].message, "error");
         console.error(error);
       }
     };
@@ -78,7 +80,8 @@ setup() {
         tickets.value = [];
         cursor.value = null;
         return await fetchAllTickets(null, limit.value);
-      } catch (error) {
+      } catch (error: any) {
+        alertService.showAlert(error.response.data.errors[0].message, "error");
         console.error(error);
       }
     };
