@@ -90,6 +90,7 @@ func (h *RefreshTokenHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 
 	c.Locals("user-id", accessTokenPayload.Id)
 	c.Locals("user-username", accessTokenPayload.Username)
+	c.Locals("user-is_admin", accessTokenPayload.IsAdmin)
 	c.Locals("user-refresh_token", refreshToken)
 	return c.Next()
 }
