@@ -26,8 +26,8 @@ export default defineComponent({
     };
   },
   methods: {
-    fetchTopAuthors() {
-      axios.get(`/api/blog/v1/top-authors`)
+    async fetchTopAuthors() {
+      await axios.get(`/api/blog/v1/top-authors`)
         .then(response => {
           this.topAuthors = response.data.authors;
         })

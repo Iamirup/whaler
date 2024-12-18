@@ -23,8 +23,8 @@ export default defineComponent({
     };
   },
   methods: {
-    addAdmin() {
-      axios.post(`/api/auth/v1/admin`, { id: this.adminId })
+    async addAdmin() {
+      await axios.post(`/api/auth/v1/admin`, { id: this.adminId })
         .then(() => {
           this.message = 'Admin added successfully';
           this.messageClass = 'text-green-600';

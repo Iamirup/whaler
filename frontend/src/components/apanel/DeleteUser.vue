@@ -23,8 +23,8 @@ export default defineComponent({
     };
   },
   methods: {
-    deleteUser() {
-      axios.delete(`/api/auth/v1/user`, { data: { id: this.userId } })
+    async deleteUser() {
+      await axios.delete(`/api/auth/v1/user`, { data: { id: this.userId } })
         .then(() => {
           this.message = 'User deleted successfully';
           this.messageClass = 'text-green-600';
