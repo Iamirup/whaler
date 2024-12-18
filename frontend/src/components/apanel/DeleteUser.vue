@@ -24,7 +24,7 @@ export default defineComponent({
   },
   methods: {
     async deleteUser() {
-      await axios.delete(`/api/auth/v1/user`, { data: { id: this.userId } })
+      await axios.delete(`/api/auth/v1/user`, { data: { user_id: this.userId } })
         .then(() => {
           this.message = 'User deleted successfully';
           this.messageClass = 'text-green-600';
