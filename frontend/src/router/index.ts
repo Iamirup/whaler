@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import NotFound from '../components/NotFound.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -60,9 +59,9 @@ const router = createRouter({
       component: () => import('@/views/Eventor.vue'),
     },
     {
-      path: '*', 
+      path: '/:notFound', 
       name: 'not found', 
-      component: NotFound,
+      component: () => import('@/components/NotFound.vue'),
     },
   ],
 })
