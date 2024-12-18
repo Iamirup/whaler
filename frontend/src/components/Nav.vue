@@ -26,7 +26,7 @@
 
                 <div class="relative group mt-1.5 xs:mt-0.5 text-center">
                   <button class="px-[18px] py-2 xs:px-7">
-                    Button
+                    Pages
                     <div class="icon-1">
                       <svg
                         xmlns:xlink="http://www.w3.org/1999/xlink"

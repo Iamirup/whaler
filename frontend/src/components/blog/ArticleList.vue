@@ -42,7 +42,7 @@ export default defineComponent({
         if (error.response.data.need_refresh){
           const isRefreshed = await refreshService.refreshJWT(); 
           if (!isRefreshed) { router.push('/login'); return; }
-          fetchArticles();
+          await fetchArticles();
         } else {
           console.error(error);
         }

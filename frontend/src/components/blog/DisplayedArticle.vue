@@ -26,7 +26,7 @@ export default defineComponent({
           if (error.response.data.need_refresh){
               const isRefreshed = await refreshService.refreshJWT(); 
               if (!isRefreshed) { router.push('/login'); return; }
-              fetchArticle(id);
+              await fetchArticle(id);
           } else {
               console.error('Failed to fetch article', error);
           }

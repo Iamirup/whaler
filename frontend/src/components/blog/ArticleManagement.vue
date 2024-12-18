@@ -55,7 +55,7 @@ export default defineComponent({
                     if (error.response.data.need_refresh){
                         const isRefreshed = await refreshService.refreshJWT(); 
                         if (!isRefreshed) { router.push('/login'); return; }
-                        fetchMyArticles();
+                        await fetchMyArticles();
                     } else {
                         console.error('Failed to get articles', error);
                     }
@@ -84,7 +84,7 @@ export default defineComponent({
                         if (error.response.data.need_refresh){
                             const isRefreshed = await refreshService.refreshJWT(); 
                             if (!isRefreshed) { router.push('/login'); return; }
-                            saveArticle();
+                            await saveArticle();
                         } else {
                             console.error('Failed to update article', error);
                         }
@@ -92,15 +92,15 @@ export default defineComponent({
                 } else {
                 // Add new article
                 return await axios.post('/api/blog/v1/article', articleData)
-                    .then(() => {
-                        fetchMyArticles();
+                    .then(async () => {
+                        await fetchMyArticles();
                         editingArticle.value = null;
                     })
                     .catch(async error => {
                         if (error.response.data.need_refresh){
                             const isRefreshed = await refreshService.refreshJWT(); 
                             if (!isRefreshed) { router.push('/login'); return; }
-                            saveArticle();
+                            await saveArticle();
                         } else {
                             console.error('Failed to add article', error);
                         }
@@ -130,7 +130,7 @@ export default defineComponent({
                     if (error.response.data.need_refresh){
                         const isRefreshed = await refreshService.refreshJWT(); 
                         if (!isRefreshed) { router.push('/login'); return; }
-                        deleteArticle(id);
+                        await deleteArticle(id);
                     } else {
                         console.error('Failed to delete article', error);
                     }

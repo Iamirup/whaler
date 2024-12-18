@@ -81,7 +81,7 @@ export default defineComponent({
         if (error.response.data.need_refresh){
           const isRefreshed = await refreshService.refreshJWT(); 
           if (!isRefreshed) { router.push('/login'); return; }
-          fetchMyTickets(eCursor, limit);
+          await fetchMyTickets(eCursor, limit);
         } else {
           alertService.showAlert(error.response.data.errors[0].message, "error");
           console.error(error);
@@ -100,7 +100,7 @@ export default defineComponent({
         if (error.response.data.need_refresh){
           const isRefreshed = await refreshService.refreshJWT(); 
           if (!isRefreshed) { router.push('/login'); return; }
-          createTicket();
+          await createTicket();
         } else {
           alertService.showAlert(error.response.data.errors[0].message, "error");
           console.error(error);

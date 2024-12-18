@@ -76,7 +76,7 @@ setup() {
         if (error.response.data.need_refresh){
           const isRefreshed = await refreshService.refreshJWT(); 
           if (!isRefreshed) { router.push('/login'); return; }
-          fetchAllTickets(eCursor, limit);
+          await fetchAllTickets(eCursor, limit);
         } else {
           alertService.showAlert(error.response.data.errors[0].message, "error");
           console.error(error);
@@ -94,7 +94,7 @@ setup() {
         if (error.response.data.need_refresh){
           const isRefreshed = await refreshService.refreshJWT(); 
           if (!isRefreshed) { router.push('/login'); return; }
-          replyToTicket(ticketId, reply_text);
+          await replyToTicket(ticketId, reply_text);
         } else {
           alertService.showAlert(error.response.data.errors[0].message, "error");
           console.error(error);

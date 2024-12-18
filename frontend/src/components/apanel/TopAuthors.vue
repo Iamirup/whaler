@@ -4,7 +4,7 @@
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Top Authors</h2>
     <button @click="fetchTopAuthors" class="bg-blue-600 text-white px-4 py-3 rounded mb-4 hover:bg-blue-700">Refresh</button>
     <ul>
-      <li v-for="author in topAuthors" :key="author.id" class="border-b py-2">{{ author.name }}</li>
+      <li v-for="author in topAuthors" :key="author.author_id" class="border-b py-2">{{ author.author_username }} with {{ author.likes }} likes❤️</li>
     </ul>
   </div>
 </template>
@@ -13,26 +13,23 @@
 import { defineComponent } from 'vue';
 import axios from 'axios';
 
-export interface User {
-  id: string;
-  name: string;
-}
-export interface Author {
-  id: string;
-  name: string;
+interface TopAuthor {
+  author_id: string;
+  author_username: string;
+  likes: number;
 }
 
 export default defineComponent({
   data() {
     return {
-      topAuthors: [] as Author[],
+      topAuthors: [] as TopAuthor[],
     };
   },
   methods: {
     fetchTopAuthors() {
-      axios.get<Author[]>(`/api/blog/v1/top-authors`)
+      axios.get(`/api/blog/v1/top-authors`)
         .then(response => {
-          this.topAuthors = response.data;
+          this.topAuthors = response.data.authors;
         })
         .catch(() => {
           alert('Failed to fetch top authors');
