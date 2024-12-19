@@ -37,7 +37,7 @@ func New(log *zap.Logger, newsRepo ports.NewsPersistencePort, token token.Token)
 	magazineV1 := server.clientApp.Group("/api/magazine/v1", newsHandler.fetchUserDataMiddleware)
 
 	magazineV1.Post("/news", newsHandler.AddNews) // only for admins
-	magazineV1.Get("/news", newsHandler.SeeNews)  // for both users and admins
+	magazineV1.Get("/news", newsHandler.SeeNews)
 
 	// 404 Handler
 	magazineV1.Use(func(c *fiber.Ctx) error {
