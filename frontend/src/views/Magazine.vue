@@ -2,6 +2,6 @@
   <News />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import News from '@/components/magazine/News.vue';
 </script>
