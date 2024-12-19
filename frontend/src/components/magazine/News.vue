@@ -39,7 +39,7 @@ export default defineComponent({
 
     const fetchNews = async () => {
       try {
-        const response = await axios.get('/news');
+        const response = await axios.get('/api/magazine/v1/news');
         newsList.value = response.data.news;
       } catch (error) {
         console.error('Error fetching news:', error);
@@ -48,7 +48,7 @@ export default defineComponent({
 
     const addNews = async () => {
       try {
-        const response = await axios.post('/news', {
+        const response = await axios.post('/api/magazine/v1/news', {
           title: newTitle.value,
           content: newContent.value,
         });
