@@ -87,20 +87,20 @@
                   </button>
 
                   <div class="absolute left mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible w-36 px-5 space-y-1  bg-slate-100 dark:bg-zinc-700 dark:text-white rounded-2xl child:block  delay-75">
-                    <router-link to="/blog" class="p-2">
-                      <div>blog</div>
+                    <router-link to="/blog" class="">
+                      <div class="hover:bg-zinc-400 hover:rounded-xl p-3 border-dashed border-b border-zinc-400">blog</div>
                     </router-link>
-                    <router-link to="/discussion" class="p-2">
-                      <div>discussion</div>
+                    <router-link to="/discussion" class="">
+                      <div class="hover:bg-zinc-400 hover:rounded-xl p-3 border-dashed border-b border-zinc-400 flex justify-center">discussion</div>
                     </router-link>
-                    <router-link to="/magazine" class="p-2">
-                      <div>magazine</div>
+                    <router-link to="/magazine" class="">
+                      <div class="hover:bg-zinc-400 hover:rounded-xl p-3 border-dashed border-b border-zinc-400">magazine</div>
                     </router-link>
-                    <router-link to="/eventor" class="p-2">
-                      <div>eventor</div>
+                    <router-link to="/eventor" class="">
+                      <div class="hover:bg-zinc-400 hover:rounded-xl p-3 border-dashed border-b border-zinc-400">eventor</div>
                     </router-link>
-                    <router-link to="/support" class="p-2">
-                      <div>support</div>
+                    <router-link to="/support" class="">
+                      <div class="hover:bg-zinc-400 hover:rounded-xl p-3">support</div>
                     </router-link>
                   </div>
                 </div>
