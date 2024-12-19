@@ -1,6 +1,6 @@
 <!-- AdminNews.vue -->
 <template>
-  <div v-if="isAdmin" class="mt-30 p-6 bg-gray-800 rounded-md shadow-lg">
+  <div v-if="isAdmin" class="p-6 bg-gray-800 rounded-md shadow-lg">
     <h2 class="text-3xl font-bold mb-6">Add News</h2>
     <form @submit.prevent="addNews" class="mb-6">
       <div class="mb-4">

@@ -1,7 +1,7 @@
 <!-- NewsPage.vue -->
 <template>
   <Nav />
-  <div class="container mx-auto">
+  <div class="mt-30 container mx-auto">
     <AdminNews />
     <NewsList />
   </div>
@@ -11,6 +11,7 @@
 import { defineComponent } from 'vue';
 import AdminNews from '../components/magazine/AdminNews.vue';
 import NewsList from '../components/magazine/NewsList.vue';
+import Nav from '../components/Nav.vue';
 
 export default defineComponent({
   components: {
