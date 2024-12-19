@@ -7,18 +7,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import Nav from '../components/Nav.vue';
 import AdminNews from '../components/magazine/AdminNews.vue';
 import NewsList from '../components/magazine/NewsList.vue';
-import Nav from '../components/Nav.vue';
 
-export default defineComponent({
-  components: {
-    AdminNews,
-    NewsList,
-  },
-});
 </script>
 
 <style scoped>
