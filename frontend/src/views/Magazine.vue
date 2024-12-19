@@ -1,7 +1,7 @@
 <!-- NewsPage.vue -->
 <template>
   <Nav />
-  <div class="mt-30 container mx-auto">
+  <div class="container mx-auto">
     <AdminNews />
     <NewsList />
   </div>
