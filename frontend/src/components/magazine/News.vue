@@ -12,7 +12,7 @@
       </div>
       <button type="submit" class="px-4 py-2 bg-blue-700 rounded hover:bg-blue-800">Add News</button>
     </form>
-    <div v-for="news in newsList" :key="news.id" class="p-4 bg-gray-900 rounded mb-4">
+    <div v-for="news in newsList" :key="news.id" class="p-4 bg-gray-900 break-words rounded mb-4">
       <h2 class="text-2xl font-semibold">{{ news.title }}</h2>
       <p class="text-lg">{{ news.content }}</p>
       <p class="text-sm text-gray-400">{{ news.date }}</p>
