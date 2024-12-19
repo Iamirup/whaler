@@ -43,7 +43,7 @@ FROM
 LEFT JOIN 
     likes l ON a.id = l.article_id
 WHERE 
-    a.id = :article_id
+    a.id = $1
 GROUP BY 
     a.id, a.title, a.content, a.author_id, a.author_username, a.date;`
 

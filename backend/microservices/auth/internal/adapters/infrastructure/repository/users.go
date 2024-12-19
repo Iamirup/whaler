@@ -108,7 +108,7 @@ func (r *userRepository) DeleteUser(userId entity.UUID) error {
 }
 
 const QueryGetOnlineUsers = `
-SELECT 
+SELECT DISTINCT ON (u.id)
     u.id,
     u.email,
     u.username,
