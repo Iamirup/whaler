@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 bg-white rounded-lg shadow-lg max-w-2xl mx-auto my-8" v-if="article">
+  <div class="p-6 bg-white rounded-lg shadow-lg max-w-2xl mx-auto my-8 break-words" v-if="article">
     <h2 class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">{{ article.title }}</h2>
     <p class="text-gray-700 text-lg leading-relaxed">{{ article.content }}</p>
   </div>

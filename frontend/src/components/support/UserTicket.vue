@@ -18,7 +18,7 @@
 
       <!-- Ticket List -->
       <div class="space-y-4">
-        <div v-for="ticket in tickets" :key="ticket.ticket_id" class="ticket-card bg-gray-50 p-4 rounded-lg shadow-md">
+        <div v-for="ticket in tickets" :key="ticket.ticket_id" class="ticket-card bg-gray-50 p-4 break-words rounded-lg shadow-md">
           <h2 class="text-xl font-bold">{{ ticket.title }}</h2>
           <p class="mt-1">{{ ticket.content }}</p>
           <p class="mt-1 text-sm text-gray-600">Status: <span :class="ticket.is_done ? 'text-green-600' : 'text-red-600'">{{ ticket.is_done ? 'Done' : 'Open' }}</span></p>

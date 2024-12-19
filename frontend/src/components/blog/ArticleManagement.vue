@@ -9,7 +9,7 @@
         <textarea v-model="editingArticle.content" placeholder="Content" class="border p-2 w-full rounded-md focus:outline-none focus:border-blue-500"></textarea>
         <button @click="saveArticle" class="px-4 py-2 bg-green-600 text-white rounded-md shadow-md hover:bg-green-700 mt-2">Save</button>
     </div>
-    <div v-for="article in articles" :key="article.article_id" class="mb-4 p-4 bg-white rounded-lg shadow-lg">
+    <div v-for="article in articles" :key="article.article_id" class="mb-4 p-4 bg-white rounded-lg shadow-lg break-words">
         <h3 class="text-xl font-semibold text-gray-800">{{ article.title }}</h3>
         <p class="text-gray-600">{{ article.content }}</p>
     <div class="mt-4 flex space-x-2">

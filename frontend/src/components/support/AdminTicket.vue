@@ -5,7 +5,7 @@
   
         <!-- Ticket List -->
         <div class="space-y-4">
-          <div v-for="ticket in tickets" :key="ticket.ticket_id" class="ticket-card bg-gray-50 p-6 rounded-lg shadow-md">
+          <div v-for="ticket in tickets" :key="ticket.ticket_id" class="ticket-card bg-gray-50 p-6 break-words rounded-lg shadow-md">
             <div class="flex justify-between items-center">
               <h2 class="text-2xl font-bold">{{ ticket.title }}</h2>
               <span :class="ticket.is_done ? 'text-green-600' : 'text-red-600'">{{ ticket.is_done ? 'Done' : 'Open' }}</span>

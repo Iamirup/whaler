@@ -79,6 +79,6 @@ export default defineComponent({
 
 <style scoped>
 .container {
-  max-width: 800px;
+  max-width: 1200px;
 }
 </style>
