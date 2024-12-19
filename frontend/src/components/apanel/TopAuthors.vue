@@ -11,6 +11,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
+import { alertService } from '../alertor';
 
 interface TopAuthor {
   author_id: string;
@@ -29,6 +30,7 @@ export default defineComponent({
           topAuthors.value = response.data.authors;
         })
         .catch(error => {
+          alertService.showAlert(error.response.data.errors[0].message, "error");
           console.error(error);
         });
     }

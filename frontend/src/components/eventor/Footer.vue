@@ -1,6 +1,6 @@
 <template>
      <!-- Footer -->
-     <footer class="bg-red-500 dark:bg-red-900 mt-14 text-white py-10 text-end">
+     <footer class="bg-red-500 mt-14 text-white py-10 text-end">
         <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
             <div>
                 <h4 class="font-bold mb-4">Contact Info</h4>
