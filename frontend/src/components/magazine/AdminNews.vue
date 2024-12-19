@@ -1,6 +1,6 @@
 <!-- AdminNews.vue -->
 <template>
-  <div v-if="isAdmin" class="p-6 bg-gray-800 rounded-md shadow-lg">
+  <div v-if="isAdmin" class="mt-30 p-6 bg-gray-800 rounded-md shadow-lg">
     <h2 class="text-3xl font-bold mb-6">Add News</h2>
     <form @submit.prevent="addNews" class="mb-6">
       <div class="mb-4">
@@ -19,6 +19,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
+import { alertService } from '../alertor';
 import { adminService } from '../admin_check';
 
 export default defineComponent({
@@ -33,13 +34,14 @@ export default defineComponent({
 
     const addNews = async () => {
       try {
-        await axios.post('/news', {
+        await axios.post('api/magazine/v1/news/news', {
           title: newTitle.value,
           content: newContent.value,
         });
         newTitle.value = '';
         newContent.value = '';
-      } catch (error) {
+      } catch (error: any) {
+        alertService.showAlert(error.response.data.errors[0].message, "error");
         console.error('Error adding news:', error);
       }
     };

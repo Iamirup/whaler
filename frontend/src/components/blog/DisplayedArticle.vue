@@ -10,6 +10,7 @@ import { defineComponent, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { refreshService } from '../refreshJWT';
+import { alertService } from '../alertor';
 
 export default defineComponent({
   setup() {
@@ -28,6 +29,7 @@ export default defineComponent({
               if (!isRefreshed) { router.push('/login'); return; }
               await fetchArticle(id);
           } else {
+              alertService.showAlert(error.response.data.errors[0].message, "error");
               console.error('Failed to fetch article', error);
           }
         });

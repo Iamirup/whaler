@@ -1,5 +1,6 @@
 <!-- NewsPage.vue -->
 <template>
+  <Nav />
   <div class="container mx-auto">
     <AdminNews />
     <NewsList />

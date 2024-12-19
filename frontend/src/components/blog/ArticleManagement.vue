@@ -25,6 +25,7 @@ import { defineComponent, ref, onMounted } from 'vue';
 import axios, { type AxiosRequestConfig } from 'axios';
 import { refreshService } from '../refreshJWT';
 import { useRouter } from 'vue-router';
+import { alertService } from '../alertor';
 
 export default defineComponent({
     setup() {
@@ -57,6 +58,7 @@ export default defineComponent({
                         if (!isRefreshed) { router.push('/login'); return; }
                         await fetchMyArticles();
                     } else {
+                        alertService.showAlert(error.response.data.errors[0].message, "error");
                         console.error('Failed to get articles', error);
                     }
                 });
@@ -86,6 +88,7 @@ export default defineComponent({
                             if (!isRefreshed) { router.push('/login'); return; }
                             await saveArticle();
                         } else {
+                            alertService.showAlert(error.response.data.errors[0].message, "error");
                             console.error('Failed to update article', error);
                         }
                     });
@@ -102,6 +105,7 @@ export default defineComponent({
                             if (!isRefreshed) { router.push('/login'); return; }
                             await saveArticle();
                         } else {
+                            alertService.showAlert(error.response.data.errors[0].message, "error");
                             console.error('Failed to add article', error);
                         }
                     });
@@ -132,6 +136,7 @@ export default defineComponent({
                         if (!isRefreshed) { router.push('/login'); return; }
                         await deleteArticle(id);
                     } else {
+                        alertService.showAlert(error.response.data.errors[0].message, "error");
                         console.error('Failed to delete article', error);
                     }
                 });

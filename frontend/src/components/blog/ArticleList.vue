@@ -16,6 +16,7 @@ import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { refreshService } from '../refreshJWT';
+import { alertService } from '../alertor';
 
 export default defineComponent({
   setup() {
@@ -44,6 +45,7 @@ export default defineComponent({
           if (!isRefreshed) { router.push('/login'); return; }
           await fetchArticles();
         } else {
+          alertService.showAlert(error.response.data.errors[0].message, "error");
           console.error(error);
         }
       });
