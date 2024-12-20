@@ -2,7 +2,7 @@
 <template>
   <div class="mt-10 container mx-auto p-6 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-md shadow-lg">
     <h1 class="text-4xl font-bold mb-6">News</h1>
-    <div v-for="news in newsList.reverse()" :key="news.id" class="p-4 bg-gray-900 rounded mb-4 break-words">
+    <div v-for="news in newsList" :key="news.id" class="flex-row-reverse p-4 bg-gray-900 rounded mb-4 break-words">
       <h2 class="text-2xl font-semibold">{{ news.title }}</h2>
       <p class="text-lg">{{ news.content }}</p>
       <p class="text-sm text-gray-400">{{ news.date }}</p>
@@ -16,7 +16,6 @@ import axios from 'axios';
 import { alertService } from '../alertor';
 import { useRouter } from 'vue-router';
 import { refreshService } from '../refreshJWT';
-const router = useRouter();
 
 export interface News {
   id: string;
@@ -27,6 +26,7 @@ export interface News {
 
 export default defineComponent({
   setup() {
+    const router = useRouter();
     const newsList = ref<News[]>([]);
 
     const fetchNews = async () => {

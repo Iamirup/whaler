@@ -121,7 +121,7 @@ setup() {
 
 <style scoped>
 .container {
-max-width: 800px;
+max-width: 1200px;
 }
 .input, .textarea {
 display: block;
