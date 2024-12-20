@@ -1,12 +1,12 @@
 <template>
-
+  <div class="px-9">
   <nav class="bg-black/5 rounded-3xl w-full backdrop-blur-md fixed top-6 z-50">
-    <div class="px-0.5 sm:px-12 mx-2 xs:mx-4 sm:mx-8">
+    <div class="px-2 sm:px-12 mx-2 xs:mx-4 sm:mx-8">
       <div class="relative flex h-16 items-center justify-between">
         <div class="flex justify-center">
           <div class="inline-block">
             <div class="flex space-x-3">
-              <dvi @click="logout" class="button ml-4 px-3 xs:px-2 py-2 xs:py-0.5 font-medium bg-red-600">
+              <div @click="logout" class="button ml-4 px-3 xs:px-2 py-2 xs:py-0.5 font-medium bg-red-600">
                 <span class="svg py-2 xs:py-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +22,7 @@
                   </svg>
                 </span>
                 <span class="text text-sm">Log Out</span>
-              </dvi>
+              </div>
 
                 <div class="relative group mt-1.5 xs:mt-0.5 text-center">
                   <button class="px-[18px] py-2 xs:px-7">
@@ -112,8 +112,8 @@
         </span>
         </div>
       </div>
-
   </nav>
+</div>
 </template>
 
 <script lang="ts">
