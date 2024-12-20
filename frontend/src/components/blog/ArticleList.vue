@@ -6,7 +6,7 @@
       <p class="text-gray-600 text-sm mt-1">{{ article.content }}</p>
     </div>
     <div class="text-center p-5">
-      <button @click="myArticles" class="bg-blue-700 text-white py-3 px-8 rounded-full shadow-lg transition-transform transform hover:bg-green-300 hover:-translate-y-1 active:bg-green-700 active:translate-y-0">
+      <button @click="myArticles" class="mx-3 bg-blue-700 text-white py-3 px-8 rounded-full shadow-lg transition-transform transform hover:bg-green-300 hover:-translate-y-1 active:bg-green-700 active:translate-y-0">
         My Articles
       </button>
       <button @click="loadMore" v-if="cursor" class="bg-orange-300 text-black py-3 px-8 rounded-full shadow-lg transition-transform transform hover:bg-green-300 hover:-translate-y-1 active:bg-green-700 active:translate-y-0">
