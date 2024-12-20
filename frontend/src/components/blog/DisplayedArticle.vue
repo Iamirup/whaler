@@ -12,7 +12,7 @@
     </div>
     <div class="article-footer">
       <button class="like-button" @click="likeArticle">
-        <i class="fas fa-thumbs-up"></i> Like
+        <i class="fas fa-heart"></i> Like
       </button>
       <span class="article-likes">{{ article.likes }} Likes</span>
     </div>
@@ -128,7 +128,7 @@ export default defineComponent({
 }
 
 .like-button {
-  background-color: #007bff;
+  background-color: #e0245e;
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -144,7 +144,7 @@ export default defineComponent({
 }
 
 .like-button:hover {
-  background-color: #0056b3;
+  background-color: #c81e4d;
   transform: scale(1.05);
 }
 
