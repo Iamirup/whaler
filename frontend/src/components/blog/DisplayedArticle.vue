@@ -1,14 +1,18 @@
 <template>
-  <div class="rounded-lg shadow-lg max-w-5xl mx-auto break-words p-6 bg-white" v-if="article">
-    <h2 class="text-4xl font-bold text-gray-800 mb-4 border-b pb-2">{{ article.title }}</h2>
-    <div class="flex items-center justify-between mb-4">
-      <span class="text-gray-600">By {{ article.author_username }}</span>
-      <span class="text-gray-600">{{ formatDate(article.date) }}</span>
+  <div class="article-container" v-if="article">
+    <div class="article-header">
+      <h2 class="article-title">{{ article.title }}</h2>
+      <div class="article-meta">
+        <span class="article-author">By {{ article.author_username }}</span>
+        <span class="article-date">{{ formatDate(article.date) }}</span>
+      </div>
     </div>
-    <p class="text-gray-700 text-lg leading-relaxed mb-4">{{ article.content }}</p>
-    <div class="flex items-center justify-between">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Like</button>
-      <span class="text-gray-600">{{ article.likes }} Likes</span>
+    <div class="article-content">
+      <p>{{ article.content }}</p>
+    </div>
+    <div class="article-footer">
+      <button class="like-button" @click="likeArticle">Like</button>
+      <span class="article-likes">{{ article.likes }} Likes</span>
     </div>
   </div>
 </template>
@@ -54,18 +58,85 @@ export default defineComponent({
       return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
+    const likeArticle = () => {
+      // Implement like functionality here
+      article.value!.likes += 1;
+    };
+
     onMounted(() => {
       const articleId = route.params.articleId;
       if (articleId) fetchArticle(articleId as string);
     });
 
-    return { article, formatDate };
+    return { article, formatDate, likeArticle };
   },
 });
 </script>
 
 <style scoped>
-.bg-white {
+.article-container {
   background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  transition: transform 0.3s;
+}
+
+.article-container:hover {
+  transform: translateY(-10px);
+}
+
+.article-header {
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+.article-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.article-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.article-content {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.article-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.like-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.like-button:hover {
+  background-color: #0056b3;
+}
+
+.article-likes {
+  font-size: 1rem;
+  color: #777;
 }
 </style>
