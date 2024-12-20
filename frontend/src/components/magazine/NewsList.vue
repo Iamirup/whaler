@@ -6,7 +6,7 @@
       <div v-for="news in newsList" :key="news.id" class="p-4 bg-gray-900 rounded mb-4 break-words">
         <h2 class="text-2xl font-semibold">{{ news.title }}</h2>
         <p class="text-lg">{{ news.content }}</p>
-        <p class="text-sm text-gray-400">{{ news.date }}</p>
+        <p class="text-sm text-gray-400">{{ formatDate(news.date) }}</p>
       </div>
     </div>
   </div>
@@ -47,10 +47,15 @@ export default defineComponent({
       }
     };
 
+    const formatDate = (date?: string): string => {
+      return date ? new Date(date).toLocaleString() : '';
+    };
+
     onMounted(fetchNews);
 
     return {
       newsList,
+      formatDate,
     };
   },
 });
