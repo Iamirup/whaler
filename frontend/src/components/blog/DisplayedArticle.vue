@@ -1,21 +1,21 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
-    <div class="article-container" v-if="article">
-      <div class="article-header">
-        <h2 class="article-title">{{ article.title }}</h2>
-        <div class="article-meta">
-          <span class="article-author">By {{ article.author_username }}</span>
-          <span class="article-date">{{ formatDate(article.date) }}</span>
+  <div class="bg-gradient-to-br from-slate-400 to-slate-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-8 transition-transform transform hover:scale-105" v-if="article">
+      <div class="border-b-2 border-gray-200 pb-4 mb-6">
+        <h2 class="text-4xl font-bold text-gray-800 mb-2 text-center">{{ article.title }}</h2>
+        <div class="flex justify-between text-gray-600 text-sm">
+          <span>By {{ article.author_username }}</span>
+          <span>{{ formatDate(article.date) }}</span>
         </div>
       </div>
-      <div class="article-content">
+      <div class="text-gray-700 text-lg leading-relaxed mb-6">
         <p>{{ article.content }}</p>
       </div>
-      <div class="article-footer">
-        <button class="like-button" @click="likeArticle">
-          <i class="fas fa-heart"></i> Like
+      <div class="flex justify-between items-center">
+        <button class="bg-red-500 text-white px-4 py-2 rounded-full flex items-center hover:bg-red-600 transform transition-transform hover:scale-110" @click="likeArticle">
+          <i class="fas fa-heart mr-2"></i> Like
         </button>
-        <span class="article-likes">{{ article.likes }} Likes</span>
+        <span class="text-gray-600 text-lg">{{ article.likes }} Likes</span>
       </div>
     </div>
   </div>
@@ -78,80 +78,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.article-container {
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 30px;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.article-container:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-}
-
-.article-header {
-  border-bottom: 2px solid #eaeaea;
-  padding-bottom: 15px;
-  margin-bottom: 25px;
-}
-
-.article-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.article-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  color: #777;
-  margin-bottom: 20px;
-}
-
-.article-content {
-  font-size: 1.2rem;
-  line-height: 1.8;
-  color: #555;
-  margin-bottom: 30px;
-  text-align: justify;
-}
-
-.article-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.like-button {
-  background-color: #e0245e;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  display: flex;
-  align-items: center;
-}
-
-.like-button i {
-  margin-right: 8px;
-}
-
-.like-button:hover {
-  background-color: #c81e4d;
-  transform: scale(1.05);
-}
-
-.article-likes {
-  font-size: 1rem;
-  color: #777;
-}
+/* No additional styles needed */
 </style>
