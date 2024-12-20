@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
+  <div class="min-h-screen flex items-center justify-center break-words">
     <div class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-8" v-if="article">
       <div class="border-b-2 border-gray-200 pb-4 mb-6">
         <h2 class="text-4xl font-bold text-gray-800 mb-2 text-center">{{ article.title }}</h2>
