@@ -1,7 +1,7 @@
 <template>
   <Nav />
   <div class="pt-32 p-6 min-h-screen">
-    <div v-for="article in articles" :key="article.article_id" @click="selectArticle(article)" class="p-4 bg-gradient-to-br from-cyan-500 via-teal-300 to-slate-100 rounded-lg shadow-lg mb-4 cursor-pointer hover:bg-gray-50 transition break-words duration-150">
+    <div v-for="article in articles" :key="article.article_id" @click="selectArticle(article)" class="p-4 bg-gradient-to-b from-orange-300 to-orange-100 rounded-lg shadow-lg mb-4 cursor-pointer hover:bg-gray-50 transition break-words duration-150">
       <h3 class="text-xl font-bold text-gray-800">{{ article.title }}</h3>
       <p class="text-gray-600 text-sm mt-1">{{ article.content }}</p>
     </div>
