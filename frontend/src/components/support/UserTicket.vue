@@ -1,7 +1,7 @@
 <template>
-  <div class="pt-32">
-    <div class="bg-white rounded-lg shadow-md p-4 min-h-screen">
-      <h1 class="text-3xl font-bold mb-4">My Support Tickets</h1>
+  <div class="pt-36">
+    <div class="mx-24 mb-12 bg-white rounded-lg shadow-md p-4 min-h-screen">
+      <h1 class="text-3xl font-bold mb-4 text-center">My Support Tickets</h1>
 
       <!-- Create New Ticket Form -->
       <form @submit.prevent="createTicket" class="mb-6">

@@ -1,10 +1,10 @@
 <template>
-  <div class="pt-40">
-      <div class="mx-12 bg-white rounded-xl shadow-md p-4 min-h-screen">
-        <h1 class="text-3xl font-bold mb-4">All Support Tickets</h1>
+  <div class="pt-36">
+      <div class="mx-24 mb-12 bg-white rounded-xl shadow-md p-4 min-h-screen">
+        <h1 class="text-3xl font-bold mb-4 text-center">All Support Tickets</h1>
   
         <!-- Ticket List -->
-        <div class="space-y-4">
+        <div class="space-y-4 mx-">
           <div v-for="ticket in tickets" :key="ticket.ticket_id" class="ticket-card bg-gray-50 p-6 break-words rounded-lg shadow-md">
             <div class="flex justify-between items-center">
               <h2 class="text-2xl font-bold">{{ ticket.title }}</h2>
