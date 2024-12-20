@@ -1,5 +1,5 @@
 <template>
-<div class="p-6 bg-gray-100 min-h-screen">
+<div class="p-6 min-h-screen">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-semibold text-gray-700">Manage Articles</h2>
         <button @click="newArticle" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700">Add Article</button>
