@@ -14,13 +14,13 @@ type (
 
 	NewArticleRequest struct {
 		Title   string `json:"title"        form:"title"         validate:"required,min=3,max=70"`
-		Content string `json:"content"      form:"content"       validate:"required,min=50,max=600"`
+		Content string `json:"content"      form:"content"       validate:"required,min=50"`
 	}
 
 	UpdateArticleRequest struct {
 		ArticleId entity.UUID `json:"article_id"     form:"article_id"     validate:"required"`
 		Title     string      `json:"title"          form:"title"          validate:"omitempty,min=3,max=70"`
-		Content   string      `json:"content"        form:"content"        validate:"omitempty,min=50,max=600"`
+		Content   string      `json:"content"        form:"content"        validate:"omitempty,min=50"`
 	}
 
 	DeleteArticleRequest struct {
