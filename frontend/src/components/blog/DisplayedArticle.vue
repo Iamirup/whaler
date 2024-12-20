@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gradient-to-br from-slate-400 to-slate-100 min-h-screen flex items-center justify-center">
+  <div class="min-h-screen flex items-center justify-center">
     <div class="article-container" v-if="article">
       <div class="article-header">
         <h2 class="article-title">{{ article.title }}</h2>
