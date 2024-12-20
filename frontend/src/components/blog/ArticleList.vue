@@ -5,8 +5,15 @@
       <h3 class="text-xl font-bold text-gray-800">{{ article.title }}</h3>
       <p class="text-gray-600 text-sm mt-1">{{ article.content }}</p>
     </div>
-    <button @click="loadMore" v-if="cursor" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700">Load More</button>
-    <button @click="myArticles" class="px-4 py-2 bg-black-600 text-white rounded-md shadow-md hover:bg-blue-700">My Articles</button>
+    <div class="article-list text-center p-5">
+      <h1 @click="myArticles" class="text-4xl font-bold text-gray-800 mb-5 relative inline-block pb-2">
+      My Articles
+      <span class="block w-1/2 h-1 bg-green-500 absolute bottom-0 left-1/4 rounded"></span>
+      </h1>
+      <button @click="loadMore" v-if="cursor" class="bg-green-500 text-white py-3 px-8 rounded-full shadow-lg transition-transform transform hover:bg-green-600 hover:-translate-y-1 active:bg-green-700 active:translate-y-0">
+        Load More
+      </button>
+    </div>
   </div>
 </template>
 
