@@ -11,7 +11,9 @@
       <p>{{ article.content }}</p>
     </div>
     <div class="article-footer">
-      <button class="like-button" @click="likeArticle">Like</button>
+      <button class="like-button" @click="likeArticle">
+        <i class="fas fa-thumbs-up"></i> Like
+      </button>
       <span class="article-likes">{{ article.likes }} Likes</span>
     </div>
   </div>
@@ -81,11 +83,12 @@ export default defineComponent({
   max-width: 800px;
   margin: 40px auto;
   padding: 30px;
-  transition: transform 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .article-container:hover {
   transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 .article-header {
@@ -99,6 +102,7 @@ export default defineComponent({
   font-weight: bold;
   color: #333;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .article-meta {
@@ -106,6 +110,7 @@ export default defineComponent({
   justify-content: space-between;
   font-size: 0.9rem;
   color: #777;
+  margin-bottom: 20px;
 }
 
 .article-content {
@@ -113,6 +118,7 @@ export default defineComponent({
   line-height: 1.8;
   color: #555;
   margin-bottom: 30px;
+  text-align: justify;
 }
 
 .article-footer {
@@ -128,11 +134,18 @@ export default defineComponent({
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.like-button i {
+  margin-right: 8px;
 }
 
 .like-button:hover {
   background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 .article-likes {
