@@ -76,7 +76,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.article-container {
+/* .article-container {
   background-color: #ffffff;
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -151,5 +151,5 @@ export default defineComponent({
 .article-likes {
   font-size: 1rem;
   color: #777;
-}
+} */
 </style>
