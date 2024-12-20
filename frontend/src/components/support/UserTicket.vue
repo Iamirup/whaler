@@ -127,7 +127,7 @@ export default defineComponent({
 
 <style scoped>
 .container {
-  max-width: 1200px;
+  max-width: 1000px;
 }
 .input, .textarea {
   display: block;
