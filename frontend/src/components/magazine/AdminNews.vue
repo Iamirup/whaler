@@ -34,7 +34,7 @@ export default defineComponent({
 
     const addNews = async () => {
       try {
-        await axios.post('api/magazine/v1/news/news', {
+        await axios.post('/api/magazine/v1/news', {
           title: newTitle.value,
           content: newContent.value,
         });

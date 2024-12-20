@@ -31,7 +31,7 @@ export default defineComponent({
 
     const fetchNews = async () => {
       try {
-        const response = await axios.get('api/magazine/v1/news');
+        const response = await axios.get('/api/magazine/v1/news');
         newsList.value = response.data.news;
       } catch (error: any) {
         if (error.response.data.need_refresh){
