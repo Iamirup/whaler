@@ -11,8 +11,8 @@ export default defineComponent({
 </script>
 
 
-<template >
-  <div class="font bg-gradient-to-r from-slate-400 to-slate-100">
+<template class="bg-gradient-to-br from-slate-300 to-slate-100">
+  <div class="font">
     <router-view></router-view>
   </div>
 </template>
