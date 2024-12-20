@@ -1,5 +1,6 @@
 <template>
-  <div class="pt-32 p-6 bg-gray-50 rounded-lg shadow-md max-w-lg mx-auto">
+  <div class="pt-32">
+  <div class="p-6 bg-gray-50 rounded-lg shadow-md max-w-lg mx-auto">
     <div class="mb-6">
       <label class="block text-lg font-medium text-gray-700 mb-2">Select a Cryptocurrency:</label>
       <div class="relative">
@@ -31,6 +32,7 @@
       <span v-html="selectedCryptoIcon" class="inline-block w-5 h-5 ml-2"></span>
       {{ selectedCrypto }}
     </div>
+  </div>
   </div>
 </template>
 
