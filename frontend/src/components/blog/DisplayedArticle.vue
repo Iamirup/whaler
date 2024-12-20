@@ -1,20 +1,22 @@
 <template>
-  <div class="article-container" v-if="article">
-    <div class="article-header">
-      <h2 class="article-title">{{ article.title }}</h2>
-      <div class="article-meta">
-        <span class="article-author">By {{ article.author_username }}</span>
-        <span class="article-date">{{ formatDate(article.date) }}</span>
+  <div class="bg-gradient-to-br from-slate-400 to-slate-100 min-h-screen flex items-center justify-center">
+    <div class="article-container" v-if="article">
+      <div class="article-header">
+        <h2 class="article-title">{{ article.title }}</h2>
+        <div class="article-meta">
+          <span class="article-author">By {{ article.author_username }}</span>
+          <span class="article-date">{{ formatDate(article.date) }}</span>
+        </div>
       </div>
-    </div>
-    <div class="article-content">
-      <p>{{ article.content }}</p>
-    </div>
-    <div class="article-footer">
-      <button class="like-button" @click="likeArticle">
-        <i class="fas fa-heart"></i> Like
-      </button>
-      <span class="article-likes">{{ article.likes }} Likes</span>
+      <div class="article-content">
+        <p>{{ article.content }}</p>
+      </div>
+      <div class="article-footer">
+        <button class="like-button" @click="likeArticle">
+          <i class="fas fa-heart"></i> Like
+        </button>
+        <span class="article-likes">{{ article.likes }} Likes</span>
+      </div>
     </div>
   </div>
 </template>
@@ -76,7 +78,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* .article-container {
+.article-container {
   background-color: #ffffff;
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -151,5 +153,5 @@ export default defineComponent({
 .article-likes {
   font-size: 1rem;
   color: #777;
-} */
+}
 </style>
