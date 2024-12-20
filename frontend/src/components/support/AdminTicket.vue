@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-40 container mx-auto p-6 bg-gray-100 min-h-screen">
+    <div class="pt-40 container mx-auto p-6 bg-gray-100 min-h-screen">
       <div class="bg-white rounded-lg shadow-md p-4">
         <h1 class="text-3xl font-bold mb-4">All Support Tickets</h1>
   

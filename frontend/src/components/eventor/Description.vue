@@ -1,6 +1,6 @@
 <template>
- <main class="mt-6 mx-3 xs:mx-5 sm:mx-14">
-  <section class="mt-32 text-end">
+ <main class="pt-32 mx-3 xs:mx-5 sm:mx-14">
+  <section class="text-end">
     <div class="">
       <div class="grid-cols-2 xl:flex xl:justify-between">
         <div class="p-5 mb-5 sm:pt-12 xl:mb-0 bg-blue-200 text-black rounded-2xl xl:w-[800px] w-full h-[320px] sm:h-[300px] xl:h-[335px] ">

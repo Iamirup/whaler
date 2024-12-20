@@ -1,9 +1,9 @@
 <!-- NewsList.vue -->
 <template>
-  <div class="mt-10 container mx-auto p-6 bg-gradient-to-r from-neutral-300 to-stone-400 text-white rounded-md shadow-lg">
+  <div class="mt-10 container mx-auto p-6 bg-gradient-to-r from-stone-400 to-neutral-300 text-white rounded-md shadow-lg">
     <h1 class="text-4xl font-bold mb-6">News</h1>
     <div class="flex flex-col-reverse">
-      <div v-for="news in newsList" :key="news.id" class="p-4 shadow-md bg-gray-900 rounded mb-4 break-words">
+      <div v-for="news in newsList" :key="news.id" class="p-4 shadow-xl bg-gray-900 rounded mb-4 break-words">
         <h2 class="text-2xl font-semibold">{{ news.title }}</h2>
         <p class="text-lg">{{ news.content }}</p>
         <p class="text-sm text-gray-400">{{ formatDate(news.date) }}</p>
