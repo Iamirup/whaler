@@ -1,6 +1,8 @@
 <template>
+  <div class="bg-gradient-to-br from-slate-400 to-slate-100">
     <Nav />
     <ArticleList v-if="isLoggedIn"/>
+  </div>
 </template>
 
 <script setup lang="ts">

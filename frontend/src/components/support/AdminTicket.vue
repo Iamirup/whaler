@@ -1,7 +1,6 @@
 <template>
   <div class="pt-40">
-    <div class="container mx-auto p-6 bg-gray-100 min-h-screen">
-      <div class="bg-white rounded-lg shadow-md p-4">
+      <div class="bg-white rounded-xl shadow-md p-4 min-h-screen">
         <h1 class="text-3xl font-bold mb-4">All Support Tickets</h1>
   
         <!-- Ticket List -->
@@ -34,7 +33,6 @@
           <button @click="loadMoreTickets" class="btn-secondary">More</button>
         </div>
       </div>
-    </div>
   </div>
 </template>
 

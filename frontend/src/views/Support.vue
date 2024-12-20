@@ -1,6 +1,6 @@
 <template>
   <Nav />
-  <div  v-if="isLoggedIn" class="mt-6">
+  <div  v-if="isLoggedIn">
     <AdminTicket v-if="isAdmin"/>
     <UserTicket v-else/>
   </div>
