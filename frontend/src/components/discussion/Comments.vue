@@ -25,13 +25,19 @@
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import { useCurrencyStore } from '../../stores/currencyStore';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 import { refreshService } from '../refreshJWT';
+import { alertService } from '../alertor';
 
 export default defineComponent({
   name: 'CommentsBox',
   setup() {
     const store = useCurrencyStore();
     const currency = computed(() => store.currency);
+    const ownUsername = ref('');
+    const commentId = ref(0);
+
+    const router = useRouter();
 
     const comments = ref<Array<{ 
       comment_id: number; 
@@ -45,18 +51,41 @@ export default defineComponent({
     const fetchComments = async () => {
       try {
         const response = await axios.get(`/api/discussion/v1/comments/${currency.value}`);
-        comments.value = response.data;
-      } catch (error) {
-        console.error('Error fetching comments:', error);
+        comments.value = response.data.comments;
+        ownUsername.value = response.data.own_username;
+      } catch (error: any) {
+        if (error.response.data.need_refresh){
+          const isRefreshed = await refreshService.refreshJWT(); 
+          if (!isRefreshed) { router.push('/login'); return; }
+          await fetchComments();
+        } else {
+          alertService.showAlert(error.response.data.errors[0].message, "error");
+          console.error('Error fetching comments:', error);
+        }
       }
     };
 
-    const addComment = () => {
+    const addComment = async () => {
       if (newCommentText.value.trim() === '') return;
+      try {
+        const commentData = { currency: currency.value, text: newCommentText.value};
+        const response = await axios.post(`/api/discussion/v1/comment`, commentData);
+        commentId.value = response.data.comment_id;
+      } catch (error: any) {
+        if (error.response.data.need_refresh){
+          const isRefreshed = await refreshService.refreshJWT(); 
+          if (!isRefreshed) { router.push('/login'); return; }
+          await addComment();
+        } else {
+          alertService.showAlert(error.response.data.errors[0].message, "error");
+          console.error('Error fetching comments:', error);
+          return;
+        }
+      }
       comments.value.push({
-        comment_id: 0,
+        comment_id: commentId.value,
         currency: currency.value,
-        username: 'Anonymous',
+        username: ownUsername.value,
         date: new Date().toISOString().split('T')[0],
         text: newCommentText.value,
       });
