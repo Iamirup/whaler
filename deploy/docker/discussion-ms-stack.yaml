@@ -1,0 +1,54 @@
+services:
+  discussion-microservice:
+    image: iamirup/whaler-discussion-backend:latest
+    build: ../../backend/microservices/discussion
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=web_net"
+        - "traefik.http.routers.discussion-microservice.entrypoints=http"
+        - "traefik.http.routers.discussion-microservice.rule=(Host(`whaler.ir`) && PathPrefix(`/api/discussion/v1`))"
+        - "traefik.http.routers.discussion-microservice.middlewares=https-redirect"
+        - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+        - "traefik.http.routers.discussion-microservice-secure.entrypoints=https"
+        - "traefik.http.routers.discussion-microservice-secure.rule=(Host(`whaler.ir`) && PathPrefix(`/api/discussion/v1`))"
+        - "traefik.http.routers.discussion-microservice-secure.tls=true"
+        - "traefik.http.routers.discussion-microservice-secure.tls.options=default"
+        - "traefik.http.routers.discussion-microservice-secure.tls.certresolver=mycert"
+        - "traefik.http.routers.discussion-microservice-secure.middlewares=rate-limit"
+        - "traefik.http.middlewares.rate-limit.ratelimit.average=240"
+        - "traefik.http.middlewares.rate-limit.ratelimit.burst=25"
+        - "traefik.http.middlewares.rate-limit.ratelimit.period=1m"
+        - "traefik.http.middlewares.rate-limit.ratelimit.sourcecriterion.requestheadername=X-Forwarded-For"
+        - "traefik.http.services.discussion-microservice.loadbalancer.server.port=8080"
+    depends_on:
+      - rdbms
+    networks:
+      - web_net
+      - whaler_discussion_net
+
+  rdbms:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    volumes:
+      - /whaler_discussion_data:/var/lib/postgresql/data
+    networks:
+      - whaler_discussion_net
+
+networks:
+  web_net:
+    external: true
+    name: web_net
+    driver: overlay
+  whaler_discussion_net:
+    driver: overlay
+
+volumes:
+  whaler_data:

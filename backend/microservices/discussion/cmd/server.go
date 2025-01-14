@@ -35,7 +35,7 @@ func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 		myLogger.Panic("Error creating rdbms database", zap.Error(err))
 	}
 
-	ticketRepo := repository.NewTicketRepository(myLogger, cfg.Repository, db)
+	ticketRepo := repository.NewCommentRepository(myLogger, cfg.Repository, db)
 
 	theToken, err := token.New(cfg.Token)
 	if err != nil {
