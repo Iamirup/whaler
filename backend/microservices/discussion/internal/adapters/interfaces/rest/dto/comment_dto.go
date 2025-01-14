@@ -23,7 +23,7 @@ type (
 	GetCommentsResponse struct {
 		Comments    []entity.Comment `json:"comments"      form:"comments"`
 		NewCursor   string           `json:"new_cursor"    form:"new_cursor"`
-		OwnUsername string           `json:"own_username"    form:"own_username"     validate:"required"`
+		OwnUsername string           `json:"own_username"    form:"own_username"`
 	}
 )
 

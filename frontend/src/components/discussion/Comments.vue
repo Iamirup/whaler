@@ -46,6 +46,7 @@ export default defineComponent({
       text: string; 
       date: string;
     }>>([]);
+    
     const newCommentText = ref('');
 
     const fetchComments = async () => {
