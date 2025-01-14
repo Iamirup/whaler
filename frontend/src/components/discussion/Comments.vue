@@ -49,10 +49,32 @@ export default defineComponent({
     
     const newCommentText = ref('');
 
+    const formatToJalali = (datetime: Date): string => {
+      const date = new Date(datetime);
+
+      date.setHours(date.getHours() + 3); 
+      date.setMinutes(date.getMinutes() + 30);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      return formattedDateTime;
+    };
+
     const fetchComments = async () => {
       try {
         const response = await axios.get(`/api/discussion/v1/comments/${currency.value}`);
-        comments.value = response.data.comments;
+        comments.value = response.data.comments.map((comment: { date: string }) => {
+          const date = new Date(comment.date);
+          return {
+            ...comment,
+            date: formatToJalali(date),
+          };
+        });
         ownUsername.value = response.data.own_username;
       } catch (error: any) {
         if (error.response.data.need_refresh){
@@ -87,7 +109,7 @@ export default defineComponent({
         comment_id: commentId.value,
         currency: currency.value,
         username: ownUsername.value,
-        date: new Date().toISOString().split('T')[0],
+        date: formatToJalali(new Date()),
         text: newCommentText.value,
       });
       newCommentText.value = '';
