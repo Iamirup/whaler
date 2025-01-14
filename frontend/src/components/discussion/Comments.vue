@@ -92,8 +92,12 @@ export default defineComponent({
       newCommentText.value = '';
     };
 
-    onMounted(() => {
-      fetchComments();
+    onMounted(async () => {
+      await fetchComments();
+    });
+
+    computed(async () => {
+      await fetchComments();
     });
 
     return {
