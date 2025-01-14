@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type ticketRepository struct {
+type commentRepository struct {
 	logger *zap.Logger
 	config *Config
 	rdbms  rdbms.RDBMS
@@ -29,8 +29,8 @@ type migrationRepository struct {
 	rdbms  rdbms.RDBMS
 }
 
-func NewTicketRepository(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) ports.TicketPersistencePort {
-	return &ticketRepository{logger: logger, config: cfg, rdbms: rdbms}
+func NewCommentRepository(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) ports.CommentPersistencePort {
+	return &commentRepository{logger: logger, config: cfg, rdbms: rdbms}
 }
 
 func NewMigrationRepository(logger *zap.Logger, cfg *Config, rdbms rdbms.RDBMS) MigrationRepository {

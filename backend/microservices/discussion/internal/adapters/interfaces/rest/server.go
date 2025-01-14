@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Iamirup/whaler/backend/microservices/support/internal/core/application/ports"
-	appService "github.com/Iamirup/whaler/backend/microservices/support/internal/core/application/services"
-	domainService "github.com/Iamirup/whaler/backend/microservices/support/internal/core/domain/services"
-	"github.com/Iamirup/whaler/backend/microservices/support/pkg/token"
+	"github.com/Iamirup/whaler/backend/microservices/discussion/internal/core/application/ports"
+	appService "github.com/Iamirup/whaler/backend/microservices/discussion/internal/core/application/services"
+	domainService "github.com/Iamirup/whaler/backend/microservices/discussion/internal/core/domain/services"
+	"github.com/Iamirup/whaler/backend/microservices/discussion/pkg/token"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 )
@@ -20,7 +20,7 @@ type Server struct {
 	clientApp    *fiber.App
 }
 
-func New(log *zap.Logger, ticketRepo ports.TicketPersistencePort, token token.Token) *Server {
+func New(log *zap.Logger, commentRepo ports.CommentPersistencePort, token token.Token) *Server {
 	server := &Server{Logger: log, Token: token}
 
 	server.managmentApp = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
@@ -31,18 +31,16 @@ func New(log *zap.Logger, ticketRepo ports.TicketPersistencePort, token token.To
 	server.managmentApp.Get("/healthz/liveness", kubernetesHandler.Liveness)
 	server.managmentApp.Get("/healthz/readiness", kubernetesHandler.Readiness)
 
-	ticketService := domainService.NewTicketService(ticketRepo, log, token)
-	ticketHandler := NewTicketHandler(server, appService.NewTicketApplicationService(ticketService, log))
+	commentService := domainService.NewCommentService(commentRepo, log, token)
+	commentHandler := NewCommentHandler(server, appService.NewCommentApplicationService(commentService, log))
 
-	supportV1 := server.clientApp.Group("/api/support/v1", ticketHandler.fetchUserDataMiddleware)
+	discussionV1 := server.clientApp.Group("/api/discussion/v1", commentHandler.fetchUserDataMiddleware)
 
-	supportV1.Post("/ticket/new", ticketHandler.NewTicket)       // for users
-	supportV1.Get("/tickets/me", ticketHandler.MyTickets)        // for users
-	supportV1.Post("/ticket/reply", ticketHandler.ReplyToTicket) // for admin
-	supportV1.Get("/tickets/all", ticketHandler.AllTicket)       // for admin
+	discussionV1.Post("/comment/:topic", commentHandler.NewComment)
+	discussionV1.Get("/comments/:topic", commentHandler.GetComments)
 
 	// 404 Handler
-	supportV1.Use(func(c *fiber.Ctx) error {
+	discussionV1.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusNotFound)
 	})
 

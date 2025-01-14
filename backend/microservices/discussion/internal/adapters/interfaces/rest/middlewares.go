@@ -3,11 +3,11 @@ package rest
 import (
 	"net/http"
 
-	"github.com/Iamirup/whaler/backend/microservices/support/internal/adapters/interfaces/rest/dto"
+	"github.com/Iamirup/whaler/backend/microservices/discussion/internal/adapters/interfaces/rest/dto"
 	"github.com/gofiber/fiber/v2"
 )
 
-func (h *TicketHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
+func (h *CommentHandler) fetchUserDataMiddleware(c *fiber.Ctx) error {
 	accessToken := c.Cookies("access_token")
 	if accessToken == "" {
 		h.server.Logger.Error("Missing access token")
