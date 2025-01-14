@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue';
+import { defineComponent, ref, watch, computed } from 'vue';
 import { useCurrencyStore } from '../../stores/currencyStore';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -92,11 +92,7 @@ export default defineComponent({
       newCommentText.value = '';
     };
 
-    onMounted(async () => {
-      await fetchComments();
-    });
-
-    computed(async () => {
+    watch(currency, async () => {
       await fetchComments();
     });
 
