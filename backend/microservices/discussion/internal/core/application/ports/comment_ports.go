@@ -18,7 +18,7 @@ type (
 
 	// CommentServicePort defines the methods for interacting with comment services
 	CommentServicePort interface {
-		NewComment(text, currency string, username string) (entity.UUID, *serr.ServiceError)
+		NewComment(text, currency string, username string) (int64, *serr.ServiceError)
 		GetComments(currencyTopic, encryptedCursor string, limit int) ([]entity.Comment, string, *serr.ServiceError)
 	}
 )

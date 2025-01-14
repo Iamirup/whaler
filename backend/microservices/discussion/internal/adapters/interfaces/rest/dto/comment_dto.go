@@ -17,7 +17,7 @@ type (
 // responses in successful status
 type (
 	NewCommentResponse struct {
-		CommentId entity.UUID `json:"comment_id"  form:"comment_id"`
+		CommentId int64 `json:"comment_id"  form:"comment_id"`
 	}
 
 	GetCommentsResponse struct {

@@ -5,7 +5,7 @@ import "time"
 type UUID string
 
 type Comment struct {
-	CommentId UUID      `json:"comment_id"`
+	CommentId int64     `json:"comment_id"`
 	TopicId   UUID      `json:"user_id"`
 	Currency  string    `json:"currency"`
 	Username  string    `json:"username"`

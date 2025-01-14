@@ -27,7 +27,7 @@ func NewCommentApplicationService(domainService ports.CommentServicePort, logger
 	}
 }
 
-func (s *CommentApplicationService) NewComment(request *api.NewCommentRequest, username string) (entity.UUID, *serr.ServiceError) {
+func (s *CommentApplicationService) NewComment(request *api.NewCommentRequest, username string) (int64, *serr.ServiceError) {
 
 	if err := request.Validate(); err != nil {
 		var validationErrors []api.ErrorContent
@@ -49,7 +49,7 @@ func (s *CommentApplicationService) NewComment(request *api.NewCommentRequest, u
 			})
 		}
 		s.logger.Error("Validation error", zap.Any("validationErrors", validationErrors))
-		return "", &serr.ServiceError{
+		return 0, &serr.ServiceError{
 			Message:    "Validation failed",
 			StatusCode: http.StatusBadRequest,
 			Details:    validationErrors,

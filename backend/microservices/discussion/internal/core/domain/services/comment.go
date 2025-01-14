@@ -29,7 +29,7 @@ func NewCommentService(
 	}
 }
 
-func (s *CommentService) NewComment(text, currency string, username string) (entity.UUID, *serr.ServiceError) {
+func (s *CommentService) NewComment(text, currency string, username string) (int64, *serr.ServiceError) {
 
 	commentEntity := &entity.Comment{
 		Username: username,
@@ -40,10 +40,10 @@ func (s *CommentService) NewComment(text, currency string, username string) (ent
 	err := s.commentPersistencePort.AddComment(commentEntity)
 	if err != nil {
 		s.logger.Error("Error happened while creating the comment", zap.Error(err))
-		return "", &serr.ServiceError{Message: "Error happened while creating the comment", StatusCode: http.StatusInternalServerError}
-	} else if commentEntity.CommentId == "" {
+		return 0, &serr.ServiceError{Message: "Error happened while creating the comment", StatusCode: http.StatusInternalServerError}
+	} else if commentEntity.CommentId == 0 {
 		s.logger.Error("Error invalid comment id created", zap.Any("comment", commentEntity))
-		return "", &serr.ServiceError{Message: "Error invalid comment id created", StatusCode: http.StatusInternalServerError}
+		return 0, &serr.ServiceError{Message: "Error invalid comment id created", StatusCode: http.StatusInternalServerError}
 	}
 
 	return commentEntity.CommentId, nil

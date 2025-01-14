@@ -90,7 +90,7 @@ func (r *commentRepository) GetComments(currencyTopic, encryptedCursor string, l
 	var lastComment entity.Comment
 
 	for index := limit - 1; index >= 0; index-- {
-		if comments[index].CommentId != "" {
+		if comments[index].CommentId != 0 {
 			lastComment = comments[index]
 			break
 		} else {
@@ -98,7 +98,7 @@ func (r *commentRepository) GetComments(currencyTopic, encryptedCursor string, l
 		}
 	}
 
-	if lastComment.CommentId == "" {
+	if lastComment.CommentId == 0 {
 		return comments, "", nil
 	}
 
