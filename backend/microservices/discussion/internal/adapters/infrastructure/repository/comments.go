@@ -35,12 +35,12 @@ const QueryGetMyComments = `
 SELECT *
 FROM comments
 WHERE 
-    owner_id=$1 AND
+    topic_id=(SELECT id FROM topics WHERE currency = $1) AND
     date > $2
 ORDER BY date
 FETCH NEXT $3 ROWS ONLY;`
 
-func (r *commentRepository) GetComments(encryptedCursor string, limit int) ([]entity.Comment, string, error) {
+func (r *commentRepository) GetComments(currencyTopic, encryptedCursor string, limit int) ([]entity.Comment, string, error) {
 	var date time.Time
 
 	if limit < r.config.Limit.Min {
@@ -77,7 +77,7 @@ func (r *commentRepository) GetComments(encryptedCursor string, limit int) ([]en
 		}
 	}
 
-	in := []any{date, limit}
+	in := []any{currencyTopic, date, limit}
 	if err := r.rdbms.Query(QueryGetMyComments, in, out); err != nil {
 		r.logger.Error("Error query comments", zap.Error(err))
 		return nil, "", err

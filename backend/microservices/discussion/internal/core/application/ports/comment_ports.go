@@ -13,12 +13,12 @@ type (
 		AddComment(comment *entity.Comment) error
 
 		// GetComments retrieves all comments
-		GetComments(encryptedCursor string, limit int) ([]entity.Comment, string, error)
+		GetComments(currencyTopic, encryptedCursor string, limit int) ([]entity.Comment, string, error)
 	}
 
 	// CommentServicePort defines the methods for interacting with comment services
 	CommentServicePort interface {
 		NewComment(text, currency string, username string) (entity.UUID, *serr.ServiceError)
-		GetComments(encryptedCursor string, limit int) ([]entity.Comment, string, *serr.ServiceError)
+		GetComments(currencyTopic, encryptedCursor string, limit int) ([]entity.Comment, string, *serr.ServiceError)
 	}
 )

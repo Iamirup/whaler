@@ -5,7 +5,6 @@ import (
 
 	"github.com/Iamirup/whaler/backend/microservices/discussion/internal/adapters/interfaces/rest/dto"
 	"github.com/Iamirup/whaler/backend/microservices/discussion/internal/core/application/services"
-	"github.com/Iamirup/whaler/backend/microservices/discussion/internal/core/domain/entity"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 )
@@ -53,24 +52,27 @@ func (h *CommentHandler) NewComment(c *fiber.Ctx) error {
 
 func (h *CommentHandler) GetComments(c *fiber.Ctx) error {
 
-	userId, ok := c.Locals("user-id").(string)
-	if !ok || userId == "" {
-		h.server.Logger.Error("Invalid user-id local")
+	username, ok := c.Locals("user-username").(string)
+	if !ok || username == "" {
+		h.server.Logger.Error("Invalid user-username local")
 		return c.SendStatus(http.StatusInternalServerError)
 	}
+
+	currencyTopic := (c.Params("topic"))
 
 	cursor := c.Query("cursor")
 	limit := c.QueryInt("limit")
 
-	comments, newCursor, err := h.commentAppService.GetComments(entity.UUID(userId), cursor, limit)
+	comments, newCursor, err := h.commentAppService.GetComments(currencyTopic, cursor, limit)
 	if err != nil {
 		response := dto.ErrorResponse{Errors: []dto.ErrorContent{{Field: "_", Message: err.Message}}, NeedRefresh: false}
 		return c.Status(err.StatusCode).JSON(response)
 	}
 
 	response := dto.GetCommentsResponse{
-		Comments:  comments,
-		NewCursor: newCursor,
+		Comments:    comments,
+		NewCursor:   newCursor,
+		OwnUsername: username,
 	}
 
 	return c.Status(http.StatusOK).JSON(response)

@@ -5,8 +5,8 @@ import "github.com/Iamirup/whaler/backend/microservices/discussion/internal/core
 // requests
 type (
 	NewCommentRequest struct {
-		Currency string `json:"currency"      form:"currency"      validate:"required"`
-		Text     string `json:"content"       form:"content"       validate:"required,max=600"`
+		Currency string `json:"currency"    form:"currency"     validate:"required"`
+		Text     string `json:"text"        form:"text"         validate:"required,max=600"`
 	}
 
 	GetCommentsRequest struct {
@@ -21,8 +21,9 @@ type (
 	}
 
 	GetCommentsResponse struct {
-		Comments  []entity.Comment `json:"comments"      form:"comments"`
-		NewCursor string           `json:"new_cursor"   form:"new_cursor"`
+		Comments    []entity.Comment `json:"comments"      form:"comments"`
+		NewCursor   string           `json:"new_cursor"    form:"new_cursor"`
+		OwnUsername string           `json:"own_username"    form:"own_username"     validate:"required"`
 	}
 )
 

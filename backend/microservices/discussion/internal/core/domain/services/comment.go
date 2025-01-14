@@ -49,9 +49,9 @@ func (s *CommentService) NewComment(text, currency string, username string) (ent
 	return commentEntity.CommentId, nil
 }
 
-func (s *CommentService) GetComments(encryptedCursor string, limit int) ([]entity.Comment, string, *serr.ServiceError) {
+func (s *CommentService) GetComments(currencyTopic, encryptedCursor string, limit int) ([]entity.Comment, string, *serr.ServiceError) {
 
-	comments, newEncryptedCursor, err := s.commentPersistencePort.GetComments(encryptedCursor, limit)
+	comments, newEncryptedCursor, err := s.commentPersistencePort.GetComments(currencyTopic, encryptedCursor, limit)
 	if err != nil {
 		s.logger.Error("Something went wrong in retrieving comments", zap.Error(err))
 		return nil, "", &serr.ServiceError{Message: "Something went wrong in retrieving comments", StatusCode: http.StatusInternalServerError}

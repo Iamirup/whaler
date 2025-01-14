@@ -59,6 +59,6 @@ func (s *CommentApplicationService) NewComment(request *api.NewCommentRequest, u
 	return s.domainService.NewComment(request.Text, request.Currency, username)
 }
 
-func (s *CommentApplicationService) GetComments(userId entity.UUID, encryptedCursor string, limit int) ([]entity.Comment, string, *serr.ServiceError) {
-	return s.domainService.GetComments(encryptedCursor, limit)
+func (s *CommentApplicationService) GetComments(currencyTopic, encryptedCursor string, limit int) ([]entity.Comment, string, *serr.ServiceError) {
+	return s.domainService.GetComments(currencyTopic, encryptedCursor, limit)
 }

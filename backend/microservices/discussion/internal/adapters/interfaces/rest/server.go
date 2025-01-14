@@ -36,7 +36,7 @@ func New(log *zap.Logger, commentRepo ports.CommentPersistencePort, token token.
 
 	discussionV1 := server.clientApp.Group("/api/discussion/v1", commentHandler.fetchUserDataMiddleware)
 
-	discussionV1.Post("/comment/:topic", commentHandler.NewComment)
+	discussionV1.Post("/comment", commentHandler.NewComment)
 	discussionV1.Get("/comments/:topic", commentHandler.GetComments)
 
 	// 404 Handler
