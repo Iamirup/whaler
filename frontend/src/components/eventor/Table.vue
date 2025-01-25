@@ -11,11 +11,10 @@
                     <thead class="bg-red-400">
                         <tr>
                             <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">Hash</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">Block</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">AGE</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">Block ID</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">Time</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">Type</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">From</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">To</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">Output Total USD</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">Token</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-white drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)]">RES</th>
                         </tr>
