@@ -7,7 +7,6 @@ require (
 	github.com/go-playground/validator/v10 v10.22.1
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/golang-jwt/jwt/v5 v5.0.0
-	github.com/iancoleman/strcase v0.3.0
 	github.com/knadh/koanf/providers/structs v0.1.0
 	github.com/knadh/koanf/v2 v2.0.1
 	github.com/lib/pq v1.10.9
