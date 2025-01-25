@@ -133,7 +133,7 @@ const fetchTransactions = async () => {
             minAmount: filters.value.minAmount,
             age: convertToSeconds(filters.value.age.number, filters.value.age.unit).toString()
         };
-        const response = await axios.get<ApiResponse>('https://api.example.com/transactions', { params });
+        const response = await axios.get<ApiResponse>('/api/eventor/v1/table', { params });
         transactions.value = response.data.table;
     } catch (error) {
         if (error instanceof AxiosError) {
