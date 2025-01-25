@@ -24,10 +24,10 @@
                             <td class="px-4 py-3 text-sm text-gray-700">● {{ transaction.hash }}</td>
                             <td class="px-4 py-3 text-sm text-gray-700">{{ transaction.block_id }}</td>
                             <td class="px-4 py-3 text-sm text-gray-700">{{ transaction.time }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-700">{{ transaction.type }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">Transfer</td>
                             <td class="px-4 py-3 text-sm text-gray-700">{{ transaction.output_total_usd }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-700">{{ transaction.token }}</td>
-                            <td class="px-4 py-3 text-sm text-green-600">{{ transaction.res }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">USD Token</td>
+                            <td class="px-4 py-3 text-sm text-green-600">OK</td>
                         </tr>
                     </tbody>
                 </table>
