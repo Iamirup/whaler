@@ -43,9 +43,9 @@
                     <label class="block text-sm font-medium">Cryptocurrency</label>
                     <select v-model="filters.cryptocurrency" class="border-gray-300 rounded-md w-full p-2 mt-2">
                         <option value="">Select cryptocurrency</option>
-                        <option value="Bitcoin">Bitcoin</option>
-                        <option value="Ethereum">Ethereum</option>
-                        <option value="Sol">Sol</option> 
+                        <option value="bitcoin">bitcoin</option>
+                        <option value="ethereum">ethereum</option>
+                        <option value="dogecoin">dogecoin</option> 
                     </select>
                 </div>
                 <div class="mb-4">
