@@ -153,15 +153,15 @@ const applyFilters = async () => {
 let intervalId: number;
 
 onMounted(() => {
-    fetchTransactions(); // Initial fetch
-    intervalId = setInterval(fetchTransactions, 5000); // Fetch every 5 seconds
+    fetchTransactions();
+    intervalId = window.setInterval(fetchTransactions, 5000); 
 });
 
 onUnmounted(() => {
-    clearInterval(intervalId); // Cleanup interval when component is destroyed
+    window.clearInterval(intervalId); 
 });
+
 </script>
 
 <style scoped>
-/* Add your custom styles here */
 </style>
