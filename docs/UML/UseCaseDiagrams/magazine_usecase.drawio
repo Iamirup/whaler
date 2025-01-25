@@ -1,0 +1,67 @@
+<mxfile host="65bd71144e">
+    <diagram id="WcTM8I9YE_VzF7k2Zn_Q" name="Page-1">
+        <mxGraphModel dx="914" dy="995" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="120" y="430" width="610" height="370" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="user" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="490" width="50" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="&lt;span style=&quot;font-family: &amp;quot;Comic Sans MS&amp;quot;; font-size: 18px;&quot;&gt;Scrape News&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="480" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;span style=&quot;font-family: &amp;quot;Comic Sans MS&amp;quot;; font-size: 18px;&quot;&gt;Add News&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="399" y="580" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="515" width="50" height="95" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="" style="endArrow=classic;html=1;" parent="1" target="4" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="80" y="540" as="sourcePoint"/>
+                        <mxPoint x="460" y="540" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8" value="" style="endArrow=classic;html=1;" parent="1" target="5" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="760" y="563" as="sourcePoint"/>
+                        <mxPoint x="460" y="540" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9" value="" style="endArrow=classic;html=1;" parent="1" target="4" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="760" y="563" as="sourcePoint"/>
+                        <mxPoint x="460" y="540" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="10" value="&lt;font face=&quot;Comic Sans MS&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;React An Emoji to A News&lt;/span&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="180" y="590" width="150" height="86" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Remove React" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Comic Sans MS;fontSize=18;" vertex="1" parent="1">
+                    <mxGeometry x="350" y="700" width="110" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="" style="endArrow=classic;html=1;dashed=1;dashPattern=8 8;fontFamily=Comic Sans MS;fontSize=18;" edge="1" parent="1" source="12" target="10">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="280.0031549807929" y="649.9955027614085" as="sourcePoint"/>
+                        <mxPoint x="287.81426197134266" y="712.7303058782734" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="14" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Comic Sans MS;fontSize=13;fillColor=default;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="336" y="685" width="5" height="5" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="" style="endArrow=classic;html=1;dashed=1;dashPattern=8 8;fontFamily=Comic Sans MS;fontSize=18;exitX=1;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="10" target="4">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="372.91551467209797" y="620.6302931693762" as="sourcePoint"/>
+                        <mxPoint x="300.094359842896" y="570.001308647163" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="19" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontFamily=Comic Sans MS;fontSize=13;fillColor=default;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="342" y="573" width="5" height="5" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

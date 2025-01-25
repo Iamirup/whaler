@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="MtLG95kfh5mEK6smX6_D" name="Page-1">
-        <mxGraphModel dx="743" dy="809" grid="1" gridSize="8" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="792" dy="863" grid="1" gridSize="8" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -33,8 +33,8 @@
                 <mxCell id="17" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffc0;strokeColor=#ff0000;strokeWidth=3;fontSize=18;" parent="1" vertex="1">
                     <mxGeometry x="320" y="664" width="30" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="18" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;font style=&quot;font-size: 13px;&quot; color=&quot;#ffffff&quot;&gt;Inappropriate&lt;br&gt;&lt;/font&gt;data&lt;/font&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;fontSize=18;labelBackgroundColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="17" target="81" edge="1">
-                    <mxGeometry x="-0.8628" y="-48" relative="1" as="geometry">
+                <mxCell id="18" value="&lt;span style=&quot;font-size: 13px;&quot;&gt;Inappropriate data&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;fontSize=18;labelBackgroundColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="17" target="81" edge="1">
+                    <mxGeometry x="-0.8436" y="-32" relative="1" as="geometry">
                         <mxPoint x="647.5" y="302" as="targetPoint"/>
                         <mxPoint as="offset"/>
                         <mxPoint x="417.4999999999998" y="603.9999999999998" as="sourcePoint"/>
@@ -45,8 +45,8 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="19" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;font style=&quot;font-size: 13px;&quot; color=&quot;#ffffff&quot;&gt;Appropriate&lt;br&gt;&lt;/font&gt;data&lt;/font&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;fontSize=18;labelBackgroundColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="17" target="69" edge="1">
-                    <mxGeometry x="-0.6949" y="-56" relative="1" as="geometry">
+                <mxCell id="19" value="&lt;span style=&quot;font-size: 13px;&quot;&gt;Appropriate data&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;fontSize=18;labelBackgroundColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="17" target="69" edge="1">
+                    <mxGeometry x="-0.5789" y="-44" relative="1" as="geometry">
                         <mxPoint x="160" y="856" as="targetPoint"/>
                         <mxPoint x="505.03666666666663" y="515.9988888888889" as="sourcePoint"/>
                         <Array as="points">
@@ -55,21 +55,21 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="59" value="&lt;font color=&quot;#ffffff&quot;&gt;incorrect&lt;br&gt;password&lt;/font&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;fontSize=18;labelBackgroundColor=none;" parent="1" source="58" target="83" edge="1">
-                    <mxGeometry x="-0.6062" y="-54" relative="1" as="geometry">
+                <mxCell id="59" value="Incorrect password" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;fontSize=14;labelBackgroundColor=none;" parent="1" source="58" target="83" edge="1">
+                    <mxGeometry x="-0.631" y="-30" relative="1" as="geometry">
                         <mxPoint x="713.5" y="842" as="targetPoint"/>
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="60" value="&lt;font color=&quot;#ffffff&quot;&gt;Correct&lt;br&gt;password&lt;br&gt;&lt;/font&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;fontSize=18;labelBackgroundColor=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="58" edge="1">
-                    <mxGeometry x="0.0783" y="-68" relative="1" as="geometry">
+                <mxCell id="60" value="Correct&lt;br style=&quot;font-size: 14px;&quot;&gt;password" style="edgeStyle=orthogonalEdgeStyle;html=1;align=center;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;fontSize=14;labelBackgroundColor=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="58" edge="1">
+                    <mxGeometry x="0.0706" y="-54" relative="1" as="geometry">
                         <mxPoint x="277.5" y="1000" as="targetPoint"/>
                         <mxPoint x="322.5666666666666" y="890.9988888888886" as="sourcePoint"/>
                         <Array as="points">
                             <mxPoint x="322.5" y="941"/>
                             <mxPoint x="277.5" y="941"/>
                         </Array>
-                        <mxPoint x="38" y="-61" as="offset"/>
+                        <mxPoint x="24" y="-45" as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="58" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffc0;strokeColor=#ff0000;strokeWidth=3;fontSize=18;" parent="1" vertex="1">
@@ -228,10 +228,10 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="123" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Fill the password field again&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;strokeWidth=3;" vertex="1" parent="1">
+                <mxCell id="123" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Fill the password field again&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;strokeWidth=3;" parent="1" vertex="1">
                     <mxGeometry x="432" y="772" width="128" height="73" as="geometry"/>
                 </mxCell>
-                <mxCell id="124" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;exitX=-0.007;exitY=0.424;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" source="123" parent="1" target="58">
+                <mxCell id="124" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;exitX=-0.007;exitY=0.424;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" parent="1" source="123" target="58" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="492" y="866" as="targetPoint"/>
                         <Array as="points">
