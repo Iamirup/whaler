@@ -6,6 +6,7 @@ import (
 
 	"github.com/Iamirup/whaler/backend/microservices/eventor/internal/core/application/ports"
 	appService "github.com/Iamirup/whaler/backend/microservices/eventor/internal/core/application/services"
+	"github.com/Iamirup/whaler/backend/microservices/eventor/internal/core/application/services/transaction"
 	domainService "github.com/Iamirup/whaler/backend/microservices/eventor/internal/core/domain/services"
 	"github.com/Iamirup/whaler/backend/microservices/eventor/pkg/token"
 	"github.com/gofiber/fiber/v2"
@@ -48,9 +49,9 @@ func New(log *zap.Logger, tableConfigRepo ports.TableConfigPersistencePort, toke
 }
 
 func (handler *Server) Serve() {
-	go appService.RunBitcoinEvent()
-	go appService.RunEthereumEvent()
-	go appService.RunDogecoinEvent()
+	go transaction.RunBitcoinEvent()
+	go transaction.RunEthereumEvent()
+	go transaction.RunDogecoinEvent()
 
 	go func() {
 		err := handler.managmentApp.Listen(":8081")

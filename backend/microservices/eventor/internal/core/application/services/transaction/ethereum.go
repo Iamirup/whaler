@@ -1,4 +1,4 @@
-package services
+package transaction
 
 import (
 	"encoding/json"
@@ -9,9 +9,8 @@ import (
 	"time"
 )
 
-var allEthereumTransactions []map[string]interface{}
+var AllEthereumTransactions []map[string]interface{}
 
-// fetchTransactions fetches transactions from the API for a given offset
 func fetchEthereumTransactions(offset int) ([]map[string]interface{}, error) {
 	client := &http.Client{}
 	url := fmt.Sprintf("https://api.blockchair.com/ethereum/transactions?s=time(desc)&limit=100&offset=%d", offset)
@@ -39,20 +38,17 @@ func fetchEthereumTransactions(offset int) ([]map[string]interface{}, error) {
 		return nil, err
 	}
 
-	// Unmarshal JSON response using a map
 	var apiResp map[string]interface{}
 	if err := json.Unmarshal(bodyText, &apiResp); err != nil {
 		return nil, err
 	}
 
-	// Extract data array from the response
 	data, ok := apiResp["data"].([]interface{})
 	if !ok {
 		fmt.Println(apiResp["data"])
 		return nil, fmt.Errorf("failed to parse data array")
 	}
 
-	// Convert to slice of maps
 	transactions := make([]map[string]interface{}, len(data))
 	for i, item := range data {
 		transactions[i] = item.(map[string]interface{})
@@ -61,24 +57,16 @@ func fetchEthereumTransactions(offset int) ([]map[string]interface{}, error) {
 }
 
 func RunEthereumEvent() {
-	for offset := 0; offset <= 3000; offset += 100 {
-		transactions, err := fetchEthereumTransactions(offset)
-		if err != nil {
-			log.Fatal(err)
+	for {
+		for offset := 0; offset <= 4000; offset += 100 {
+			transactions, err := fetchEthereumTransactions(offset)
+			if err != nil {
+				log.Fatal(err)
+			}
+			AllEthereumTransactions = append(AllEthereumTransactions, transactions...)
+
+			time.Sleep(5 * time.Second)
 		}
-		allEthereumTransactions = append(allEthereumTransactions, transactions...)
-
-		time.Sleep(3 * time.Second)
+		AllEthereumTransactions = nil
 	}
-
-	// // Filter transactions based on output_total_usd and time
-	// for _, transaction := range allEthereumTransactions {
-	// 	outputTotalUSD, ok := transaction["value_usd"].(float64)
-	// 	if ok && outputTotalUSD > 1_000_000 {
-	// 		timeStr, ok := transaction["time"].(string)
-	// 		if ok && isWithinLastDay(timeStr) {
-	// 			fmt.Printf("Transaction with value_usd > 1,000,000 within last day: %s at %s\n", formatNumber(outputTotalUSD), timeStr)
-	// 		}
-	// 	}
-	// }
 }

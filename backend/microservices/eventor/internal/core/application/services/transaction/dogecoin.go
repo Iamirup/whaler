@@ -1,4 +1,4 @@
-package services
+package transaction
 
 import (
 	"encoding/json"
@@ -9,12 +9,11 @@ import (
 	"time"
 )
 
-var allBitcoinTransactions []map[string]interface{}
+var AllDogecoinTransactions []map[string]interface{}
 
-// fetchTransactions fetches transactions from the API for a given offset
-func fetchBitcoinTransactions(offset int) ([]map[string]interface{}, error) {
+func fetchDogecoinTransactions(offset int) ([]map[string]interface{}, error) {
 	client := &http.Client{}
-	url := fmt.Sprintf("https://api.blockchair.com/bitcoin/transactions?s=time(desc)&limit=100&offset=%d", offset)
+	url := fmt.Sprintf("https://api.blockchair.com/dogecoin/transactions?s=time(desc)&limit=100&offset=%d", offset)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -39,20 +38,17 @@ func fetchBitcoinTransactions(offset int) ([]map[string]interface{}, error) {
 		return nil, err
 	}
 
-	// Unmarshal JSON response using a map
 	var apiResp map[string]interface{}
 	if err := json.Unmarshal(bodyText, &apiResp); err != nil {
 		return nil, err
 	}
 
-	// Extract data array from the response
 	data, ok := apiResp["data"].([]interface{})
 	if !ok {
 		fmt.Println(apiResp["data"])
 		return nil, fmt.Errorf("failed to parse data array")
 	}
 
-	// Convert to slice of maps
 	transactions := make([]map[string]interface{}, len(data))
 	for i, item := range data {
 		transactions[i] = item.(map[string]interface{})
@@ -60,25 +56,17 @@ func fetchBitcoinTransactions(offset int) ([]map[string]interface{}, error) {
 	return transactions, nil
 }
 
-func RunBitcoinEvent() {
-	for offset := 0; offset <= 3000; offset += 100 {
-		transactions, err := fetchBitcoinTransactions(offset)
-		if err != nil {
-			log.Fatal(err)
+func RunDogecoinEvent() {
+	for {
+		for offset := 0; offset <= 4000; offset += 100 {
+			transactions, err := fetchDogecoinTransactions(offset)
+			if err != nil {
+				log.Fatal(err)
+			}
+			AllDogecoinTransactions = append(AllDogecoinTransactions, transactions...)
+
+			time.Sleep(5 * time.Second)
 		}
-		allBitcoinTransactions = append(allBitcoinTransactions, transactions...)
-
-		time.Sleep(4 * time.Second)
+		AllDogecoinTransactions = nil
 	}
-
-	// // Filter transactions based on output_total_usd and time
-	// for _, transaction := range allBitcoinTransactions {
-	// 	outputTotalUSD, ok := transaction["output_total_usd"].(float64)
-	// 	if ok && outputTotalUSD > 1_000_000 {
-	// 		timeStr, ok := transaction["time"].(string)
-	// 		if ok && isWithinLastDay(timeStr) {
-	// 			fmt.Printf("Transaction with output_total_usd > 1,000,000 within last day: %s at %s\n", formatNumber(outputTotalUSD), timeStr)
-	// 		}
-	// 	}
-	// }
 }

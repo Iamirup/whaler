@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/Iamirup/whaler/backend/microservices/eventor/internal/core/application/ports"
+	"github.com/Iamirup/whaler/backend/microservices/eventor/internal/core/application/services/transaction"
 	"github.com/Iamirup/whaler/backend/microservices/eventor/internal/core/domain/entity"
 )
 
@@ -25,11 +26,11 @@ func (s *TableConfigApplicationService) SeeTable(cryptocurrency string, minAmoun
 
 	switch cryptocurrency {
 	case "bitcoin":
-		transactions = allBitcoinTransactions
+		transactions = transaction.AllBitcoinTransactions
 	case "ethereum":
-		transactions = allEthereumTransactions
+		transactions = transaction.AllEthereumTransactions
 	case "dogecoin":
-		transactions = allDogecoinTransactions
+		transactions = transaction.AllDogecoinTransactions
 	default:
 		return nil, "", nil
 	}
@@ -46,11 +47,11 @@ func (s *TableConfigApplicationService) filterAndConvertTransactions(transaction
 	var records []entity.TableRecord
 
 	for _, tx := range transactions {
-		if !meetsFilterCriteria(tx, minAmount, age) {
+		if !transaction.MeetsFilterCriteria(tx, minAmount, age) {
 			continue
 		}
 
-		record, err := convertToTableRecord(tx)
+		record, err := transaction.ConvertToTableRecord(tx)
 		if err != nil {
 			continue
 		}
@@ -59,52 +60,4 @@ func (s *TableConfigApplicationService) filterAndConvertTransactions(transaction
 	}
 
 	return records, nil
-}
-
-func convertToTableRecord(tx map[string]interface{}) (entity.TableRecord, error) {
-	record := entity.TableRecord{}
-
-	if blockId, ok := tx["block_id"].(float64); ok {
-		record.BlockId = int(blockId)
-	}
-
-	if outputTotal, ok := tx["output_total_usd"].(float64); ok {
-		record.OutputTotalUsd = outputTotal
-	}
-
-	if hash, ok := tx["hash"].(string); ok {
-		record.Hash = hash
-	}
-
-	if timeStr, ok := tx["time"].(string); ok {
-		record.Time = timeStr
-	}
-
-	if _, ok := tx["res"].(string); ok {
-		record.Res = "OK"
-	}
-
-	if _, ok := tx["token"].(string); ok {
-		record.Token = "USD Token"
-	}
-
-	if _, ok := tx["type"].(string); ok {
-		record.Type = "Transfer"
-	}
-
-	return record, nil
-}
-
-func meetsFilterCriteria(tx map[string]interface{}, minAmount float64, age int) bool {
-	outputTotalUSD, ok := tx["output_total_usd"].(float64)
-	if !ok || outputTotalUSD <= minAmount {
-		return false
-	}
-
-	timeStr, ok := tx["time"].(string)
-	if !ok || !isWithinLastAge(timeStr, age) {
-		return false
-	}
-
-	return true
 }
